@@ -1,0 +1,21 @@
+{
+  "name": "dogancanyucel-website",
+  "main": "index.js",
+  "compatibility_date": "2026-07-07",
+  "assets": {
+    "directory": "./public"
+  },
+  "routes": [
+    {
+      "pattern": "dogancanyucel.com/*",
+      "zone_name": "dogancanyucel.com"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "exercises_db",
+      "database_id": "61c91ab8-fa3d-465d-8e95-768f5e10a48d"
+    }
+  ]
+}

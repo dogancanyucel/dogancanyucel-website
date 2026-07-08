@@ -1,0 +1,6 @@
+# Development / seed dosyaları — deploy edilmez
+raw_exercises.json
+data.sql
+seed.js
+node_modules
+.git
