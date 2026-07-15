@@ -1,0 +1,21 @@
+# Wrangler / Cloudflare local cache (may contain account info)
+.wrangler/
+public/.wrangler/
+
+# Secrets & local env
+.env
+.env.*
+.dev.vars
+*.pem
+
+# Dependencies
+node_modules/
+
+# Debug logs
+debug-*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
