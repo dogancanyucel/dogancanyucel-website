@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Designing Fair AI Quotas — Blog</title>
+  <meta name="description" content="How Turquoise AI implements trial, premium, and daily general caps for Gemini API usage." />
+  <meta property="og:url" content="https://dogancanyucel.com/blog/ai-quota-system/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+  <nav id="navbar" class="scrolled">
+    <div class="nav-container">
+      <a href="../../index.html" class="nav-logo">DCY<span class="dot">.</span></a>
+      <ul class="nav-links">
+        <li><a href="../../index.html#about">About</a></li>
+        <li><a href="../../index.html#projects">Projects</a></li>
+        <li><a href="../../blog/">Blog</a></li>
+        <li><a href="../../index.html#skills">Skills</a></li>
+        <li><a href="../../index.html#contact">Contact</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="blog-page">
+    <div class="container blog-article">
+      <a href="../" class="back-link">← Back to Blog</a>
+
+      <div class="blog-meta">
+        <span>July 15, 2026</span>
+        <span class="blog-tag">Engineering</span>
+        <span class="blog-tag">Turquoise AI</span>
+        <span>5 min read</span>
+      </div>
+
+      <h1>Designing Fair AI Quotas for a Fitness App</h1>
+
+      <p>
+        Every AI feature in Turquoise — chat, food photos, voice logs, body scans, program regeneration —
+        costs real API tokens. Without limits, a single user could burn through a month's budget in a day.
+        Here's how the quota system works.
+      </p>
+
+      <h2>Three tiers</h2>
+      <ul>
+        <li><strong>Free</strong> — trial expired, not premium: all AI limits = 0</li>
+        <li><strong>Trial</strong> — 7-day period with generous but bounded limits</li>
+        <li><strong>Premium</strong> — doubled limits for power users</li>
+      </ul>
+
+      <h2>Daily general cap</h2>
+      <p>
+        Trial users get 50 general daily AI requests; Premium gets 100. Daily features (chat, food photo,
+        voice log, macro AI) count toward this cap. When their individual limits sum above the general cap,
+        excess is deducted from <strong>chat only</strong> — so specialized features keep their full allowance.
+      </p>
+
+      <h2>Reset schedules</h2>
+      <ul>
+        <li><strong>Daily</strong> — midnight reset for chat, food photo, voice, macro, general</li>
+        <li><strong>Weekly</strong> — Sunday reset for body scan and weekly report</li>
+        <li><strong>Monthly</strong> — 1st of month for program regeneration</li>
+      </ul>
+      <p>
+        Resets run via a Cloudflare scheduled function (Europe/Istanbul timezone) and sync to Firestore
+        so the app always shows accurate usage in Settings → AI Daily Quota.
+      </p>
+
+      <h2>80% warnings</h2>
+      <p>
+        When a user hits 80% of any limit, they get a localized warning before the hard block at 100%.
+        Premium users never see upsell prompts — only trial users get upgrade nudges during their active trial.
+      </p>
+
+      <div class="blog-cta-box">
+        <p style="margin-bottom:12px;"><strong>Related</strong></p>
+        <a href="../building-turquoise-ai/" class="project-link">Building Turquoise AI →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-logo">DCY<span class="dot">.</span></div>
+      <div class="footer-copy">© 2026 Dogan Can Yucel</div>
+      <div class="footer-links">
+        <a href="../../blog/">Blog</a>
+        <a href="../../index.html">Home</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../script.js"></script>
+</body>
+</html>

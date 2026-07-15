@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Dogan Can Yucel</title>
+  <meta name="description" content="Development notes, AI fitness app updates, and engineering insights from Dogan Can Yucel." />
+  <meta property="og:title" content="Blog — Dogan Can Yucel" />
+  <meta property="og:url" content="https://dogancanyucel.com/blog/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+
+  <nav id="navbar" class="scrolled">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">DCY<span class="dot">.</span></a>
+      <ul class="nav-links">
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../blog/">Blog</a></li>
+        <li><a href="../index.html#skills">Skills</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="../index.html#about" class="mobile-link">About</a>
+      <a href="../index.html#projects" class="mobile-link">Projects</a>
+      <a href="../blog/" class="mobile-link">Blog</a>
+      <a href="../index.html#skills" class="mobile-link">Skills</a>
+      <a href="../index.html#contact" class="mobile-link">Contact</a>
+    </div>
+  </nav>
+
+  <main class="blog-page">
+    <div class="container">
+      <a href="../index.html" class="back-link">← Back to Home</a>
+
+      <header class="blog-header">
+        <div class="section-label">/ Blog</div>
+        <h1>Notes on <span class="accent">AI, Fitness &amp; Code</span></h1>
+        <p>Build logs, product updates, and engineering decisions behind my projects — starting with Turquoise AI: Calorie &amp; Fitness.</p>
+      </header>
+
+      <div class="blog-grid">
+        <article class="blog-card featured">
+          <div class="blog-meta">
+            <span>July 15, 2026</span>
+            <span class="blog-tag">Turquoise AI</span>
+            <span class="blog-tag">Android</span>
+          </div>
+          <h2><a href="building-turquoise-ai/">Building Turquoise AI: Calorie &amp; Fitness</a></h2>
+          <p>
+            How I built a personal AI fitness coach for Android — Gemini-powered nutrition tracking,
+            gym programs, body scan, voice logging, Firebase sync, and a fair-use AI quota system.
+            iOS is next on the roadmap.
+          </p>
+          <a href="building-turquoise-ai/" class="blog-read-more">Read article →</a>
+        </article>
+
+        <article class="blog-card">
+          <div class="blog-meta">
+            <span>July 15, 2026</span>
+            <span class="blog-tag">Engineering</span>
+          </div>
+          <h3><a href="ai-quota-system/">Designing Fair AI Quotas for a Fitness App</a></h3>
+          <p>
+            Trial vs Premium limits, daily general caps, chat adjustment math, and why weekly/monthly
+            features reset on different schedules.
+          </p>
+          <a href="ai-quota-system/" class="blog-read-more">Read article →</a>
+        </article>
+
+        <article class="blog-card">
+          <div class="blog-meta">
+            <span>Coming soon</span>
+            <span class="blog-tag">iOS</span>
+          </div>
+          <h3>Turquoise AI for iOS — Roadmap</h3>
+          <p>
+            SwiftUI, HealthKit integration, and bringing the same AI coaching engine to Apple devices.
+            Subscribe via GitHub or check back here for updates.
+          </p>
+          <span class="blog-read-more" style="opacity:0.6;">Coming soon</span>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-logo">DCY<span class="dot">.</span></div>
+      <div class="footer-copy">© 2026 Dogan Can Yucel. Blog</div>
+      <div class="footer-links">
+        <a href="../index.html">Home</a>
+        <a href="../privacy.html">Privacy</a>
+        <a href="../terms.html">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../script.js"></script>
+</body>
+</html>

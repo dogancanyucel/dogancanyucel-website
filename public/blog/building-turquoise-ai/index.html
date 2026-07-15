@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building Turquoise AI: Calorie &amp; Fitness — Blog</title>
+  <meta name="description" content="Build log for Turquoise AI — an Android AI fitness coach with Gemini, Firebase, and Jetpack Compose." />
+  <meta property="og:title" content="Building Turquoise AI: Calorie &amp; Fitness" />
+  <meta property="og:url" content="https://dogancanyucel.com/blog/building-turquoise-ai/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+  <nav id="navbar" class="scrolled">
+    <div class="nav-container">
+      <a href="../../index.html" class="nav-logo">DCY<span class="dot">.</span></a>
+      <ul class="nav-links">
+        <li><a href="../../index.html#about">About</a></li>
+        <li><a href="../../index.html#projects">Projects</a></li>
+        <li><a href="../../blog/">Blog</a></li>
+        <li><a href="../../index.html#skills">Skills</a></li>
+        <li><a href="../../index.html#contact">Contact</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="blog-page">
+    <div class="container blog-article">
+      <a href="../" class="back-link">← Back to Blog</a>
+
+      <div class="blog-meta">
+        <span>July 15, 2026</span>
+        <span class="blog-tag">Turquoise AI</span>
+        <span class="blog-tag">Android</span>
+        <span>8 min read</span>
+      </div>
+
+      <h1>Building Turquoise AI: Calorie &amp; Fitness</h1>
+
+      <p>
+        <strong>Turquoise AI: Calorie &amp; Fitness</strong> started as a simple question: what if your phone
+        could act as a real personal trainer and nutritionist — not generic templates, but programs shaped
+        around <em>your</em> body, goals, and daily habits?
+      </p>
+
+      <h2>Android first</h2>
+      <p>
+        The Android app is built with <strong>Kotlin</strong> and <strong>Jetpack Compose</strong>. Core features include:
+      </p>
+      <ul>
+        <li>AI chat coach powered by Google Gemini</li>
+        <li>Food photo analysis and voice meal logging</li>
+        <li>Smart gym tracker with AI-calculated burned calories</li>
+        <li>Body scan with ephemeral photo processing (never stored)</li>
+        <li>Weekly AI fitness reports</li>
+        <li>Home-screen widgets for steps, water, and activity</li>
+      </ul>
+
+      <h2>Backend &amp; sync</h2>
+      <p>
+        User profiles, AI usage counters, and trial/premium state sync through <strong>Firebase Firestore</strong>.
+        Exercise data is served via a <strong>Cloudflare Worker</strong> with D1 database on
+        <a href="https://dogancanyucel.com">dogancanyucel.com</a> — the same domain that hosts this blog,
+        legal pages, and the <a href="../../project/turquoise-ai-calorie-fitness/">project page</a>.
+      </p>
+
+      <h2>Fair AI usage</h2>
+      <p>
+        AI calls are expensive at scale. Turquoise implements tiered quotas — Free (trial expired),
+        Trial (7-day limits), and Premium — with a daily general cap and smart chat adjustment when
+        daily feature limits exceed the general pool. More on that in the
+        <a href="../ai-quota-system/">AI quota design post</a>.
+      </p>
+
+      <h2>iOS next</h2>
+      <p>
+        Android is live in active development. The Apple version is planned with SwiftUI, HealthKit,
+        and feature parity with the Android coaching engine. Follow this blog for iOS progress updates.
+      </p>
+
+      <div class="blog-cta-box">
+        <p style="margin-bottom:12px;"><strong>Explore the project</strong></p>
+        <div class="project-cta-row">
+          <a href="../../project/turquoise-ai-calorie-fitness/" class="project-link">Project page →</a>
+          <a href="../../privacy.html" class="project-link secondary">Privacy Policy</a>
+          <a href="../../terms.html" class="project-link secondary">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-logo">DCY<span class="dot">.</span></div>
+      <div class="footer-copy">© 2026 Dogan Can Yucel</div>
+      <div class="footer-links">
+        <a href="../../blog/">Blog</a>
+        <a href="../../index.html">Home</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../script.js"></script>
+</body>
+</html>
