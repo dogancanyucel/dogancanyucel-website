@@ -582,6 +582,158 @@ section { padding: 100px 0; }
 .coming-soon h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; }
 .coming-soon p { color: var(--gray); font-size: 0.85rem; line-height: 1.7; margin-bottom: 24px; }
 
+.project-logo-img {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0, 188, 212, 0.25);
+}
+
+.platform-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+}
+.platform-badge.android {
+  color: #a5f3fc;
+  border-color: rgba(0, 188, 212, 0.35);
+  background: rgba(0, 188, 212, 0.08);
+}
+.platform-badge.ios-soon {
+  color: var(--gray2);
+  border-color: var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ═══════════════════════════
+   PROJECT DETAIL PAGE
+═══════════════════════════ */
+.project-page {
+  padding-top: 100px;
+  padding-bottom: 80px;
+}
+.project-hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  align-items: center;
+  margin-bottom: 48px;
+}
+.project-hero-logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 24px;
+  box-shadow: 0 12px 40px rgba(0, 188, 212, 0.3);
+}
+.project-hero-title {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.project-hero-sub {
+  color: var(--tq);
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.project-hero-desc {
+  color: var(--gray2);
+  max-width: 720px;
+  line-height: 1.75;
+  font-size: 1rem;
+}
+.project-section {
+  margin-bottom: 48px;
+}
+.project-section h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.feature-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  transition: all var(--transition);
+}
+.feature-card:hover {
+  border-color: rgba(0, 188, 212, 0.35);
+  transform: translateY(-3px);
+}
+.feature-icon { font-size: 1.6rem; margin-bottom: 10px; }
+.feature-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+.feature-card p { color: var(--gray2); font-size: 0.85rem; line-height: 1.65; }
+.roadmap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.roadmap-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+.roadmap-card.active { border-color: rgba(0, 188, 212, 0.35); }
+.roadmap-card.soon { opacity: 0.85; }
+.roadmap-status {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+  padding: 4px 10px;
+  border-radius: 50px;
+}
+.roadmap-status.live { color: var(--tq); background: rgba(0,188,212,0.12); border: 1px solid rgba(0,188,212,0.3); }
+.roadmap-status.planned { color: var(--gray2); background: rgba(255,255,255,0.04); border: 1px solid var(--border); }
+.roadmap-card h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 10px; }
+.roadmap-card p { color: var(--gray2); font-size: 0.88rem; line-height: 1.7; }
+.project-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gray2);
+  font-size: 0.875rem;
+  margin-bottom: 32px;
+  transition: color var(--transition);
+}
+.back-link:hover { color: var(--tq); }
+
+@media (max-width: 900px) {
+  .project-hero { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .roadmap-grid { grid-template-columns: 1fr; }
+}
+
 /* ═══════════════════════════
    SKILLS
 ═══════════════════════════ */
