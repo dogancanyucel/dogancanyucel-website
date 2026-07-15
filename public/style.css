@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════
-   DOĞAN CAN YÜCEL — Personal Portfolio
+   DOGAN CAN YUCEL — Personal Portfolio
    style.css
 ══════════════════════════════════════════════ */
 
@@ -283,6 +283,15 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   color: var(--gray2);
   font-family: var(--mono);
   letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.hero-subtitle {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  font-weight: 400;
+  color: var(--gray);
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
   margin-bottom: 20px;
 }
 
@@ -458,6 +467,28 @@ section { padding: 100px 0; }
   grid-template-columns: 2fr 1fr;
   gap: 24px;
   align-items: start;
+}
+
+.projects-grid-preview,
+.projects-grid-list {
+  grid-template-columns: 1fr;
+  max-width: 720px;
+}
+
+.section-cta {
+  margin-top: 28px;
+  text-align: center;
+}
+
+a.project-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+a.project-card-link .project-link {
+  display: inline-block;
+  margin-top: 16px;
 }
 
 .project-card {

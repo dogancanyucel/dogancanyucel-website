@@ -110,20 +110,18 @@ export default {
     if (url.pathname === "/api/contact" && request.method === "POST") {
       try {
         const formData = await request.formData();
-        const senderName = formData.get("name") || "İsimsiz Kullanıcı";
-        const senderEmail = formData.get("email") || "Belirtilmedi";
-        const senderMessage = formData.get("message") || "Mesaj yok.";
+        const senderName = formData.get("name") || "Anonymous User";
+        const senderEmail = formData.get("email") || "Not provided";
+        const senderMessage = formData.get("message") || "No message.";
 
-        // Cloudflare Email Sending binding (MailChannels ücretsiz Workers desteğini kapattı)
         await env.EMAIL.send({
-          to: "contact@dogancanyucel.com", // Kendi e-posta adresinizi buraya yazabilirsiniz
+          to: "contact@dogancanyucel.com",
           from: { email: "noreply@dogancanyucel.com", name: "Website Contact Form" },
-          subject: `Yeni İletişim Formu Mesajı: ${senderName}`,
-          text: `Ad: ${senderName}\nE-posta: ${senderEmail}\n\nMesaj:\n${senderMessage}`
+          subject: `New Contact Form Message: ${senderName}`,
+          text: `Name: ${senderName}\nEmail: ${senderEmail}\n\nMessage:\n${senderMessage}`
         });
 
-        // Web sitesine başarılı dönüş (JSON formatında)
-        return new Response(JSON.stringify({ success: true, message: "Mesajınız başarıyla gönderildi." }), { 
+        return new Response(JSON.stringify({ success: true, message: "Your message was sent successfully." }), {
           status: 200, 
           headers: { "Content-Type": "application/json", ...corsHeaders } 
         });

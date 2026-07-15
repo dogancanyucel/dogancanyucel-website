@@ -1,4 +1,4 @@
-# Doğan Can Yücel — Personal Website
+# Dogan Can Yucel — Personal Website
 
 Personal portfolio website for [dogancanyucel.com](https://dogancanyucel.com)
 
