@@ -11,6 +11,11 @@
       "zone_name": "dogancanyucel.com"
     }
   ],
+  "send_email": [
+    {
+      "name": "EMAIL"
+    }
+  ],
   "d1_databases": [
     {
       "binding": "DB",

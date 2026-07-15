@@ -63,6 +63,19 @@ export default {
         }
 
         await env.DB.prepare("INSERT INTO feedbacks (user_email, message) VALUES (?, ?)").bind(email || "Anonymous", message).run();
+
+        // Also forward to your personal inbox via Cloudflare Email Routing
+        try {
+          await env.EMAIL.send({
+            to: "contact@dogancanyucel.com",
+            from: { email: "noreply@dogancanyucel.com", name: "Turquoise App Feedback" },
+            subject: `App Feedback from ${email || "Anonymous"}`,
+            text: `From: ${email || "Anonymous"}\n\n${message}`
+          });
+        } catch (emailErr) {
+          console.warn("Feedback saved to DB but email forward failed:", emailErr.message);
+        }
+
         return new Response(JSON.stringify({ success: true }), { status: 201, headers: { "Content-Type": "application/json", ...corsHeaders } });
       } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } });
@@ -78,17 +91,47 @@ export default {
         }
 
         const body = await request.json();
-        const { email, verificationCode } = body;
+        const { email, message } = body;
 
-        await fetch(`https://formspree.io/f/${env.FORMSPREEE_FORM_ID}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Accept": "application/json" },
-          body: JSON.stringify({ email, subject: "Verification Code", message: `Code: ${verificationCode}` })
+        // Cloudflare Email Sending binding (MailChannels ücretsiz Workers desteğini kapattı)
+        await env.EMAIL.send({
+          to: email,
+          from: { email: "noreply@dogancanyucel.com", name: "Turquoise AI Calorie & Fitness" },
+          subject: "Turquoise AI Calorie & Fitness",
+          text: message
         });
 
         return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
       } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } });
+      }
+    }
+    // --- ROTA 4: POST /api/contact (Website İletişim Formu) ---
+    if (url.pathname === "/api/contact" && request.method === "POST") {
+      try {
+        const formData = await request.formData();
+        const senderName = formData.get("name") || "İsimsiz Kullanıcı";
+        const senderEmail = formData.get("email") || "Belirtilmedi";
+        const senderMessage = formData.get("message") || "Mesaj yok.";
+
+        // Cloudflare Email Sending binding (MailChannels ücretsiz Workers desteğini kapattı)
+        await env.EMAIL.send({
+          to: "contact@dogancanyucel.com", // Kendi e-posta adresinizi buraya yazabilirsiniz
+          from: { email: "noreply@dogancanyucel.com", name: "Website Contact Form" },
+          subject: `Yeni İletişim Formu Mesajı: ${senderName}`,
+          text: `Ad: ${senderName}\nE-posta: ${senderEmail}\n\nMesaj:\n${senderMessage}`
+        });
+
+        // Web sitesine başarılı dönüş (JSON formatında)
+        return new Response(JSON.stringify({ success: true, message: "Mesajınız başarıyla gönderildi." }), { 
+          status: 200, 
+          headers: { "Content-Type": "application/json", ...corsHeaders } 
+        });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { 
+          status: 500, 
+          headers: { "Content-Type": "application/json", ...corsHeaders } 
+        });
       }
     }
 
