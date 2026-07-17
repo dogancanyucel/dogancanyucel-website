@@ -11,6 +11,10 @@ public/.wrangler/
 # Dependencies
 node_modules/
 
+# Generated DSLD slim dump (large)
+data/supplements_slim.json
+data/_batch_*.sql
+
 # Debug logs
 debug-*.log
 

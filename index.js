@@ -47,6 +47,72 @@ export default {
       }
     }
 
+    // --- ROTA 1b: GET /api/supplements?q=whey&limit=20 ---
+    if (url.pathname === "/api/supplements" && request.method === "GET") {
+      try {
+        const apiKey = request.headers.get("x-api-key");
+        if (!apiKey || apiKey !== env.ANDROID_API_KEY) {
+          return new Response(JSON.stringify({ error: "Unauthorized: Invalid or missing API Key." }), {
+            status: 401, headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
+        const q = (url.searchParams.get("q") || "").trim();
+        if (q.length < 2) {
+          return new Response(JSON.stringify({ error: "Query 'q' must be at least 2 characters." }), {
+            status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
+        const limit = Math.min(Math.max(parseInt(url.searchParams.get("limit")) || 20, 1), 50);
+        const tokens = q
+          .toLowerCase()
+          .split(/[\s,+]+/)
+          .map((t) => t.trim())
+          .filter((t) => t.length >= 2)
+          .slice(0, 6);
+
+        if (tokens.length === 0) {
+          return new Response(JSON.stringify({ error: "No usable search tokens." }), {
+            status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
+        // Match all tokens against name OR brand; prefer on-market + products with macros
+        let sql =
+          "SELECT id, name, brand, serving, calories, protein, carbs, fat, ingredients, off_market " +
+          "FROM supplements WHERE 1=1";
+        const params = [];
+        for (const token of tokens) {
+          sql += " AND (LOWER(name) LIKE ? OR LOWER(brand) LIKE ?)";
+          const like = `%${token}%`;
+          params.push(like, like);
+        }
+        sql +=
+          " ORDER BY off_market ASC, " +
+          "(CASE WHEN calories > 0 OR protein > 0 OR carbs > 0 OR fat > 0 THEN 0 ELSE 1 END) ASC, " +
+          "LENGTH(name) ASC LIMIT ?";
+        params.push(limit);
+
+        const { results } = await env.DB.prepare(sql).bind(...params).all();
+
+        return new Response(
+          JSON.stringify({
+            q,
+            count: results.length,
+            data: results,
+            source: "NIH DSLD (slim)",
+          }),
+          { headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+    }
+
     // --- ROTA 2: POST /api/feedback ---
     if (url.pathname === "/api/feedback" && request.method === "POST") {
       try {
