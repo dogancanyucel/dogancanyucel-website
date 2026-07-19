@@ -133,7 +133,7 @@ export default {
         // Also forward to your personal inbox via Cloudflare Email Routing
         try {
           await env.EMAIL.send({
-            to: "contact@dogancanyucel.com",
+            to: "support@dogancanyucel.com",
             from: { email: "noreply@dogancanyucel.com", name: "Turquoise App Feedback" },
             subject: `App Feedback from ${email || "Anonymous"}`,
             text: `From: ${email || "Anonymous"}\n\n${message}`
@@ -181,7 +181,7 @@ export default {
         const senderMessage = formData.get("message") || "No message.";
 
         await env.EMAIL.send({
-          to: "contact@dogancanyucel.com",
+          to: "dcy@dogancanyucel.com",
           from: { email: "noreply@dogancanyucel.com", name: "Website Contact Form" },
           subject: `New Contact Form Message: ${senderName}`,
           text: `Name: ${senderName}\nEmail: ${senderEmail}\n\nMessage:\n${senderMessage}`
