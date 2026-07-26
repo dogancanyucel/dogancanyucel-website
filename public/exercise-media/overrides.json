@@ -1,0 +1,3 @@
+{
+  "_comment": "Exercise demo animation corrections for the Turquoise AI app. Key = exercise name in any language (case, punctuation and hyphens are ignored), value = media file id served from /exercise-media/<id>.gif, or \"-\" to show no animation for that exercise. The app re-reads this file once a day, so corrections take effect without an app update. Example: { \"military press\": \"aB3xYz1\", \"face pull\": \"-\" }"
+}
