@@ -25,6 +25,8 @@ struct Source: Decodable {
     let raw: [String]
 }
 
+
+
 func load(_ path: String) -> CGImage? {
     guard let src = CGImageSourceCreateWithURL(URL(fileURLWithPath: path) as CFURL, nil) else { return nil }
     return CGImageSourceCreateImageAtIndex(src, 0, nil)
@@ -131,6 +133,7 @@ for item in sources {
 
     var changes = "Converted to a single-colour line drawing on a transparent 360 × 360 canvas; the poses cropped to one shared frame."
     if item.source == "Workout Guide" { changes += " Frames 1 and 3 of 3." }
+    if item.source.hasPrefix("Everkinetic (2015") { changes += " Taken from a 2015 copy whose maker had removed the background." }
     catalogue.append([
         "slug": item.slug, "name": item.name, "primary": item.primary, "equipment": item.equipment, "frames": masks.count,
         "source": item.source, "sourceUrl": item.sourceUrl, "author": item.author,

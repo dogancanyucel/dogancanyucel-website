@@ -7400,5 +7400,95 @@
     "slug" : "butterfly-stretch",
     "source" : "Workout Guide",
     "sourceUrl" : "https://github.com/bryllim/workout-guide/tree/HEAD/packages/workout-guide/assets/butterfly-stretch"
+  },
+  {
+    "author" : "Everkinetic (Greg Priday)",
+    "changes" : "Converted to a single-colour line drawing on a transparent 360 × 360 canvas; the poses cropped to one shared frame. Taken from a 2015 copy whose maker had removed the background.",
+    "equipment" : [
+
+    ],
+    "frames" : 2,
+    "license" : "CC BY-SA 3.0",
+    "licenseUrl" : "https://creativecommons.org/licenses/by-sa/3.0/",
+    "name" : "Chin-up",
+    "primary" : "",
+    "slug" : "chin-up",
+    "source" : "Everkinetic (2015 copy)",
+    "sourceUrl" : "https://github.com/lczarnec/everkinetic_modifications/blob/master/images/chin_ups_1.png"
+  },
+  {
+    "author" : "Everkinetic (Greg Priday)",
+    "changes" : "Converted to a single-colour line drawing on a transparent 360 × 360 canvas; the poses cropped to one shared frame. Taken from a 2015 copy whose maker had removed the background.",
+    "equipment" : [
+
+    ],
+    "frames" : 2,
+    "license" : "CC BY-SA 3.0",
+    "licenseUrl" : "https://creativecommons.org/licenses/by-sa/3.0/",
+    "name" : "Gironda Sternum Chin",
+    "primary" : "",
+    "slug" : "gironda-sternum-chin",
+    "source" : "Everkinetic (2015 copy)",
+    "sourceUrl" : "https://github.com/lczarnec/everkinetic_modifications/blob/master/images/gironda_sternum_chins_1.png"
+  },
+  {
+    "author" : "Everkinetic (Greg Priday)",
+    "changes" : "Converted to a single-colour line drawing on a transparent 360 × 360 canvas; the poses cropped to one shared frame. Taken from a 2015 copy whose maker had removed the background.",
+    "equipment" : [
+
+    ],
+    "frames" : 2,
+    "license" : "CC BY-SA 3.0",
+    "licenseUrl" : "https://creativecommons.org/licenses/by-sa/3.0/",
+    "name" : "Cuban Dumbbell Press",
+    "primary" : "",
+    "slug" : "cuban-dumbbell-press",
+    "source" : "Everkinetic (2015 copy)",
+    "sourceUrl" : "https://github.com/lczarnec/everkinetic_modifications/blob/master/images/cuban_dumbbell_press_1.png"
+  },
+  {
+    "author" : "Everkinetic (Greg Priday)",
+    "changes" : "Converted to a single-colour line drawing on a transparent 360 × 360 canvas; the poses cropped to one shared frame. Taken from a 2015 copy whose maker had removed the background.",
+    "equipment" : [
+
+    ],
+    "frames" : 2,
+    "license" : "CC BY-SA 3.0",
+    "licenseUrl" : "https://creativecommons.org/licenses/by-sa/3.0/",
+    "name" : "Overhand Grip Lat Pulldown",
+    "primary" : "",
+    "slug" : "overhand-grip-lat-pulldown",
+    "source" : "Everkinetic (2015 copy)",
+    "sourceUrl" : "https://github.com/lczarnec/everkinetic_modifications/blob/master/images/overhand_pull_down_1.png"
+  },
+  {
+    "author" : "Everkinetic (Greg Priday)",
+    "changes" : "Converted to a single-colour line drawing on a transparent 360 × 360 canvas; the poses cropped to one shared frame. Taken from a 2015 copy whose maker had removed the background.",
+    "equipment" : [
+
+    ],
+    "frames" : 2,
+    "license" : "CC BY-SA 3.0",
+    "licenseUrl" : "https://creativecommons.org/licenses/by-sa/3.0/",
+    "name" : "Barbell Front Raise",
+    "primary" : "",
+    "slug" : "barbell-front-raise",
+    "source" : "Everkinetic (2015 copy)",
+    "sourceUrl" : "https://github.com/lczarnec/everkinetic_modifications/blob/master/images/front_barbell_raises_1.png"
+  },
+  {
+    "author" : "Everkinetic (Greg Priday)",
+    "changes" : "Converted to a single-colour line drawing on a transparent 360 × 360 canvas; the poses cropped to one shared frame. Taken from a 2015 copy whose maker had removed the background.",
+    "equipment" : [
+
+    ],
+    "frames" : 2,
+    "license" : "CC BY-SA 3.0",
+    "licenseUrl" : "https://creativecommons.org/licenses/by-sa/3.0/",
+    "name" : "Incline Chest Press Machine",
+    "primary" : "",
+    "slug" : "incline-chest-press-machine",
+    "source" : "Everkinetic (2015 copy)",
+    "sourceUrl" : "https://github.com/lczarnec/everkinetic_modifications/blob/master/images/incline_chest_press_1.png"
   }
 ]

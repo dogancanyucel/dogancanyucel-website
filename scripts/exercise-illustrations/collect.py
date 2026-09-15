@@ -8,6 +8,14 @@ attribution page and the app's credit line are written from the data rather than
 1. Everkinetic (https://github.com/everkinetic/data, CC BY-SA 4.0) — first: two frames, start and end, one hand.
 2. Workout Guide (https://github.com/bryllim/workout-guide, CC BY-SA 4.0) — movements Everkinetic does not have. Frames 1 and 3
    only: frame 2 is drawn differently and a loop through it jumps (seen 2026-09-15).
+3. Everkinetic's older copies — the 2015 one (https://github.com/lczarnec/everkinetic_modifications) and OpenTraining's
+   (https://github.com/chaosbastler/opentraining-exercises), both CC BY-SA 3.0, "Author: Everkinetic" — added 2026-09-15 at the
+   owner's word (*"diğer free olana bakalım, aynısı ise eksikleri tamamla üstüne"*). They are the same drawings as source 1, named
+   differently, plus a few the current set no longer has. **Chosen by hand, `OLDER_KEEP`**: of 52 names not already in the set, most
+   were the set's own drawings under another name ("Bicep curls" is "Biceps Curl with Dumbbell"), and three were misnamed ("Push Up"
+   is a push-up on a ball, "One Arm Preacher Curl" a concentration curl). Comparing the drawings themselves was tried and could not
+   be trusted either way — the same drawing cropped differently scored lower than two different standing figures. Six remain.
+
 **wger is not used**, though the owner's plan named it. Its images carry a Creative Commons licence each, set by whoever uploaded
 them; on 2026-09-15 one of the 40 it would have added ("Dumbbell bicep curl to press") carried a VectorStock watermark — a paid
 stock image under a free licence. A licence that can be wrong for one image cannot be trusted for the rest without checking each
@@ -98,6 +106,37 @@ def main():
         })
     wg_count = len(chosen) - ek_count
 
+    # 3. Everkinetic's older copies: only the movements in OLDER_KEEP, under the names given there.
+    CC_BY_SA_3 = ("CC BY-SA 3.0", "https://creativecommons.org/licenses/by-sa/3.0/")
+    OLDER_KEEP = {
+        # raw name in the copy → name published
+        "chin_ups": "Chin-up",
+        "gironda_sternum_chins": "Gironda Sternum Chin",
+        "cuban_dumbbell_press": "Cuban Dumbbell Press",
+        "overhand_pull_down": "Overhand Grip Lat Pulldown",
+        "front_barbell_raises": "Barbell Front Raise",
+        "incline_chest_press": "Incline Chest Press Machine",
+    }
+    copy = ("Everkinetic (2015 copy)", "https://api.github.com/repos/lczarnec/everkinetic_modifications/git/trees/HEAD?recursive=1",
+            "https://raw.githubusercontent.com/lczarnec/everkinetic_modifications/master/",
+            "https://github.com/lczarnec/everkinetic_modifications/blob/master/")
+    paths = [t["path"] for t in fetch(copy[1])["tree"] if t["path"].startswith("images/") and t["path"].endswith(".png")]
+    older_count = 0
+    for raw_name, published in OLDER_KEEP.items():
+        poses = sorted(p for p in paths if re.fullmatch(rf"images/{re.escape(raw_name)}_\d+\.png", p))[:2]
+        if len(poses) < 2:
+            raise RuntimeError(f"{raw_name}: expected two poses in the 2015 copy, found {poses}")
+        if key(published) in taken:
+            continue
+        taken.add(key(published))
+        older_count += 1
+        chosen.append({
+            "slug": slug(published), "name": published, "primary": "", "equipment": [],
+            "frames": [copy[2] + p for p in poses],
+            "source": copy[0], "sourceUrl": copy[3] + poses[0],
+            "author": "Everkinetic (Greg Priday)", "license": CC_BY_SA_3[0], "licenseUrl": CC_BY_SA_3[1],
+        })
+
     # Slugs must be unique on disk.
     seen = {}
     for item in chosen:
@@ -120,7 +159,7 @@ def main():
 
     with open(os.path.join(WORK, "sources.json"), "w") as f:
         json.dump(chosen, f, ensure_ascii=False, indent=2)
-    print(f"everkinetic {ek_count} · workout guide {wg_count} · total {len(chosen)}")
+    print(f"everkinetic {ek_count} · workout guide {wg_count} · older Everkinetic copies {older_count} · total {len(chosen)}")
 
 
 if __name__ == "__main__":
