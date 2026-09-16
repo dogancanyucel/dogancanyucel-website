@@ -9,6 +9,10 @@
     {
       "pattern": "dogancanyucel.com/*",
       "zone_name": "dogancanyucel.com"
+    },
+    {
+      "pattern": "app.dogancanyucel.com",
+      "custom_domain": true
     }
   ],
   "send_email": [

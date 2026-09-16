@@ -1,6 +1,13 @@
+import { APP_LINKS_HOST, appLinksResponse } from "./app-links.js";
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    // The app's own host answers nothing else — see app-links.js.
+    if (url.hostname === APP_LINKS_HOST) {
+      return appLinksResponse(url);
+    }
 
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",

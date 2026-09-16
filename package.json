@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node test/verify-email.test.js && node test/password-rules.test.js && node test/auth-action.test.js"
+    "test": "node test/verify-email.test.js && node test/password-rules.test.js && node test/auth-action.test.js && node test/app-links.test.js"
   },
   "keywords": [],
   "author": "Dogan Can Yucel",

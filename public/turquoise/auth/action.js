@@ -53,14 +53,15 @@ export function refusalKey(firebaseMessage) {
 
 /**
  * The link that opens the app on this device, or null where there is no app to open (a computer).
- * iOS: the app's own URL scheme (Info.plist). Android: by package, through an intent link.
+ * iOS: a Universal Link on app.dogancanyucel.com, which falls back to the URL scheme. Android: by package, through an intent link.
  */
 export function openAppLink(userAgent) {
   if (/Android/i.test(userAgent)) {
     return "intent://auth-done#Intent;scheme=com.aistudio.fitai.trfity;package=com.aistudio.fitai.trfity;end";
   }
   if (/iPhone|iPad|iPod/i.test(userAgent) || (/Macintosh/i.test(userAgent) && /Mobile/i.test(userAgent))) {
-    return "com.aistudio.fitai.trfity://auth-done";
+    // A Universal Link, not the URL scheme: Edge on iPhone ignores the scheme (owner, 2026-09-16). See app-links.js.
+    return "https://app.dogancanyucel.com/open/auth-done";
   }
   return null;
 }
