@@ -148,29 +148,15 @@ export default {
       }
     }
 
-    // --- ROTA 3: POST /api/verify-email ---
-    if (url.pathname === "/api/verify-email" && request.method === "POST") {
-      try {
-        const apiKey = request.headers.get("x-api-key");
-        if (!apiKey || apiKey !== env.ANDROID_API_KEY) {
-          return new Response(JSON.stringify({ error: "Unauthorized." }), { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } });
-        }
-
-        const body = await request.json();
-        const { email, message } = body;
-
-        // Cloudflare Email Sending binding (MailChannels ücretsiz Workers desteğini kapattı)
-        await env.EMAIL.send({
-          to: email,
-          from: { email: "noreply@dogancanyucel.com", name: "Turquoise AI Calorie & Fitness" },
-          subject: "Turquoise AI Calorie & Fitness",
-          text: message
-        });
-
-        return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
-      } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } });
-      }
+    // --- ROTA 3: POST /api/verify-email — RETIRED ---
+    // It mailed any text to any address from noreply@dogancanyucel.com for whoever held the key: a phishing relay in the
+    // owner's name, whose mail passes the domain's own checks (found 2026-09-16). Its only caller was the Firebase callable
+    // workerVerifyEmail, the courier for a device-generated OTP that Android took out on 2026-08-14; that callable now refuses
+    // too. Gone, not guarded: nothing sends anything from here, whatever the request carries.
+    if (url.pathname === "/api/verify-email") {
+      return new Response(JSON.stringify({ error: "Gone." }), {
+        status: 410, headers: { "Content-Type": "application/json", ...corsHeaders }
+      });
     }
     // --- ROTA 4: POST /api/contact (Website İletişim Formu) ---
     if (url.pathname === "/api/contact" && request.method === "POST") {
