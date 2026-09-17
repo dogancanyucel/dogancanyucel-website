@@ -85,10 +85,10 @@
   <!-- ═══ PRIVACY POLICY CONTENT ═══ -->
   <section class="privacy-container">
     <h1>PRIVACY POLICY</h1>
-    <p><strong>Effective Date:</strong> August 15, 2026</p>
+    <p><strong>Effective Date:</strong> August 15, 2026<br /><strong>Last updated:</strong> September 17, 2026</p>
 
     <h2>1. Introduction</h2>
-    <p>Welcome to <strong>Turquoise AI Calorie &amp; Fitness</strong>. Dogancan Yucel is committed to protecting your privacy and ensuring that your personal and health-related data is handled securely and transparently. This Privacy Policy explains how Dogancan Yucel collects, uses, and safeguards your information when you use the mobile application (the "App") on iOS and Android platforms, including any associated services such as Apple Watch integration (collectively, the "Service").</p>
+    <p>Welcome to <strong>Turquoise AI Calorie &amp; Fitness</strong>. Dogancan Yucel is committed to protecting your privacy and ensuring that your personal and health-related data is handled securely and transparently. This Privacy Policy explains how Dogancan Yucel collects, uses, and safeguards your information when you use the mobile application (the "App") on iOS and Android platforms, including the Apple Watch and Wear OS watch apps (collectively, the "Service").</p>
     <p>Please note that the website <a href="https://dogancanyucel.com">dogancanyucel.com</a> is used solely as an informational landing page and host for these legal documents. The website itself does not collect, track, or store any of your personal data.</p>
     <p>By using the Service, you agree to the collection and use of information in accordance with this Privacy Policy.</p>
 
@@ -105,21 +105,51 @@
     </ul>
 
     <h3>2.2 Google Health Connect Data (Android)</h3>
-    <p>With your explicit consent, the App requests access to read specific health and fitness data from Google Health Connect:</p>
+    <p>With your explicit consent, the App requests read-only access to the following data types from Google Health Connect. Each permission is optional: you can grant or deny any of them, and the App works with whichever you allow. The App never writes to Health Connect.</p>
     <ul>
-      <li><strong>StepsRecord:</strong> Your daily step count.</li>
-      <li><strong>ActiveCaloriesBurned:</strong> Calories burned during activities.</li>
-      <li><strong>DistanceRecord:</strong> Distance covered during your physical activities.</li>
+      <li><strong>Steps</strong>: Your daily step count.</li>
+      <li><strong>Active Calories Burned</strong>: Calories burned during activities.</li>
+      <li><strong>Distance</strong>: Distance covered during your physical activities.</li>
+      <li><strong>Exercise Sessions</strong>: Workouts recorded by your watch or other apps, with their type and duration.</li>
+      <li><strong>Floors Climbed</strong>: Floors climbed during the day.</li>
+      <li><strong>Speed</strong>: Your walking and running speed.</li>
+      <li><strong>Heart Rate</strong>: Heart rate readings during the day and during workouts.</li>
+      <li><strong>Resting Heart Rate</strong>: Your resting heart rate.</li>
+      <li><strong>Heart Rate Variability</strong>: Heart rate variability (RMSSD).</li>
+      <li><strong>Oxygen Saturation</strong>: Blood oxygen (SpO2) readings.</li>
+      <li><strong>Respiratory Rate</strong>: Breaths per minute.</li>
+      <li><strong>Skin Temperature</strong>: Skin temperature changes measured by your watch, where your device supports it.</li>
+      <li><strong>VO2 Max</strong>: Your estimated cardio fitness (VO2 max).</li>
+      <li><strong>Sleep</strong>: Your sleep sessions and their duration.</li>
     </ul>
-
-    <h3>2.3 Apple HealthKit (iOS)</h3>
-    <p>With your explicit permission, the App accesses and reads data from Apple HealthKit and your Apple Watch:</p>
+    <p><strong>How this data is used and where it is kept:</strong></p>
     <ul>
-      <li><strong>Step Count:</strong> (<code>HKQuantityTypeIdentifier.stepCount</code>)</li>
-      <li><strong>Active Energy Burned:</strong> Active Calories (<code>HKQuantityTypeIdentifier.activeEnergyBurned</code>)</li>
-      <li><strong>Walking + Running Distance:</strong> Distance (<code>HKQuantityTypeIdentifier.distanceWalkingRunning</code>)</li>
-      <li><strong>Heart Rate &amp; Heart Rate Zones:</strong> To monitor intensity during workouts (<code>HKQuantityTypeIdentifier.heartRate</code>)</li>
-      <li><strong>Running Dynamics:</strong> For advanced form and performance analysis.</li>
+      <li>Your daily <strong>step count</strong> and <strong>active calories</strong> are saved to your activity history and synced to your account, so they appear in your activity summary and on your other devices. Your recent daily step counts and active calories are also included when you ask the AI coach a question or create your AI Weekly Report.</li>
+      <li>Last night&rsquo;s <strong>sleep duration</strong> is written as a short note in your AI coach chat. Your chat is saved to your account, and the AI coach reads your most recent messages, including that note, when it answers.</li>
+      <li>All other data types listed above are read only to display them in the Health Connect card and its measurements page on your phone. They are not saved by the App, not uploaded to our servers, and not sent to any AI service.</li>
+    </ul>
+    <p><strong>Wear OS watch app.</strong> The Turquoise Wear OS app does not use Health Connect. It reads your daily step count from the watch&rsquo;s own health service and, during a run you start, your location to draw the route and measure the distance. Your step count and the finished run&rsquo;s duration, distance and calories are sent to your phone; the route is not saved. It writes nothing to Health Connect.</p>
+
+    <h3>2.3 Apple Health (iOS and Apple Watch)</h3>
+    <p>With your permission, the App reads the following data from Apple Health. Apple asks for each type separately: you can allow or deny any of them, and the App works with whichever you allow.</p>
+    <ul>
+      <li><strong>Steps</strong> and <strong>Active Energy</strong> (active calories only, never resting energy).</li>
+      <li><strong>Walking + Running Distance</strong>, <strong>Flights Climbed</strong> and <strong>Walking Speed</strong>.</li>
+      <li><strong>Heart Rate</strong>, <strong>Resting Heart Rate</strong>, <strong>Walking Heart Rate Average</strong>, <strong>Heart Rate Variability</strong> and <strong>Heart Rate Recovery</strong> (one minute).</li>
+      <li><strong>Cardio Fitness</strong> (VO2 max), <strong>Blood Oxygen</strong> and <strong>Respiratory Rate</strong>.</li>
+      <li><strong>Sleep</strong>, including sleep stages where your watch records them, and <strong>Sleeping Wrist Temperature</strong>.</li>
+      <li><strong>Exercise Minutes</strong>, <strong>Stand Time</strong> and your <strong>Activity rings</strong> with their goals.</li>
+      <li><strong>Workouts</strong> and their <strong>routes</strong>.</li>
+      <li><strong>Mindful Minutes</strong>, <strong>Time in Daylight</strong> and <strong>Environmental Sound Levels</strong>.</li>
+    </ul>
+    <p>Some of these types exist only on newer versions of iOS; on older versions the App does not ask for them.</p>
+    <p><strong>What the Apple Watch app writes.</strong> When you start a workout on the Turquoise Apple Watch app, the workout is saved to Apple Health &mdash; and, for outdoor activities, the route recorded by the watch. It reads your heart rate, active energy, steps and distance (walking and running, cycling, swimming) during the workout. It writes nothing else to Apple Health, and the iPhone app writes nothing to Apple Health at all.</p>
+    <p><strong>How this data is used and where it is kept:</strong></p>
+    <ul>
+      <li>Today&rsquo;s <strong>step count</strong> and <strong>active calories</strong> are saved to your activity history and synced to your account, so they appear in your activity summary and on your other devices. Your recent daily step counts are also included when you ask the AI coach a question or create your AI Weekly Report.</li>
+      <li>All other types are read to show them on the Apple Watch card and its measurements page on your iPhone. They are not saved by the App and not uploaded to our servers.</li>
+      <li><strong>AI coach and weekly report:</strong> when you ask the AI coach a question or create your AI Weekly Report, a short written summary of the week is included in that request: average activity rings, heart rate range and resting heart rate, sleep duration and stages, heart rate variability, cardio fitness, heart rate recovery, respiratory rate, blood oxygen, wrist temperature change and recent watch workouts. It is sent to the AI provider that answers the request, as described in section 5. The answer you receive is saved on your device.</li>
+      <li>Apple Health data is never used for advertising and never sold.</li>
     </ul>
 
     <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.1); margin: 30px 0;" />
@@ -127,7 +157,7 @@
     <h2>3. How Your Information Is Used</h2>
     <p>Dogancan Yucel uses the collected information exclusively to provide, maintain, and improve the core functionalities of the Service. Specifically:</p>
     <ul>
-      <li><strong>Health and Fitness Metrics:</strong> Health Connect and HealthKit data are used solely to generate your "AI Weekly Report," provide real-time feedback during workouts on your Apple Watch, and construct highly personalized diet and training plans.</li>
+      <li><strong>Health and Fitness Metrics:</strong> Health Connect and Apple Health data are used to show your measurements, to count your steps and active calories in your activity history, to give live feedback during workouts on your watch, and, as a short summary, to let the AI coach and your AI Weekly Report take your activity (and, on iOS, your recovery) into account.</li>
       <li><strong>AI Analytics:</strong> To power the artificial intelligence engine which offers fitness insights, calculates nutritional needs, and tracks progress.</li>
       <li><strong>Service Provisioning:</strong> To manage your account, process subscription payments, and communicate with you regarding your service.</li>
     </ul>
@@ -139,6 +169,7 @@
     <h3>4.1 Strict Limited Use Policy for Health Data</h3>
     <p><strong>Dogancan Yucel absolutely does NOT sell, rent, lease, or trade your personal health data to any advertising networks, data brokers, or any other third parties for marketing or advertising purposes.</strong></p>
     <p>The use of information received from Google Health Connect and Apple HealthKit will adhere strictly to their respective limited use policies. Your health data is accessed and utilized solely to provide the core fitness, health, and AI analysis features of the application.</p>
+    <p>The only exception is the AI provider that answers your own AI coach or weekly report request, as described in sections 2.2, 2.3 and 5; it receives a short summary of daily totals and measurements, not your raw health records.</p>
 
     <h3>4.2 Third-Party Service Providers</h3>
     <p>Dogancan Yucel may share non-health information with trusted third-party service providers (such as payment processors and cloud hosting providers) only to the extent necessary to operate the Service. These third parties are bound by strict confidentiality agreements and are prohibited from using your data for any other purposes.</p>
@@ -146,6 +177,7 @@
     <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.1); margin: 30px 0;" />
 
     <h2>5. Ephemeral Processing of Media (Photos and Audio)</h2>
+    <p>The App&rsquo;s own AI features are answered by Google&rsquo;s Gemini API through our server. Our server passes each request on and does not store it. If you add your own API key or your own server address, requests go directly from your device to that provider or server, under its own terms.</p>
     <p>The App utilizes advanced AI (via the Gemini API) to analyze your meals and posture, as well as to transcribe voice commands.</p>
     <ul>
       <li><strong>Photos:</strong> Body photos uploaded for posture analysis and meal photos uploaded for calorie calculation are processed <strong>ephemerally (in-memory)</strong> during transit via the Gemini API.</li>
@@ -159,7 +191,7 @@
     <p>The App can record a run while you are running it. This is the only feature that uses your location, and it collects it only while Live Run Mode is on screen and running &mdash; not in the background, and never when the feature is closed.</p>
     <ul>
       <li><strong>What it is used for:</strong> the route is drawn on your own map inside the App, and the distance of the run is the length of that line. Pace follows from the same measurement.</li>
-      <li><strong>Where it goes:</strong> the recorded run is saved to your own account so that it appears in your activity history on your other devices. It is not shared with anyone, not sold, and not used for advertising.</li>
+      <li><strong>Where it goes:</strong> the run saved to your account holds its duration, distance and calories (on iOS, also its steps), so that it appears in your activity history on your other devices. The route is drawn on the map while you run and is not saved to your account; on iOS, a run recorded on Apple Watch keeps its route in Apple Health. It is not shared with anyone, not sold, and not used for advertising.</li>
       <li><strong>Turning it off:</strong> the App asks for location permission the first time you start a run and works without it &mdash; you simply get no map and no distance. Permission can be withdrawn at any time in your device settings.</li>
     </ul>
 
@@ -178,13 +210,14 @@
 
     <h2>8. Data Retention and Deletion</h2>
     <p>Your structured database data (profile, fitness logs, and AI chat history) is retained only for as long as your App account is active.</p>
+    <p>Your AI coach chat and your AI Weekly Reports are kept on your device and, on Android, also in your account.</p>
 
     <h3>Preventing Trial Abuse (Secure Non-PII Retention):</h3>
     <p>To enforce our Terms of Service and prevent the fraudulent reuse or abuse of the 7-day free trial, a secure, one-way cryptographic hash (SHA-256) of your registered email address and hardware identifier (Device ID) is securely                                 stored in an isolated registry when you delete your account. Because SHA-256 is a one-way mathematical function, this hash is completely irreversible,meaning your actual email address and device identifiers cannot be reconstructed,    read, or identified by Dogancan Yucel or any third party. This anonymous hash is kept strictly to perform automated trial eligibility checks upon subsequent registration attempts.</p>
 
 <h3>Your Rights and Control:</h3>
     <ul>
-      <li><strong>Revoking Access:</strong> You maintain full control over your health data. You can revoke access to Google Health Connect or Apple HealthKit at any time directly through your device settings.</li>
+      <li><strong>Revoking Access:</strong> You maintain full control over your health data. You can revoke access at any time: on Android in the Health Connect app&rsquo;s app permissions, and on iPhone in Settings &rsaquo; Privacy &amp; Security &rsaquo; Health &rsaquo; Turquoise.</li>
       <li><strong>Account Deletion (Data Deletion Request):</strong> You can request the permanent deletion of your account and all associated historical data at any time directly within the application with a single click. Upon initiating this request, all your personal information, historical fitness logs, and chat history will be irrevocably erased from the Firebase databases. You may also request deletion by contacting <a href="mailto:support@dogancanyucel.com">support@dogancanyucel.com</a>.</li>
     </ul>
 
