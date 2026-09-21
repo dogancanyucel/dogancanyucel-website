@@ -8,7 +8,7 @@
    ══════════════════════════════════════════════════════════════ */
 
 :root {
-  --bg:            #f4f4f6;
+  --bg:            #eff3f8;         /* the aura fades into this, so it carries the same blue */
   --surface:       #ffffff;
   --surface-sunk:  #ececed;
   --ink:           #0b1424;         /* the dark panel, same blue cast */
@@ -65,9 +65,9 @@ body {
    opposite directions. Fixed rather than scrolled, so it reads as
    light in the room rather than a picture glued to the page, and
    it costs one composited layer instead of a repaint.
-   Greyscale on purpose (owner, 2026-09-21): smoke and light, no hue.
-   The one colour on the page is the product panel. Body text sits
-   directly on this field, so the measured floor is in CLAUDE.md. */
+   One hue only (owner, 2026-09-21): a soft blue, no purple and no
+   black. Body text sits directly on this field, so how deep the blue
+   may go is a measured ceiling, not a taste call — see CLAUDE.md. */
 
 body::before,
 body::after {
@@ -81,17 +81,17 @@ body::after {
 
 body::before {
   background:
-    radial-gradient(38% 34% at 18% 22%, rgba(0, 0, 0, .16), transparent 68%),
-    radial-gradient(34% 32% at 82% 14%, rgba(0, 0, 0, .10), transparent 70%),
-    radial-gradient(40% 36% at 68% 78%, rgba(255, 255, 255, .85), transparent 70%);
+    radial-gradient(38% 34% at 18% 22%, rgba(116, 176, 226, .46), transparent 68%),
+    radial-gradient(34% 32% at 82% 14%, rgba(150, 200, 238, .40), transparent 70%),
+    radial-gradient(40% 36% at 68% 78%, rgba(255, 255, 255, .80), transparent 70%);
   animation: aura-a 34s var(--ease) infinite alternate;
 }
 
 body::after {
   background:
-    radial-gradient(32% 30% at 74% 42%, rgba(0, 0, 0, .09), transparent 70%),
-    radial-gradient(36% 32% at 26% 76%, rgba(0, 0, 0, .13), transparent 70%),
-    radial-gradient(30% 28% at 48% 6%,  rgba(255, 255, 255, .80), transparent 72%);
+    radial-gradient(32% 30% at 74% 42%, rgba(132, 190, 232, .34), transparent 70%),
+    radial-gradient(36% 32% at 26% 76%, rgba(100, 162, 218, .36), transparent 70%),
+    radial-gradient(30% 28% at 48% 6%,  rgba(255, 255, 255, .78), transparent 72%);
   animation: aura-b 46s var(--ease) infinite alternate;
 }
 
