@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="DCY.">
+  <!-- The site's wordmark as its icon. The letters are paths, not <text>: a favicon
+       renders without the page's webfont, so type would fall back to whatever the
+       platform happens to have and the mark would change shape per device.
+       Each glyph is drawn once at its own origin and then placed, so the spacing
+       is edited in one place instead of inside path data. -->
+  <rect width="64" height="64" rx="14" fill="#1b3157"/>
+  <defs>
+    <!-- glyphs on a 22-unit body -->
+    <path id="g-d" d="M0 0h9.2C16.1 0 20.5 4.2 20.5 11S16.1 22 9.2 22H0V0zm8.9 17.2c3.9 0 6.2-2.3 6.2-6.2S12.8 4.8 8.9 4.8H5.3v12.4h3.6z"/>
+    <path id="g-c" d="M11.4 22.6C4.7 22.6 0 17.9 0 11S4.7-.6 11.4-.6c3.1 0 5.8 1 7.7 2.9l-3.1 3.6c-1.2-1.2-2.7-1.8-4.4-1.8-3.7 0-6.2 2.8-6.2 6.9s2.5 6.9 6.2 6.9c1.8 0 3.3-.6 4.5-1.9l3.1 3.5c-2 2-4.7 3.1-7.8 3.1z"/>
+    <path id="g-y" d="M0 0h5.9l4.2 7.6L14.3 0h5.8l-7.4 12.1V22H7.4v-9.9L0 0z"/>
+  </defs>
+  <g fill="#ffffff" transform="translate(7.6 24.5) scale(0.68)">
+    <use href="#g-d" x="0"    y="0"/>
+    <use href="#g-c" x="21.5" y="0.6"/>
+    <use href="#g-y" x="42.6" y="0"/>
+  </g>
+  <circle cx="54.4" cy="37.2" r="2.7" fill="#4fdced"/>
+</svg>
