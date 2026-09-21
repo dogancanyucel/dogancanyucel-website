@@ -23,3 +23,11 @@ debug-*.log
 Thumbs.db
 .vscode/
 .idea/
+
+# Agent notes, local only (owner, 2026-09-21). The repo is public and these are
+# working state, not deliverables: half-done work, measured design floors, the
+# owner's own decisions. They stay on disk and are still the first files a session
+# reads. WARNING: git is no longer their backup — if this machine loses them, they
+# are gone, and a fresh clone of this repo will not have them.
+contextwindows.md
+CLAUDE.md
