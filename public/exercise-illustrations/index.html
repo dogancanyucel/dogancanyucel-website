@@ -19,7 +19,8 @@
     .credits h1 { font-size: clamp(32px, 5vw, 44px); margin-bottom: 8px; color: var(--label); }
     .credits h2 { margin: 48px 0 4px; font-size: 22px; color: var(--label); }
     .credits .lead { max-width: 760px; }
-    .credits .meta { font-size: 14px; color: var(--label-3); }
+    .credits .meta { font-size: 14px; color: var(--label-2); }   /* --label-3 cannot pass on the aura */
+    .credits > .lead a, .credits .meta a { color: var(--accent-strong); }   /* on the aura: --accent is 3.48:1, --accent-strong 4.75:1 */
     .credits input { font: inherit; width: 100%; max-width: 360px; margin: 24px 0 4px; min-height: 44px; padding: 10px 14px;
       border-radius: var(--r-control); border: 1px solid var(--hairline); background: var(--surface); color: var(--label); }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; margin-top: 16px; }

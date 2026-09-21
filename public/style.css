@@ -15,8 +15,8 @@
   --ink-2:         #17171a;
 
   --label:         #1d1d1f;
-  --label-2:       #58585c;
-  --label-3:       #6e6e73;          /* 4.66:1 on --bg; #86868b fails AA at 13-15px */
+  --label-2:       #4c4c51;         /* 5.13:1 over the aura floor; #58585c measured 4.25:1 */
+  --label-3:       #6e6e73;         /* white/--surface only: 3.05:1 over the aura, never place it there */
 
   --on-ink:        #f5f5f7;
   --on-ink-2:      rgba(245, 245, 247, .68);
@@ -59,6 +59,56 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+
+/* ── Aura ─────────────────────────────────────────────────────
+   Two fixed fields of wide radial gradients, drifting slowly in
+   opposite directions. Fixed rather than scrolled, so it reads as
+   light in the room rather than a picture glued to the page, and
+   it costs one composited layer instead of a repaint.
+   Every colour is high-lightness on purpose: body text sits
+   directly on this, and the measured floor is in CLAUDE.md. */
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -25%;
+  z-index: -2;
+  pointer-events: none;
+  will-change: transform;
+}
+
+body::before {
+  background:
+    radial-gradient(38% 34% at 18% 22%, rgba(0, 200, 222, .50), transparent 68%),
+    radial-gradient(34% 32% at 82% 14%, rgba(122, 162, 255, .44), transparent 70%),
+    radial-gradient(40% 36% at 68% 78%, rgba(126, 240, 208, .40), transparent 70%);
+  animation: aura-a 34s var(--ease) infinite alternate;
+}
+
+body::after {
+  background:
+    radial-gradient(32% 30% at 74% 40%, rgba(196, 150, 255, .36), transparent 70%),
+    radial-gradient(36% 32% at 26% 76%, rgba(0, 176, 200, .34), transparent 70%),
+    radial-gradient(30% 28% at 48% 6%,  rgba(255, 190, 175, .26), transparent 72%);
+  animation: aura-b 46s var(--ease) infinite alternate;
+}
+
+@keyframes aura-a {
+  from { transform: translate3d(-3%, -2%, 0) scale(1);    }
+  to   { transform: translate3d( 4%,  3%, 0) scale(1.14); }
+}
+@keyframes aura-b {
+  from { transform: translate3d( 3%,  2%, 0) scale(1.1); }
+  to   { transform: translate3d(-4%, -3%, 0) scale(1);   }
+}
+
+/* Motion is decoration here; the colour field stays, the drift goes. */
+@media (prefers-reduced-motion: reduce) {
+  body::before, body::after { animation: none; }
+}
+
+body > * { position: relative; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -207,7 +257,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
   letter-spacing: -.02em;
   color: var(--label);
 }
-.dot { color: var(--accent-bright); }
+.dot { color: var(--accent-strong); }   /* the wordmark sits on the aura: --accent is 3.48:1 there, --accent-strong 4.75:1 */
 
 .nav-links { display: flex; gap: 2px; margin: 0; padding: 0; list-style: none; }
 .nav-links a {
@@ -269,21 +319,6 @@ section { padding-block: clamp(72px, 12vw, 148px); }
   align-items: center;
   min-height: min(92vh, 860px);
   padding-top: calc(var(--nav-h) + var(--nav-gap) + 40px);
-  isolation: isolate;
-  overflow: hidden;                  /* the glow below bleeds past the viewport */
-}
-#hero::before {
-  content: "";
-  position: absolute;
-  inset: -20% -30% auto -30%;
-  height: 130%;
-  z-index: -1;
-  background:
-    radial-gradient(48% 42% at 22% 28%, rgba(0, 200, 222, .30), transparent 70%),
-    radial-gradient(42% 40% at 78% 18%, rgba(120, 160, 255, .22), transparent 72%),
-    radial-gradient(52% 46% at 62% 74%, rgba(0, 112, 126, .16), transparent 70%);
-  filter: blur(18px);
-  pointer-events: none;
 }
 
 .hero-content { position: relative; max-width: 900px; }
@@ -461,10 +496,16 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
 /* ── Long-form legal / credits ────────────────────────────── */
 
 .prose {
-  max-width: 740px; margin-inline: auto;
-  padding-top: calc(var(--nav-h) + var(--nav-gap) + 48px);
-  padding-bottom: 104px; padding-inline: var(--gutter);
-  color: var(--label-2); line-height: 1.68;
+  max-width: 800px;
+  margin: calc(var(--nav-h) + var(--nav-gap) + 40px) auto 96px;
+  padding: clamp(28px, 5vw, 56px);
+  border-radius: var(--r-panel);
+  background: var(--surface);
+  color: var(--label-2);
+  line-height: 1.68;
+}
+@media (max-width: 680px) {
+  .prose { margin-inline: var(--gutter); border-radius: var(--r-card); }
 }
 .prose h1 { margin-bottom: 8px; font-size: clamp(34px, 5vw, 48px); letter-spacing: -.03em; color: var(--label); }
 .prose h2 { margin: 52px 0 12px; font-size: 25px; color: var(--label); }
@@ -475,7 +516,15 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
 
 /* ── Footer ───────────────────────────────────────────────── */
 
-footer { border-top: 1px solid var(--hairline); padding-block: 36px; font-size: 14px; color: var(--label-3); }
+/* The footer carries --label-3, which only clears AA on white — so it brings its
+   own surface rather than sitting on the aura. */
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--hairline);
+  padding-block: 36px;
+  font-size: 14px;
+  color: var(--label-3);
+}
 .footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
 .footer-links { display: flex; flex-wrap: wrap; gap: 2px; }
 .footer-links a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 12px; color: var(--label-3); }
