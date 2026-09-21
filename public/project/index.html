@@ -3,87 +3,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projects — Dogan Can Yucel</title>
-  <meta name="description" content="Software projects by Dogan Can Yucel — mobile apps, AI tools, and open-source work." />
+  <title>Work — Dogan Can Yucel</title>
+  <meta name="description" content="Turquoise AI: Calorie &amp; Fitness — the cross-platform AI coaching app Dogan Can Yucel builds for Android and iOS." />
+  <link rel="canonical" href="https://dogancanyucel.com/project/" />
+  <meta name="theme-color" content="#f4f4f6" />
+  <meta property="og:title" content="Work — Dogan Can Yucel" />
+  <meta property="og:description" content="Turquoise AI: Calorie &amp; Fitness — one AI coaching app for Android and iOS." />
   <meta property="og:url" content="https://dogancanyucel.com/project/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://dogancanyucel.com/assets/turquoise-ai-logo.svg" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="../assets/turquoise-ai-logo.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
 
   <nav id="navbar" class="scrolled">
     <div class="nav-container">
-      <a href="../index.html" class="nav-logo">DCY<span class="dot">.</span></a>
+      <a href="/" class="nav-logo">DCY<span class="dot">.</span></a>
       <ul class="nav-links">
-        <li><a href="../index.html#about">About</a></li>
-        <li><a href="../project/">Projects</a></li>
-        <li><a href="../blog/">Blog</a></li>
-        <li><a href="../index.html#skills">Skills</a></li>
-        <li><a href="../index.html#contact">Contact</a></li>
+        <li><a href="/project/" aria-current="page">Work</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#contact">Contact</a></li>
       </ul>
-      <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
         <span></span><span></span><span></span>
       </button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
-      <a href="../index.html#about" class="mobile-link">About</a>
-      <a href="../project/" class="mobile-link">Projects</a>
-      <a href="../blog/" class="mobile-link">Blog</a>
-      <a href="../index.html#skills" class="mobile-link">Skills</a>
-      <a href="../index.html#contact" class="mobile-link">Contact</a>
+      <a href="/project/" class="mobile-link">Work</a>
+      <a href="/#about" class="mobile-link">About</a>
+      <a href="/#contact" class="mobile-link">Contact</a>
     </div>
   </nav>
 
-  <main class="project-page">
+  <main class="page">
     <div class="container">
-      <a href="../index.html" class="back-link">← Back to Home</a>
+      <a href="/" class="back-link"><span aria-hidden="true">&larr;</span> Home</a>
 
-      <div class="blog-header">
-        <div class="section-label">/ Projects</div>
-        <h1>Things I've <span class="accent">Built</span></h1>
-        <p>Mobile apps, AI-powered tools, and experiments. Select a project to view details.</p>
+      <div class="page-head">
+        <span class="eyebrow">Work</span>
+        <h1 class="title-1">One product,<br />built properly.</h1>
+        <p class="lead">
+          Everything I build goes into a single app rather than a shelf of demos.
+          This is it.
+        </p>
       </div>
 
-      <div class="projects-grid projects-grid-list">
-        <a href="turquoise-ai-calorie-fitness/" class="project-card featured project-card-link">
-          <div class="project-badge">Featured App</div>
-          <div class="project-icon-wrap">
-            <img src="../assets/turquoise-ai-logo.svg" alt="Turquoise AI logo" class="project-logo-img" width="72" height="72" />
-          </div>
-          <div class="project-info">
-            <h3 class="project-title">Turquoise AI: Calorie &amp; Fitness</h3>
-            <p class="project-subtitle">AI Calorie &amp; Fitness Coach</p>
-            <div class="platform-badges">
-              <span class="platform-badge android">📱 Android &amp; iOS</span>
+      <div class="bento">
+        <a href="turquoise-ai-calorie-fitness/" class="bento-cell feature">
+          <div class="feature-head">
+            <img src="../assets/turquoise-ai-logo.svg" alt="" class="feature-logo" width="68" height="68" />
+            <div>
+              <h2 class="title-2">Turquoise AI: Calorie &amp; Fitness</h2>
+              <p class="feature-sub">AI calorie &amp; fitness coach</p>
             </div>
-            <p class="project-desc">
-              One cross-platform mobile app — personalized AI gym coach, nutrition tracking,
-              body scan, voice logging, and weekly reports. Android is in active development;
-              iOS release follows on the same product roadmap.
-            </p>
-            <div class="project-tags">
-              <span class="tag">Kotlin</span>
-              <span class="tag">Jetpack Compose</span>
-              <span class="tag">SwiftUI</span>
-              <span class="tag">Gemini AI</span>
-              <span class="tag">Firebase</span>
-            </div>
-            <span class="project-link">Open project page →</span>
           </div>
+          <ul class="pills">
+            <li class="pill"><span class="dot-live"></span>Android — in development</li>
+            <li class="pill"><span class="dot-live"></span>iOS — in testing</li>
+          </ul>
+          <p>
+            One cross-platform app with a single coaching engine behind it: nutrition
+            tracking, gym tools, body scan, voice logging, and a weekly report that
+            adjusts the plan.
+          </p>
+          <span class="cell-more">Read about Turquoise <span class="arrow">&rarr;</span></span>
         </a>
+
+        <div class="bento-cell half reveal">
+          <span class="cell-label">Clients</span>
+          <h3 class="title-3">Kotlin &amp; Compose, SwiftUI &amp; HealthKit</h3>
+          <p>Two native clients sharing a product, not a codebase, so each belongs on its own platform.</p>
+        </div>
+
+        <div class="bento-cell half reveal">
+          <span class="cell-label">Server</span>
+          <h3 class="title-3">Cloudflare Workers, Firebase, D1</h3>
+          <p>Quotas, entitlements and exercise data are decided on the server, never on the phone.</p>
+        </div>
       </div>
     </div>
   </main>
 
   <footer>
     <div class="container footer-inner">
-      <div class="footer-logo">DCY<span class="dot">.</span></div>
-      <div class="footer-copy">© 2026 Dogan Can Yucel</div>
+      <div>&copy; 2026 Dogan Can Yucel</div>
       <div class="footer-links">
-        <a href="../index.html">Home</a>
-        <a href="../blog/">Blog</a>
+        <a href="/">Home</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
       </div>
     </div>
   </footer>

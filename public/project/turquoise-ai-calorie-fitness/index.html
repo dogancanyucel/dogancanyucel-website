@@ -4,157 +4,180 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Turquoise AI: Calorie &amp; Fitness — Dogan Can Yucel</title>
-  <meta name="description" content="Turquoise AI: Calorie &amp; Fitness — cross-platform AI fitness coach for Android and iOS." />
+  <meta name="description" content="Turquoise AI: Calorie &amp; Fitness — an AI calorie and fitness coach for Android and iOS, with food photo analysis, voice logging, a gym tracker, and weekly reports." />
+  <link rel="canonical" href="https://dogancanyucel.com/project/turquoise-ai-calorie-fitness/" />
+  <meta name="theme-color" content="#f4f4f6" />
   <meta property="og:title" content="Turquoise AI: Calorie &amp; Fitness" />
+  <meta property="og:description" content="An AI calorie and fitness coach for Android and iOS." />
   <meta property="og:url" content="https://dogancanyucel.com/project/turquoise-ai-calorie-fitness/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://dogancanyucel.com/assets/turquoise-ai-logo.svg" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="../../assets/turquoise-ai-logo.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../style.css" />
 </head>
 <body>
 
   <nav id="navbar" class="scrolled">
     <div class="nav-container">
-      <a href="../../index.html" class="nav-logo">DCY<span class="dot">.</span></a>
+      <a href="/" class="nav-logo">DCY<span class="dot">.</span></a>
       <ul class="nav-links">
-        <li><a href="../../index.html#about">About</a></li>
-        <li><a href="../../project/">Projects</a></li>
-        <li><a href="../../blog/">Blog</a></li>
-        <li><a href="../../index.html#skills">Skills</a></li>
-        <li><a href="../../index.html#contact">Contact</a></li>
+        <li><a href="/project/" aria-current="page">Work</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#contact">Contact</a></li>
       </ul>
-      <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
         <span></span><span></span><span></span>
       </button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
-      <a href="../../index.html#about" class="mobile-link">About</a>
-      <a href="../../project/" class="mobile-link">Projects</a>
-      <a href="../../blog/" class="mobile-link">Blog</a>
-      <a href="../../index.html#skills" class="mobile-link">Skills</a>
-      <a href="../../index.html#contact" class="mobile-link">Contact</a>
+      <a href="/project/" class="mobile-link">Work</a>
+      <a href="/#about" class="mobile-link">About</a>
+      <a href="/#contact" class="mobile-link">Contact</a>
     </div>
   </nav>
 
-  <main class="project-page">
+  <main class="page">
     <div class="container">
-      <a href="../" class="back-link">← Back to Projects</a>
+      <a href="/project/" class="back-link"><span aria-hidden="true">&larr;</span> Work</a>
 
-      <div class="project-hero">
-        <img src="../../assets/turquoise-ai-logo.svg" alt="Turquoise AI logo" class="project-hero-logo" width="96" height="96" />
-        <div>
-          <div class="project-badge">Cross-Platform Mobile App</div>
-          <h1 class="project-hero-title">Turquoise AI: Calorie &amp; Fitness</h1>
-          <p class="project-hero-sub">AI Calorie &amp; Fitness Coach</p>
-          <div class="platform-badges">
-            <span class="platform-badge android">📱 Android &amp; iOS — One App</span>
-          </div>
-          <p class="project-hero-desc">
-            Turquoise is a single product across mobile platforms — the same AI coaching engine,
-            nutrition tools, and fitness tracking experience on Android and iOS. Built with Kotlin
-            and Jetpack Compose on Android; SwiftUI and HealthKit on iOS.
-          </p>
-        </div>
-      </div>
-
-      <section class="project-section">
-        <h2>One App, Two Platforms</h2>
-        <div class="roadmap-grid">
-          <div class="roadmap-card active">
-            <span class="roadmap-status live">In Development</span>
-            <h3>Android</h3>
-            <p>
-              Kotlin, Jetpack Compose, Google Gemini, Firebase, Health Connect, home-screen widgets,
-              and tiered AI daily quotas. Active development and testing.
-            </p>
-          </div>
-          <div class="roadmap-card active">
-            <span class="roadmap-status live">Roadmap</span>
-            <h3>iOS</h3>
-            <p>
-              Same feature set with SwiftUI and HealthKit — shared backend, shared AI logic,
-              and one unified Turquoise experience for Apple users.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="project-section">
-        <h2>Key Features</h2>
-        <div class="feature-grid">
-          <div class="feature-card">
-            <div class="feature-icon">💬</div>
-            <h3>AI Chat Coach</h3>
-            <p>Personalized fitness advice, program updates, and macro guidance.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📸</div>
-            <h3>Food Photo Analysis</h3>
-            <p>Gemini-powered calorie and macro estimates from meal photos.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🎙️</div>
-            <h3>Voice Meal Logging</h3>
-            <p>Hands-free meal logging with AI parsing.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🏋️</div>
-            <h3>Smart Gym Tracker</h3>
-            <p>Set tracking, rest timers, and AI-calculated burned calories.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🫀</div>
-            <h3>Body Scan</h3>
-            <p>AI body composition and posture feedback — photos never stored.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3>Weekly AI Reports</h3>
-            <p>Automated progress summaries and plan adjustments.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="project-section">
-        <h2>Tech Stack</h2>
-        <div class="project-tags">
-          <span class="tag">Kotlin · Jetpack Compose</span>
-          <span class="tag">SwiftUI · HealthKit</span>
-          <span class="tag">Google Gemini AI</span>
-          <span class="tag">Firebase / Firestore</span>
-          <span class="tag">Room / SQLite</span>
-          <span class="tag">Cloudflare Workers</span>
-        </div>
-      </section>
-
-      <section class="project-section">
-        <h2>Contact</h2>
-        <p>
-          App support:
-          <a href="mailto:support@dogancanyucel.com">support@dogancanyucel.com</a><br />
-          Product / legal:
-          <a href="mailto:turquoise-ai-calorie-fitness@dogancanyucel.com">turquoise-ai-calorie-fitness@dogancanyucel.com</a>
+      <div class="page-head">
+        <img src="../../assets/turquoise-ai-logo.svg" alt="" class="feature-logo" width="68" height="68" style="margin-bottom: 22px;" />
+        <h1 class="title-1">Turquoise AI:<br />Calorie &amp; Fitness</h1>
+        <p class="lead">
+          An AI coach that reads your week and adjusts the plan — one app,
+          the same engine on Android and iOS.
         </p>
+        <ul class="pills" style="margin: 26px 0 0;">
+          <li class="pill"><span class="dot-live"></span>Android — in development</li>
+          <li class="pill"><span class="dot-live"></span>iOS — in testing</li>
+        </ul>
+      </div>
+
+      <section class="block">
+        <h2 class="title-2">What it does</h2>
+        <div class="bento">
+          <div class="bento-cell reveal">
+            <span class="cell-label">Coach</span>
+            <h3 class="title-3">AI chat coach</h3>
+            <p>Answers about training and macros, and rewrites the programme when the week goes sideways.</p>
+          </div>
+          <div class="bento-cell reveal">
+            <span class="cell-label">Camera</span>
+            <h3 class="title-3">Food photo analysis</h3>
+            <p>Point the camera at a plate; calories and macros come back estimated.</p>
+          </div>
+          <div class="bento-cell reveal">
+            <span class="cell-label">Voice</span>
+            <h3 class="title-3">Voice meal logging</h3>
+            <p>Say what you ate. No forms, no dropdowns.</p>
+          </div>
+          <div class="bento-cell reveal">
+            <span class="cell-label">Gym</span>
+            <h3 class="title-3">Gym tracker</h3>
+            <p>Sets, reps, rest timers, and the calories burned per session.</p>
+          </div>
+          <div class="bento-cell reveal">
+            <span class="cell-label">Body</span>
+            <h3 class="title-3">Body scan</h3>
+            <p>Composition and posture feedback. The photos are never stored.</p>
+          </div>
+          <div class="bento-cell reveal">
+            <span class="cell-label">Sunday</span>
+            <h3 class="title-3">Weekly reports</h3>
+            <p>What changed, what didn't, and what the plan does about it.</p>
+          </div>
+          <div class="bento-cell half reveal">
+            <span class="cell-label">Your key</span>
+            <h3 class="title-3">Bring your own AI key</h3>
+            <p>Plug in an API key from your own AI provider account and the app runs on it instead of the included allowance.</p>
+          </div>
+          <div class="bento-cell half reveal">
+            <span class="cell-label">Plans</span>
+            <h3 class="title-3">Free allowance, or premium</h3>
+            <p>Everything works inside a free daily AI allowance; a premium tier is there for anyone who wants more.</p>
+          </div>
+        </div>
       </section>
 
-      <div class="project-cta-row">
-        <a href="../../index.html#contact" class="project-link">Request Demo →</a>
-        <a href="https://github.com/dogancanyucel" class="project-link secondary" target="_blank" rel="noopener">GitHub</a>
-        <a href="../../blog/building-turquoise-ai/" class="project-link secondary">Dev blog →</a>
-        <a href="../../privacy.html" class="project-link secondary">Privacy</a>
-        <a href="../../terms.html" class="project-link secondary">Terms</a>
-      </div>
+      <section class="block">
+        <h2 class="title-2">Two platforms, one product</h2>
+        <div class="bento">
+          <div class="bento-cell half reveal">
+            <span class="cell-label">Android</span>
+            <h3 class="title-3">Kotlin &amp; Jetpack Compose</h3>
+            <p>Health Connect, home-screen widgets, and tiered daily AI quotas. In active development and testing.</p>
+          </div>
+          <div class="bento-cell half reveal">
+            <span class="cell-label">iOS</span>
+            <h3 class="title-3">SwiftUI &amp; HealthKit</h3>
+            <p>The same feature set, sharing the backend and the coaching logic rather than reimplementing them. The build is in testing on the App Store.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2 class="title-2">How it's built</h2>
+        <div class="bento">
+          <div class="bento-cell reveal">
+            <h3 class="title-3">Kotlin · Jetpack Compose</h3>
+            <p>Android client</p>
+          </div>
+          <div class="bento-cell reveal">
+            <h3 class="title-3">SwiftUI · HealthKit</h3>
+            <p>iOS client</p>
+          </div>
+          <div class="bento-cell reveal">
+            <h3 class="title-3">AI</h3>
+            <p>Coaching, photo and voice analysis</p>
+          </div>
+          <div class="bento-cell reveal">
+            <h3 class="title-3">Firebase · Firestore</h3>
+            <p>Accounts and cross-device sync</p>
+          </div>
+          <div class="bento-cell reveal">
+            <h3 class="title-3">Room · SQLite</h3>
+            <p>On-device store; works offline</p>
+          </div>
+          <div class="bento-cell reveal">
+            <h3 class="title-3">Cloudflare Workers · D1</h3>
+            <p>Exercise data and server-side rules</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2 class="title-2">Contact</h2>
+        <dl class="rows">
+          <div class="row">
+            <dt>App support</dt>
+            <dd><a href="mailto:support@dogancanyucel.com">support@dogancanyucel.com</a></dd>
+          </div>
+          <div class="row">
+            <dt>Product &amp; legal</dt>
+            <dd><a href="mailto:turquoise-ai-calorie-fitness@dogancanyucel.com">turquoise-ai-calorie-fitness@dogancanyucel.com</a></dd>
+          </div>
+        </dl>
+        <ul class="linklist">
+          <li><a href="/privacy.html">Privacy policy</a></li>
+          <li><a href="/terms.html">Terms of service</a></li>
+          <li><a href="/exercise-illustrations/">Illustration credits</a></li>
+        </ul>
+      </section>
     </div>
   </main>
 
   <footer>
     <div class="container footer-inner">
-      <div class="footer-logo">DCY<span class="dot">.</span></div>
-      <div class="footer-copy">© 2026 Dogan Can Yucel · Turquoise AI</div>
+      <div>&copy; 2026 Dogan Can Yucel · Turquoise AI</div>
       <div class="footer-links">
-        <a href="../../project/">All Projects</a>
-        <a href="../../index.html">Home</a>
+        <a href="/">Home</a>
+        <a href="/project/">Work</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
       </div>
     </div>
   </footer>
