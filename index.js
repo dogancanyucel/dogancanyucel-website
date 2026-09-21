@@ -165,31 +165,19 @@ export default {
         status: 410, headers: { "Content-Type": "application/json", ...corsHeaders }
       });
     }
-    // --- ROTA 4: POST /api/contact (Website İletişim Formu) ---
-    if (url.pathname === "/api/contact" && request.method === "POST") {
-      try {
-        const formData = await request.formData();
-        const senderName = formData.get("name") || "Anonymous User";
-        const senderEmail = formData.get("email") || "Not provided";
-        const senderMessage = formData.get("message") || "No message.";
-
-        await env.EMAIL.send({
-          to: "dcy@dogancanyucel.com",
-          from: { email: "noreply@dogancanyucel.com", name: "Website Contact Form" },
-          subject: `New Contact Form Message: ${senderName}`,
-          text: `Name: ${senderName}\nEmail: ${senderEmail}\n\nMessage:\n${senderMessage}`
-        });
-
-        return new Response(JSON.stringify({ success: true, message: "Your message was sent successfully." }), {
-          status: 200, 
-          headers: { "Content-Type": "application/json", ...corsHeaders } 
-        });
-      } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), { 
-          status: 500, 
-          headers: { "Content-Type": "application/json", ...corsHeaders } 
-        });
-      }
+    // --- ROTA 4: POST /api/contact — RETIRED ---
+    // The site's contact form was taken out on 2026-09-21 and this was its only caller. Whether the
+    // route ever delivered was never established either way — its send() call matches the binding's
+    // EmailMessageBuilder overload, so the failure, if there was one, was in Email Routing and not
+    // in this code. What is certain is that it took no API key and no rate limit: a button anyone
+    // could press, as often as they liked, to put mail in the owner's inbox from his own domain.
+    // Retiring it costs nothing now that the page prints the address and lets the visitor's own
+    // mail client do the work. 410 rather than deletion so a stale client gets an answer, not the
+    // index page that ASSETS would otherwise hand a POST.
+    if (url.pathname === "/api/contact") {
+      return new Response(JSON.stringify({ error: "Gone." }), {
+        status: 410, headers: { "Content-Type": "application/json", ...corsHeaders }
+      });
     }
 
     // --- STATİK DOSYALAR İÇİN HATA KORUMASI ---
