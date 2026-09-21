@@ -81,16 +81,16 @@ body::after {
 
 body::before {
   background:
-    radial-gradient(38% 34% at 18% 22%, rgba(116, 176, 226, .37), transparent 68%),
-    radial-gradient(34% 32% at 82% 14%, rgba(150, 200, 238, .32), transparent 70%),
+    radial-gradient(38% 34% at 18% 22%, rgba(116, 176, 226, .185), transparent 68%),
+    radial-gradient(34% 32% at 82% 14%, rgba(150, 200, 238, .16), transparent 70%),
     radial-gradient(40% 36% at 68% 78%, rgba(255, 255, 255, .80), transparent 70%);
   animation: aura-a 34s var(--ease) infinite alternate;
 }
 
 body::after {
   background:
-    radial-gradient(32% 30% at 74% 42%, rgba(132, 190, 232, .27), transparent 70%),
-    radial-gradient(36% 32% at 26% 76%, rgba(100, 162, 218, .29), transparent 70%),
+    radial-gradient(32% 30% at 74% 42%, rgba(132, 190, 232, .135), transparent 70%),
+    radial-gradient(36% 32% at 26% 76%, rgba(100, 162, 218, .145), transparent 70%),
     radial-gradient(30% 28% at 48% 6%,  rgba(255, 255, 255, .78), transparent 72%);
   animation: aura-b 46s var(--ease) infinite alternate;
 }
