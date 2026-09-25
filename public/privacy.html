@@ -37,7 +37,7 @@
   <!-- ═══ PRIVACY POLICY CONTENT ═══ -->
   <main class="prose">
     <h1>PRIVACY POLICY</h1>
-    <p><strong>Effective Date:</strong> August 15, 2026<br /><strong>Last updated:</strong> September 19, 2026</p>
+    <p><strong>Effective Date:</strong> August 15, 2026<br /><strong>Last updated:</strong> September 25, 2026</p>
 
     <h2>1. Introduction</h2>
     <p>Welcome to <strong>Turquoise AI Calorie &amp; Fitness</strong>. Dogancan Yucel is committed to protecting your privacy and ensuring that your personal and health-related data is handled securely and transparently. This Privacy Policy explains how Dogancan Yucel collects, uses, and safeguards your information when you use the mobile application (the "App") on iOS and Android platforms, including the Apple Watch and Wear OS watch apps (collectively, the "Service").</p>
@@ -53,6 +53,7 @@
     <ul>
       <li><strong>Account Information:</strong> Name, email address, and subscription details (which plan is active and when it renews).</li>
       <li><strong>Text Inputs:</strong> Search history for food logging and interactions with the AI Chat feature.</li>
+      <li><strong>Coach notes (iPhone):</strong> The AI coach may keep short notes, one line each, of lasting facts you tell it, such as an injury or a food you don&rsquo;t eat &mdash; up to twenty. It chooses what to keep and writes each note in its own words, so a note may include health details you chose to tell it. You can see them, and delete one or all of them, in the App&rsquo;s own Settings under What the Coach Remembers. They are sent with every request to the AI coach, including questions asked from Apple Watch, to the AI provider that answers it (section 5), and are not stored on our servers. The conversation in which you told the coach stays in your chat until you delete it or it is older than seven days.</li>
       <li><strong>Physical Characteristics:</strong> Basic demographic and biometric data you manually enter (such as current weight, target weight, height, and date of birth) to help calculate your fitness metrics.</li>
     </ul>
 
@@ -125,7 +126,8 @@
 
     <h3>4.2 Third-Party Service Providers</h3>
     <p>Dogancan Yucel may share non-health information with trusted third-party service providers (such as payment processors and cloud hosting providers) only to the extent necessary to operate the Service. These third parties are bound by strict confidentiality agreements and are prohibited from using your data for any other purposes.</p>
-    <p><strong>Crash reports.</strong> When the App crashes, or when a step such as phone verification fails, a report is sent to <strong>Firebase Crashlytics</strong> (Google) so the fault can be found and fixed. A report holds the technical details of the fault, the App version, the device model and operating system version, and an identifier for this installation of the App. It does not hold your name, email address, meals, health data or anything you wrote.</p>
+    <p><strong>Crash and performance reports.</strong> When the App crashes on your phone, or, on Android 11 and later, stops responding, a report is sent to <strong>Firebase Crashlytics</strong> (Google) so the fault can be found and fixed. On iPhone, a report is also sent when a step the App depends on fails &mdash; such as phone verification, registering for notifications, opening, reading or saving data on your device, uploading to your account, verifying or recording a purchase, getting an answer from an AI feature, or scheduling a reminder &mdash; and, if you share analytics with app developers in your iPhone&rsquo;s settings, when iOS measures the App freezing, using the processor heavily or writing too much to storage, with how long or how much and the call stack showing where in the App&rsquo;s code, and in the iOS code it called, it happened. Each time the App is opened, Crashlytics also sends a short session record so that use without crashes can be counted. A report holds the technical details of the fault, the App version, the device model, operating system version and language setting, device state such as free memory and storage (and, on Android, battery level and whether the device is rooted), and an identifier for this installation of the App. The App does not add your name, email address, phone number, meals, health data or anything you wrote to a report.</p>
+    <p><strong>Performance monitoring (Android).</strong> On Android, the App also sends <strong>Firebase Performance Monitoring</strong> (Google) how long it takes to start, how smoothly its screens draw and how long it stays open, and, for a sample of sessions, how much processor and memory it uses, with the App version and an identifier for this installation of the App.</p>
     <p><strong>Background photographs.</strong> If you choose one of the App's stock backgrounds (Forest, Ocean or Caribbean), the picture is loaded from <strong>Unsplash</strong>, which sees the network address the request comes from. A photograph of your own stays on your device and, if you use Apple Watch, is copied to your watch.</p>
 
     <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.1); margin: 30px 0;" />
@@ -174,6 +176,7 @@
     <h2>8. Data Retention and Deletion</h2>
     <p>Your structured database data (profile, fitness logs, and AI chat history) is retained only for as long as your App account is active.</p>
     <p>Your AI coach chat and your AI Weekly Reports are kept on your device and, on Android, also in your account.</p>
+    <p>On iPhone, the AI coach&rsquo;s notes are kept only on that iPhone, and in any backup you make of it such as iCloud Backup, until you delete them, delete your AI chat data or your account on that iPhone, or remove the App. They are not stored in your account or on our servers.</p>
 
     <h3>Preventing Trial Abuse (Secure Non-PII Retention):</h3>
     <p>To enforce our Terms of Service and prevent the fraudulent reuse or abuse of the 7-day free trial, a secure, one-way cryptographic hash (SHA-256) of your registered email address and hardware identifier (Device ID) is securely                                 stored in an isolated registry when you delete your account. Because SHA-256 is a one-way mathematical function, this hash is completely irreversible,meaning your actual email address and device identifiers cannot be reconstructed,    read, or identified by Dogancan Yucel or any third party. This anonymous hash is kept strictly to perform automated trial eligibility checks upon subsequent registration attempts.</p>
