@@ -1,50 +1,9 @@
 import { APP_LINKS_HOST, appLinksResponse } from "./app-links.js";
 import { statsResponse } from "./site-stats.js";
+import { apiRouteOf, countsAsVisit, recordApiCall, recordVisit } from "./traffic.js";
 
-// ── Where the site is read from ──────────────────────────────────────────────
-// Counts pages, never the app. Owner, 2026-09-26: the API routes are called by
-// Turquoise on people's phones, and recording where those calls come from would be
-// collecting a new kind of data about app users — a privacy-policy and store-
-// declaration change. Browsers reading the website are a different population, so
-// only they are counted.
-//
-// What is kept is a tally, not a trail: day, country, city, count. No address, no
-// user agent, no path, no time of day, nothing joining two requests together. A row
-// reading "2026-09-26 · PL · Wroclaw · 14" cannot single anybody out, which is what
-// keeps this out of consent territory rather than a promise that it is harmless.
-
-/** True for a request that is a person opening a page of the site. */
-export function countsAsVisit(request, url) {
-  if (request.method !== "GET") return false;
-  if (url.hostname === APP_LINKS_HOST) return false;        // the app's own host
-  if (url.pathname.startsWith("/api/")) return false;       // the apps, not the site
-  // Pages ask for HTML; stylesheets, scripts, icons and most crawlers do not.
-  return (request.headers.get("accept") || "").includes("text/html");
-}
-
-/** Adds one to today's tally for the caller's city. Never throws at the caller. */
-export async function recordVisit(request, env, now = new Date()) {
-  const place = request.cf;
-  if (!place || !env?.DB) return;                            // local dev has neither
-  try {
-    await env.DB.prepare(
-      "INSERT INTO site_visits (day, country, city, hits) VALUES (?, ?, ?, 1) " +
-      "ON CONFLICT(day, country, city) DO UPDATE SET hits = hits + 1"
-    ).bind(
-      now.toISOString().slice(0, 10),
-      String(place.country || "??").slice(0, 2),
-      String(place.city || "").slice(0, 64),
-    ).run();
-  } catch {
-    // Swallowed on purpose: a counter must never cost someone the page they asked
-    // for. The table may not exist yet, or D1 may be having a moment; either way the
-    // visit is lost and the response is served. Nothing here is worth an error page.
-  }
-}
-
-export default {
-  async fetch(request, env, ctx) {
-    const url = new URL(request.url);
+/** Everything the site answers. One return per route, counted by fetch below. */
+async function handle(request, env, ctx, url) {
 
     // The app's own host answers nothing else — see app-links.js.
     if (url.hostname === APP_LINKS_HOST) {
@@ -248,6 +207,21 @@ export default {
       return new Response(`Static assets routing error: ${assetsError.message}`, { status: 500 });
     }
 
-    return new Response("Not Found", { status: 404 });
+  return new Response("Not Found", { status: 404 });
+}
+
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const response = await handle(request, env, ctx, url);
+
+    // After the answer, never in front of it. An API call is counted by route and
+    // outcome and nothing else; where it came from is deliberately not recorded,
+    // because those callers are people using the app.
+    if (ctx?.waitUntil) {
+      const route = apiRouteOf(url);
+      if (route) ctx.waitUntil(recordApiCall(route, response.status, env));
+    }
+    return response;
   }
 };

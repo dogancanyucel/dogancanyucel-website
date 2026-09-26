@@ -1,7 +1,8 @@
 // The visit tally counts pages and never the app, and keeps no trail (owner,
 // 2026-09-26). Run: node test/site-visits.test.js
 import assert from "node:assert";
-import worker, { countsAsVisit, recordVisit } from "../index.js";
+import worker from "../index.js";
+import { countsAsVisit, recordVisit } from "../traffic.js";
 
 const HTML = { accept: "text/html,application/xhtml+xml" };
 const page = (u, headers = HTML, method = "GET") => new Request(u, { method, headers });

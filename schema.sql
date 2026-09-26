@@ -43,3 +43,15 @@ CREATE TABLE IF NOT EXISTS site_visits (
     hits    INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (day, country, city)
 );
+
+-- How hard the API is being pulled (owner, 2026-09-26). How much, never who: day,
+-- route, outcome, count. The "rejected" rows are the signal — the apps hold a valid
+-- key, so requests without one are somebody trying the door. No address and nothing
+-- standing in for one, because those callers are people using the app.
+CREATE TABLE IF NOT EXISTS api_calls (
+    day     TEXT    NOT NULL,          -- YYYY-MM-DD, UTC
+    route   TEXT    NOT NULL,          -- exercises, supplements, feedback, ...
+    outcome TEXT    NOT NULL,          -- ok | rejected | refused | error
+    hits    INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (day, route, outcome)
+);

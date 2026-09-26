@@ -38,7 +38,23 @@ function flag(code) {
   return String.fromCodePoint(...[...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
 }
 
-function page({ places, days, total, since }) {
+function apiSection(api) {
+  if (!api.length) {
+    return `<p class="footnote">No API calls recorded yet. If the apps are live and this stays empty, the api_calls table is missing — see scripts/migrate-api-calls.sql.</p>`;
+  }
+  const rows = api.map((r) => {
+    const rejected = Number(r.rejected) || 0;
+    // Somebody without a valid key, in numbers worth looking at twice.
+    const flag = rejected > 0 ? ` class="warn"` : "";
+    return `<tr><td>${escape(r.day)}</td><td>${escape(r.route)}</td><td class="n">${r.ok || 0}</td><td class="n"${flag}>${rejected}</td></tr>`;
+  }).join("");
+  return `<table>
+      <thead><tr><th>Day</th><th>Route</th><th class="n">Answered</th><th class="n">Rejected</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function page({ places, days, total, since, api }) {
   const placeRows = places.length
     ? places.map((r) => `<tr><td>${flag(r.country)} ${escape(r.country)}</td><td>${escape(r.city || "—")}</td><td class="n">${r.hits}</td></tr>`).join("")
     : `<tr><td colspan="3" class="empty">Nothing recorded yet. If the site is live and this stays empty, the site_visits table is missing — see scripts/migrate-site-visits.sql.</td></tr>`;
@@ -68,6 +84,7 @@ function page({ places, days, total, since }) {
   tr:last-child td { border-bottom: 0; }
   td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
   td.empty { color: var(--label-2); }
+  td.warn { color: #9a3412; font-weight: 600; }
   .two { display: grid; gap: 20px; grid-template-columns: 1fr; margin-top: 20px; }
   @media (min-width: 720px) { .two { grid-template-columns: 1.4fr 1fr; align-items: start; } }
 </style>
@@ -89,6 +106,10 @@ function page({ places, days, total, since }) {
       <tbody>${dayRows}</tbody>
     </table>
   </div>
+
+  <h2 class="title-2" style="margin: 48px 0 8px;">What the API answered</h2>
+  <p class="footnote" style="margin: 0 0 16px;">How much, not who. Rejected means a request arrived without a valid key — the apps have one, so those are somebody else.</p>
+  ${apiSection(api)}
 </main>
 </body>
 </html>`;
@@ -109,22 +130,29 @@ export async function statsResponse(request, env, url) {
     });
   }
 
-  let places = [], days = [], total = 0, since = "";
+  let places = [], days = [], total = 0, since = "", api = [];
   try {
-    const [byPlace, byDay, sum] = await Promise.all([
+    const [byPlace, byDay, sum, byRoute] = await Promise.all([
       env.DB.prepare("SELECT country, city, SUM(hits) AS hits FROM site_visits GROUP BY country, city ORDER BY hits DESC LIMIT 100").all(),
       env.DB.prepare("SELECT day, SUM(hits) AS hits FROM site_visits GROUP BY day ORDER BY day DESC LIMIT 30").all(),
       env.DB.prepare("SELECT SUM(hits) AS hits, MIN(day) AS since FROM site_visits").all(),
+      env.DB.prepare(
+        "SELECT day, route, " +
+        "SUM(CASE WHEN outcome = 'ok' THEN hits ELSE 0 END) AS ok, " +
+        "SUM(CASE WHEN outcome = 'rejected' THEN hits ELSE 0 END) AS rejected " +
+        "FROM api_calls GROUP BY day, route ORDER BY day DESC, ok DESC LIMIT 60"
+      ).all(),
     ]);
     places = byPlace.results ?? [];
     days = byDay.results ?? [];
     total = sum.results?.[0]?.hits ?? 0;
     since = sum.results?.[0]?.since ?? "";
+    api = byRoute.results ?? [];
   } catch {
     // The table may not exist yet. The page says so rather than showing an error.
   }
 
-  return new Response(page({ places, days, total, since }), {
+  return new Response(page({ places, days, total, since, api }), {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
