@@ -219,6 +219,37 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
 .on-ink .btn-ghost { background: transparent; color: var(--on-ink); border-color: var(--hairline-ink); }
 .on-ink .btn-ghost:hover { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .3); }
 
+/* App Store button. Apple ships an official "Download on the App Store" badge, but
+   it is a licensed image with its own placement rules and the mark is a trademark —
+   this site carries no licensed assets, so the link is type, not artwork. */
+.btn-store {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  min-height: 56px;
+  padding: 8px 26px;
+  line-height: 1.2;
+}
+.btn-store .store-kicker {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  opacity: .72;
+}
+.btn-store .store-name { font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
+
+/* The dark product panel is not .on-ink, so it names its own button colours. */
+.feature .btn-primary { background: var(--on-ink); color: var(--ink); }
+.feature .btn-primary:hover { background: #fff; }
+
+.store-note { margin: 12px 0 0; font-size: 14px; color: var(--label-2); }   /* --label-3 would be 4.15:1 here: this line sits on the aura */
+.feature .store-note, .on-ink .store-note { color: var(--on-ink-2); }
+
+/* A bento cell whose whole job is the store link. */
+.bento-cell .store-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 20px; }
+
+
 /* ── Floating capsule nav ─────────────────────────────────── */
 
 #navbar {
