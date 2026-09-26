@@ -1,4 +1,5 @@
 import { APP_LINKS_HOST, appLinksResponse } from "./app-links.js";
+import { statsResponse } from "./site-stats.js";
 
 // ── Where the site is read from ──────────────────────────────────────────────
 // Counts pages, never the app. Owner, 2026-09-26: the API routes are called by
@@ -49,6 +50,10 @@ export default {
     if (url.hostname === APP_LINKS_HOST) {
       return appLinksResponse(url);
     }
+
+    // The owner's view of the tally. Answers 404 unless STATS_PASSWORD is set.
+    const stats = await statsResponse(request, env, url);
+    if (stats) return stats;
 
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",
