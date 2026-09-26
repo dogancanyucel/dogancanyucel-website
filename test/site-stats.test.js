@@ -49,6 +49,20 @@ for (const path of ["/stats", "/stats/"]) {
   assert.ok(/<meta name="robots" content="noindex/.test(html), "no robots meta");
 }
 
+// ── The username is not part of the secret ───────────────────────────────────
+// Basic auth always asks for one and this page has none. Whatever is typed there must
+// not matter, and the prompt says so — do not turn the user part into a second secret.
+for (const user of ["", "owner", "admin", "a b c", "!@#$%^&*()", "türkçe", "1"]) {
+  const ok = await worker.fetch(get("/stats", basic(PASSWORD, user)), env, {});
+  assert.strictEqual(ok.status, 200, `username ${JSON.stringify(user)} was refused`);
+  const no = await worker.fetch(get("/stats", basic("wrong", user)), env, {});
+  assert.strictEqual(no.status, 401, `username ${JSON.stringify(user)} got in with a wrong password`);
+}
+assert.ok(
+  /username is ignored/.test((await worker.fetch(get("/stats"), env, {})).headers.get("www-authenticate") || ""),
+  "the prompt no longer tells the owner the username does not matter",
+);
+
 // ── A broken table must not become an error page ─────────────────────────────
 const broken = { DB: { prepare() { throw new Error("no such table: site_visits"); } }, ASSETS, STATS_PASSWORD: PASSWORD };
 const r = await worker.fetch(get("/stats", basic(PASSWORD)), broken, {});

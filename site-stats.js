@@ -5,7 +5,7 @@
 // the route answers 404 rather than opening — an analytics page that fails open is
 // worse than no analytics page.
 
-const REALM = 'Basic realm="stats", charset="UTF-8"';
+const REALM = 'Basic realm="dogancanyucel.com stats - username is ignored, leave it blank", charset="UTF-8"';
 
 /** Compares without leaking, through length or through timing, how far it matched. */
 function sameSecret(given, expected) {
