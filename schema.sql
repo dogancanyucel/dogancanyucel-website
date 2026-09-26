@@ -31,3 +31,15 @@ CREATE TABLE IF NOT EXISTS supplements (
 );
 CREATE INDEX IF NOT EXISTS idx_supplements_name ON supplements(name);
 CREATE INDEX IF NOT EXISTS idx_supplements_brand ON supplements(brand);
+-- Where the website is read from (owner, 2026-09-26). A tally, not a trail: one row
+-- per day per city, holding a count. No address, no user agent, no path, no time of
+-- day, nothing that joins two requests. Pages only — /api/* is the apps and is never
+-- counted, because recording where those calls come from would be collecting a new
+-- kind of data about app users. See countsAsVisit/recordVisit in index.js.
+CREATE TABLE IF NOT EXISTS site_visits (
+    day     TEXT    NOT NULL,          -- YYYY-MM-DD, UTC
+    country TEXT    NOT NULL,          -- ISO 3166-1 alpha-2, "??" when unknown
+    city    TEXT    NOT NULL DEFAULT '',
+    hits    INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (day, country, city)
+);

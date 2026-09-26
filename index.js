@@ -1,7 +1,48 @@
 import { APP_LINKS_HOST, appLinksResponse } from "./app-links.js";
 
+// ── Where the site is read from ──────────────────────────────────────────────
+// Counts pages, never the app. Owner, 2026-09-26: the API routes are called by
+// Turquoise on people's phones, and recording where those calls come from would be
+// collecting a new kind of data about app users — a privacy-policy and store-
+// declaration change. Browsers reading the website are a different population, so
+// only they are counted.
+//
+// What is kept is a tally, not a trail: day, country, city, count. No address, no
+// user agent, no path, no time of day, nothing joining two requests together. A row
+// reading "2026-09-26 · PL · Wroclaw · 14" cannot single anybody out, which is what
+// keeps this out of consent territory rather than a promise that it is harmless.
+
+/** True for a request that is a person opening a page of the site. */
+export function countsAsVisit(request, url) {
+  if (request.method !== "GET") return false;
+  if (url.hostname === APP_LINKS_HOST) return false;        // the app's own host
+  if (url.pathname.startsWith("/api/")) return false;       // the apps, not the site
+  // Pages ask for HTML; stylesheets, scripts, icons and most crawlers do not.
+  return (request.headers.get("accept") || "").includes("text/html");
+}
+
+/** Adds one to today's tally for the caller's city. Never throws at the caller. */
+export async function recordVisit(request, env, now = new Date()) {
+  const place = request.cf;
+  if (!place || !env?.DB) return;                            // local dev has neither
+  try {
+    await env.DB.prepare(
+      "INSERT INTO site_visits (day, country, city, hits) VALUES (?, ?, ?, 1) " +
+      "ON CONFLICT(day, country, city) DO UPDATE SET hits = hits + 1"
+    ).bind(
+      now.toISOString().slice(0, 10),
+      String(place.country || "??").slice(0, 2),
+      String(place.city || "").slice(0, 64),
+    ).run();
+  } catch {
+    // Swallowed on purpose: a counter must never cost someone the page they asked
+    // for. The table may not exist yet, or D1 may be having a moment; either way the
+    // visit is lost and the response is served. Nothing here is worth an error page.
+  }
+}
+
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     // The app's own host answers nothing else — see app-links.js.
@@ -191,6 +232,11 @@ export default {
     // --- STATİK DOSYALAR İÇİN HATA KORUMASI ---
     try {
       if (env.ASSETS) {
+        // After the response, never in front of it: waitUntil lets the page go out
+        // first and the tally happen on the way.
+        if (ctx?.waitUntil && countsAsVisit(request, url)) {
+          ctx.waitUntil(recordVisit(request, env));
+        }
         return await env.ASSETS.fetch(request);
       }
     } catch (assetsError) {
