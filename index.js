@@ -31,8 +31,16 @@ export default {
 
         const target = url.searchParams.get("target");
         const bodyPart = url.searchParams.get("bodyPart");
-        const limit = parseInt(url.searchParams.get("limit")) || 20;
-        const page = parseInt(url.searchParams.get("page")) || 1;
+        // Bounded the way /api/supplements already bounds itself. Unclamped, this took
+        // whatever number the caller sent: SQLite reads a negative LIMIT as "no limit",
+        // so ?limit=-1 returned the whole exercises table in a single request, and a
+        // negative page seeked backwards. The rows are public data, but the D1 read is
+        // billed to the owner, and one request should not be able to drag the table.
+        // The ceiling is generous on purpose — shipped clients page through this and
+        // must not start losing rows (found 2026-09-26; test/exercises-limit.test.js).
+        const MAX_LIMIT = 500;
+        const limit = Math.min(Math.max(parseInt(url.searchParams.get("limit")) || 20, 1), MAX_LIMIT);
+        const page = Math.max(parseInt(url.searchParams.get("page")) || 1, 1);
         const offset = (page - 1) * limit;
 
         let query = "SELECT id, name, target, bodyPart, equipment, gifUrl, instructions FROM exercises WHERE 1=1";
