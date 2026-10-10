@@ -36,7 +36,7 @@
 
   <main class="prose">
     <h1>Privacy Policy — Cairn: Skill Tree</h1>
-    <p><strong>Effective date:</strong> October 8, 2026<br /><strong>Last updated:</strong> October 8, 2026</p>
+    <p><strong>Effective date:</strong> October 8, 2026<br /><strong>Last updated:</strong> October 11, 2026</p>
 
     <h2>1. Who we are, and what this covers</h2>
     <p>This policy covers <strong>Cairn: Skill Tree</strong> ("Cairn", "the App"), made by Dogancan Yucel, Poland ("we", "us"). Dogancan Yucel is the controller of the personal data described here.</p>
@@ -47,7 +47,7 @@
     <ul>
       <li><strong>What you learn stays on your device.</strong> Your plans, lessons, review cards, notes, books, focus history and calendar are stored only on the device you use. We do not receive them.</li>
       <li><strong>Your account holds only who you are.</strong> Your e-mail address, an account identifier, when the account was made, and which plan you are on.</li>
-      <li><strong>The AI coach runs on your own AI account or on your own computer.</strong> When you use it, the App sends what the coach needs directly from your device to the AI provider you chose. We are not in between, and we do not see it.</li>
+      <li><strong>The AI coach runs where you choose.</strong> On your own AI account or your own computer, the App sends what the coach needs directly from your device to that provider; we are not in between. On the Cairn Cloud + AI plan, it goes through our server to Google's Gemini; our server passes it on and does not keep what you asked or what came back.</li>
       <li><strong>No advertising, no analytics, no tracking.</strong> The App contains no advertising and no analytics or tracking tools, and it does not sell or share your data for advertising.</li>
     </ul>
 
@@ -81,12 +81,22 @@
     <h2>5. The AI coach</h2>
     <p>Cairn's coach is an AI model. You choose where it runs:</p>
     <ul>
+      <li><strong>Cairn's own AI</strong> (on the Cairn Cloud + AI plan) — see below.</li>
       <li><strong>Your own AI provider account</strong> — you enter an API key from a provider you have an account with. The providers the App offers are Google Gemini, OpenAI, Anthropic, xAI, Mistral, DeepSeek, Moonshot (Kimi), Meta Llama API, Groq, Cerebras, Together AI, OpenRouter, NVIDIA and Ollama.</li>
       <li><strong>A model on your own computer or network</strong> (Ollama on your own machine). Then nothing leaves your own machines.</li>
     </ul>
-    <p>When you ask the coach something, build a plan, have a lesson written, or ask it to review an answer, the App sends from your device directly to that provider: your request, and the parts of your Cairn data the coach needs to answer — for example your plans and steps, the lesson in question, cards you keep forgetting, recent exercise mistakes, your notes on steps, the facts it remembers about you, a summary of your focus sessions (including the names of the apps you spent time in), your calendar, your goals and the reasons you gave for skipping a block. If you ask about a passage in one of your books, that passage and its page are sent with that question only. Your profile name is not sent.</p>
+    <p>When you ask the coach something, build a plan, have a lesson written, or ask it to review an answer, the App sends from your device directly to that provider: your request, and the parts of your Cairn data the coach needs to answer — for example the name of what you have open when you ask (a step, a review card, a book and its page number, a note page's title), your plans and steps, the lesson in question, cards you keep forgetting, recent exercise mistakes, your notes on steps, the facts it remembers about you, a summary of your focus sessions (including the names of the apps you spent time in), your calendar, your goals and the reasons you gave for skipping a block. If you ask about a passage in one of your books, that passage and its page are sent with that question only. Your profile name is not sent.</p>
     <p>The provider processes this under <strong>its own terms and privacy policy</strong>, in your account with them. We do not receive, store or see these requests or the answers.</p>
     <p><strong>Your API key</strong> is stored only in your device's secure storage. It is sent only to the provider it belongs to, to make your requests, and never to us.</p>
+    <h3>Cairn's own AI (Cairn Cloud + AI)</h3>
+    <p>On the Cairn Cloud + AI plan the coach runs on Cairn's own AI, with no key to set up. The App then sends the same request and the same parts of your Cairn data, with your account's sign-in token, to our server (Google Cloud Functions, in Warsaw, Poland). The server checks your plan and your allowance, and passes the request to Google's Gemini model through Google Cloud Vertex AI, which answers it. Vertex AI is reached through its global endpoint, so Google may process the request outside Poland and the EEA.</p>
+    <ul>
+      <li><strong>What our server does not keep:</strong> what you asked, the data sent with it, and the answer. They pass through it and are not stored.</li>
+      <li><strong>What it keeps for your account:</strong> how much of your allowances you have used — the number of calls, their cost and their token counts for the current week of questions and month of course writing — in Cloud Firestore. Each new week or month replaces the last.</li>
+      <li><strong>What it keeps without your account:</strong> the day's total calls and tokens for the whole service, and one line in the server's log for each answer with its kind (question, coach or lesson), the model, the token counts and the cost — no account, no text. Google Cloud's request logs for the server also record the time, IP address and the App's network details of each call; Google keeps these logs for 30 days by default.</li>
+      <li><strong>Proof that the request comes from Cairn (App Check):</strong> with each call to Cairn's AI your Apple device creates a DeviceCheck token, which Apple can check and which tells it the request comes from the real Cairn app on a real device. Firebase App Check (Google) exchanges it with Apple for a short-lived token the server checks. The token says nothing about you or what you asked.</li>
+    </ul>
+    <p>Why: to give you Cairn's AI as part of the plan you chose, and to keep it within what the plan allows (legal basis: performance of our contract with you).</p>
 
     <h2>6. Other things the App does on its own</h2>
     <ul>
@@ -98,6 +108,7 @@
     <h2>7. Who receives your data</h2>
     <ul>
       <li><strong>Google (Firebase Authentication and Cloud Firestore)</strong> — your account, as in section 3.</li>
+      <li><strong>Google (Cloud Functions, Vertex AI, Firebase App Check)</strong> and <strong>Apple (DeviceCheck)</strong> — only on the Cairn Cloud + AI plan, when you use Cairn's own AI, as in section 5.</li>
       <li><strong>Apple or Google</strong> — only if you sign in with them.</li>
       <li><strong>The AI provider you choose</strong> — what you send to the coach, as in section 5, under your own account with them.</li>
     </ul>
@@ -107,11 +118,12 @@
     <h2>8. How long data is kept</h2>
     <ul>
       <li>Your account and its record are kept until you delete your account.</li>
+      <li>On Cairn Cloud + AI, your account's use of the current week and month is kept until the next week or month replaces it, or until you delete your account. The server's log lines, which carry no account, are kept for 30 days.</li>
       <li>Data on your device is kept until you delete it, delete your account, or remove the App. Skills, books, notebooks and pages you delete wait 30 days in Recently Deleted, then go for good; you can also empty it at once.</li>
     </ul>
 
     <h2>9. Deleting your data and your account</h2>
-    <p>In the App, open <strong>Settings → Delete Account &amp; Data</strong>. You can delete one kind of data at a time (skills, books, notes, focus history, calendar and goals, what the coach remembers, your AI keys), or tick <strong>Entire Account</strong>: this deletes your account and its record first, and then everything Cairn keeps on that device. If you signed in with Apple, the App also asks Apple to remove Cairn from your Apple ID's sign-in permissions.</p>
+    <p>In the App, open <strong>Settings → Delete Account &amp; Data</strong>. You can delete one kind of data at a time (skills, books, notes, focus history, calendar and goals, what the coach remembers, your AI keys), or tick <strong>Entire Account</strong>: this deletes your account and its record first — and with them what our server keeps of your use of Cairn's AI — and then everything Cairn keeps on that device. If you signed in with Apple, the App also asks Apple to remove Cairn from your Apple ID's sign-in permissions.</p>
     <p>Data you sent to an AI provider is kept under that provider's own rules; you can manage it in your account with them.</p>
 
     <h2>10. Your rights</h2>
