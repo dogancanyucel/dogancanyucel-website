@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Privacy Policy — Cairn: Skill Tree</title>
-  <meta name="description" content="Privacy Policy for Cairn: Skill Tree — what the app keeps on your device, what its account holds, and what goes to the AI provider you choose." />
+  <meta name="description" content="Privacy Policy for Cairn: Skill Tree — what the app keeps on your device, what its account holds, what sync keeps on our server, and what goes to the AI provider you choose." />
   <link rel="canonical" href="https://dogancanyucel.com/project/cairn/privacy/" />
   <meta name="theme-color" content="#eff3f8" />
   <link rel="icon" href="/assets/dcy-icon.svg" type="image/svg+xml" />
@@ -45,7 +45,7 @@
 
     <h2>2. The short version</h2>
     <ul>
-      <li><strong>What you learn stays on your device.</strong> Your plans, lessons, review cards, notes, books, focus history and calendar are stored only on the device you use. We do not receive them.</li>
+      <li><strong>What you learn stays on your device — unless you choose sync.</strong> On the free plan your plans, lessons, review cards, notes, books, focus history and calendar are stored only on the device you use, and we do not receive them. On Cairn Cloud and Cairn Cloud + AI, a copy is kept on our server so your devices stay the same (section 4a); pictures, drawings and PDF files stay on your device.</li>
       <li><strong>Your account holds only who you are.</strong> Your e-mail address, an account identifier, when the account was made, and which plan you are on.</li>
       <li><strong>The AI coach runs where you choose.</strong> On your own AI account or your own computer, the App sends what the coach needs directly from your device to that provider; we are not in between. On the Cairn Cloud + AI plan, it goes through our server to Google's Gemini; our server passes it on and does not keep what you asked or what came back.</li>
       <li><strong>No advertising, no analytics, no tracking.</strong> The App contains no advertising and no analytics or tracking tools, and it does not sell or share your data for advertising.</li>
@@ -64,7 +64,7 @@
     <p><strong>Why:</strong> to give you an account and to know what your account is entitled to (legal basis: performance of our contract with you).</p>
 
     <h2>4. What stays on your device</h2>
-    <p>Everything you create in Cairn is stored on your device only:</p>
+    <p>On the free plan, everything you create in Cairn is stored on your device only. On Cairn Cloud and Cairn Cloud + AI it is stored on your device and synced as section 4a says.</p>
     <ul>
       <li>your skills, plans, steps, lessons and review cards, and your review history;</li>
       <li>your answers to exercises and quizzes, and the coach's feedback on them;</li>
@@ -74,9 +74,18 @@
       <li>the short facts the coach remembers about you, which you can see and delete in the App;</li>
       <li>your profile (a display name you choose and your weekly study time) and your settings.</li>
     </ul>
-    <p><strong>Focus and other apps (Mac):</strong> while a focus session is running, the App notes which other app you switch to and for how long, when you stay in it longer than 15 seconds, to show you how often you leave your work. You choose which apps count as study. These names stay on your device; a short summary of them can go to the AI coach (section 5).</p>
+    <p><strong>Focus and other apps (Mac):</strong> while a focus session is running, the App notes which other app you switch to and for how long, when you stay in it longer than 15 seconds, to show you how often you leave your work. You choose which apps count as study. These names stay on your device — or, with sync, are synced with your focus history (section 4a); a short summary of them can go to the AI coach (section 5).</p>
     <p><strong>Signing out</strong> leaves this data on the device; signing in again finds it. Anyone who signs in on the same device can see it.</p>
-    <p>Syncing your data between devices is <strong>not</strong> available yet. If it is added, this policy will say so before it is switched on.</p>
+
+    <h3>4a. Sync, on Cairn Cloud and Cairn Cloud + AI</h3>
+    <p>On these two plans the App keeps a copy of your learning on our server, so every device you sign in on holds the same. It starts when you sign in on one of these plans and runs on its own while the App is open.</p>
+    <ul>
+      <li><strong>What is synced:</strong> your skills, plans, steps and the lessons written for them; your review cards and review history; your exercise and quiz answers and the coach's feedback; your notebooks and pages (their words and formatting); your books' titles, authors, reading positions, highlights and notes; your focus sessions, the distractions you mark with their reasons and the names of the apps you switched to; your calendar blocks, goals and growth notes; the facts the coach remembers; your profile and settings, including which AI provider and model you chose.</li>
+      <li><strong>What is not synced:</strong> pictures and drawings in your pages, and the PDF files of your books, stay on the device where you added them. Your AI keys stay in your device's keychain and never leave it.</li>
+      <li><strong>Where:</strong> in <strong>Cloud Firestore</strong>, a Google service, reached only through our server (Cloud Functions). The App sends each request with your account's sign-in token and a token from <strong>Firebase App Check</strong> — on a Mac made with <strong>Apple's DeviceCheck</strong> — so only the genuine App, signed in as you, can read or write your copy. Only our server reads and writes it, and only to keep your devices the same.</li>
+      <li><strong>Another account on the same device:</strong> if someone signs in with a different account on a device whose data was synced with yours, the App asks before anything moves: upload that device's data to their account, or keep that device apart from it.</li>
+    </ul>
+    <p><strong>Why:</strong> to give you the sync you chose (legal basis: performance of our contract with you).</p>
 
     <h2>5. The AI coach</h2>
     <p>Cairn's coach is an AI model. You choose where it runs:</p>
@@ -108,6 +117,7 @@
     <h2>7. Who receives your data</h2>
     <ul>
       <li><strong>Google (Firebase Authentication and Cloud Firestore)</strong> — your account, as in section 3.</li>
+      <li><strong>Google (Cloud Firestore, Cloud Functions, Firebase App Check)</strong> and <strong>Apple (DeviceCheck)</strong> — only on Cairn Cloud and Cairn Cloud + AI, the synced copy of your learning, as in section 4a.</li>
       <li><strong>Google (Cloud Functions, Vertex AI, Firebase App Check)</strong> and <strong>Apple (DeviceCheck)</strong> — only on the Cairn Cloud + AI plan, when you use Cairn's own AI, as in section 5.</li>
       <li><strong>Apple or Google</strong> — only if you sign in with them.</li>
       <li><strong>The AI provider you choose</strong> — what you send to the coach, as in section 5, under your own account with them.</li>
@@ -120,10 +130,11 @@
       <li>Your account and its record are kept until you delete your account.</li>
       <li>On Cairn Cloud + AI, your account's use of the current week and month is kept until the next week or month replaces it, or until you delete your account. The server's log lines, which carry no account, are kept for 30 days.</li>
       <li>Data on your device is kept until you delete it, delete your account, or remove the App. Skills, books, notebooks and pages you delete wait 30 days in Recently Deleted, then go for good; you can also empty it at once.</li>
+      <li>The synced copy (section 4a) is kept until you delete it or your account. Something you delete is marked deleted on our server at the next sync, so your other devices delete it too; 30 days after the delete, its contents are removed from our server, and only the note that it was deleted stays, so a device that was away longer still learns of it.</li>
     </ul>
 
     <h2>9. Deleting your data and your account</h2>
-    <p>In the App, open <strong>Settings → Delete Account &amp; Data</strong>. You can delete one kind of data at a time (skills, books, notes, focus history, calendar and goals, what the coach remembers, your AI keys), or tick <strong>Entire Account</strong>: this deletes your account and its record first — and with them what our server keeps of your use of Cairn's AI — and then everything Cairn keeps on that device. If you signed in with Apple, the App also asks Apple to remove Cairn from your Apple ID's sign-in permissions.</p>
+    <p>In the App, open <strong>Settings → Delete Account &amp; Data</strong>. You can delete one kind of data at a time (skills, books, notes, focus history, calendar and goals, what the coach remembers, your AI keys) — with sync, it is deleted from our server and your other devices too at the next sync, as section 8 says — or tick <strong>Entire Account</strong>: this deletes your account and its record first — and with them the synced copy of your learning and what our server keeps of your use of Cairn's AI — and then everything Cairn keeps on that device. If you signed in with Apple, the App also asks Apple to remove Cairn from your Apple ID's sign-in permissions.</p>
     <p>Data you sent to an AI provider is kept under that provider's own rules; you can manage it in your account with them.</p>
 
     <h2>10. Your rights</h2>
