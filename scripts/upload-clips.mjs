@@ -1,16 +1,19 @@
-// Uploads the owner's exercise clips to the private R2 bucket and writes the catalogue
+// Uploads the owner's approved exercise clips to the private R2 bucket and writes the catalogue
 // the apps read (see clips.js). Clips never enter this public repository.
 //
-//   node scripts/upload-clips.mjs --dir ~/path/to/clips            # upload
-//   node scripts/upload-clips.mjs --dir ~/path/to/clips --dry-run  # show what would happen
+//   node scripts/upload-clips.mjs --from ~/Desktop/Repo/blender-poc            # upload
+//   node scripts/upload-clips.mjs --from ~/Desktop/Repo/blender-poc --dry-run  # show what would happen
 //
-// Only the clips named in clip-slugs.json go up. That file stays on this machine, out of the public
-// repository (owner, 2026-10-13); clip-slugs.example.json shows its shape. It pairs a clip's id (its file name,
-// the media id from the owner's Blender list) with the drawing's slug it replaces in the
-// apps — the owner confirms each pair (2026-10-13: a drawing is replaced "sadece
-// urettiklerimle ayni ise"), so nothing here guesses one.
+// Read straight from the Blender production folder: its log (uretim-kaydi.csv) says which clips
+// the owner approved, and only those go up — the 1080p H.264 file of each (H.264 plays on every
+// phone the apps support; HEVC does not on every Android).
+//
+// Which drawing a clip replaces is clip-slugs.json, kept on this machine only (owner, 2026-10-13;
+// clip-slugs.example.json shows the shape). A clip not in it goes up with "slug": null — the
+// owner pairs a clip with a drawing only when it is the same movement ("sadece urettiklerimle
+// ayni ise"), so nothing here guesses one.
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join, resolve } from "node:path";
 import { homedir } from "node:os";
@@ -21,14 +24,54 @@ const ROOT = new URL("..", import.meta.url).pathname;
 /** A clip id the Worker will serve — the same rule as clips.js's CLIP_ID. */
 export const isServableId = (id) => /^[A-Za-z0-9_-]{1,32}$/.test(id);
 
+/** The rows of a CSV file, quotes and commas inside quotes respected. */
+export function parseCsv(text) {
+  const rows = [];
+  let row = [], field = "", quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quoted) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') quoted = false;
+      else field += c;
+    } else if (c === '"') quoted = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); field = "";
+      if (row.some((cell) => cell !== "")) rows.push(row);
+      row = [];
+    } else field += c;
+  }
+  row.push(field);
+  if (row.some((cell) => cell !== "")) rows.push(row);
+  const [head, ...body] = rows;
+  return body.map((cells) => Object.fromEntries(head.map((name, i) => [name, cells[i] ?? ""])));
+}
+
+/** The approved clips of a production log: id and name, in the log's order. Pure, so it is tested. */
+export function approvedClips(logRows) {
+  return logRows
+    .filter((row) => row.durum === "onaylandi" && isServableId(row.medya_id))
+    .map((row) => ({ id: row.medya_id, name: row.egzersiz_adi }));
+}
+
 /** The catalogue for the clips found, in the shape clips.js serves. Pure, so it is tested. */
 export function catalogueFor(found, version, updatedAt) {
   return {
     version,
     clips: found
-      .map(({ id, slug, bytes, sha256 }) => ({ id, slug, bytes, sha256, updatedAt }))
-      .sort((a, b) => a.slug.localeCompare(b.slug)),
+      .map(({ id, name, slug, bytes, sha256 }) => ({ id, name, slug: slug ?? null, bytes, sha256, updatedAt }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
   };
+}
+
+/** The 1080p H.264 file of a clip in the production's out/ folder, or null. */
+function clipFile(outDir, id) {
+  const folder = readdirSync(outDir).find((name) => name.split("_")[1] === id);
+  if (!folder) return null;
+  const file = join(outDir, folder, `${id}_1080_h264.mp4`);
+  return existsSync(file) ? file : null;
 }
 
 function put(key, file, contentType, dryRun) {
@@ -37,39 +80,47 @@ function put(key, file, contentType, dryRun) {
     console.log(`would run: npx ${args.join(" ")}`);
     return;
   }
-  const run = spawnSync("npx", args, { stdio: "inherit", cwd: ROOT });
+  const run = spawnSync("npx", args, { stdio: ["ignore", "ignore", "inherit"], cwd: ROOT });
   if (run.status !== 0) throw new Error(`upload of ${key} failed`);
 }
 
 function main(argv) {
-  const dirArg = argv[argv.indexOf("--dir") + 1];
-  if (!argv.includes("--dir") || !dirArg) throw new Error("usage: node scripts/upload-clips.mjs --dir <folder> [--dry-run]");
-  const dir = resolve(dirArg.replace(/^~(?=$|\/)/, homedir()));
+  const fromArg = argv[argv.indexOf("--from") + 1];
+  if (!argv.includes("--from") || !fromArg) throw new Error("usage: node scripts/upload-clips.mjs --from <blender-poc folder> [--dry-run]");
+  const from = resolve(fromArg.replace(/^~(?=$|\/)/, homedir()));
   const dryRun = argv.includes("--dry-run");
+  const outDir = join(from, "pilot", "out");
+  const approved = approvedClips(parseCsv(readFileSync(join(from, "uretim-kaydi.csv"), "utf8")));
+
   const slugsFile = join(ROOT, "clip-slugs.json");
-  if (!existsSync(slugsFile)) throw new Error("clip-slugs.json is missing: copy clip-slugs.example.json and fill in the pairs");
-  const slugs = JSON.parse(readFileSync(slugsFile, "utf8"));
+  const slugs = existsSync(slugsFile) ? JSON.parse(readFileSync(slugsFile, "utf8")) : {};
+  for (const id of Object.keys(slugs)) {
+    if (!isServableId(id)) throw new Error(`clip-slugs.json: ${id} is not an id the Worker serves`);
+  }
 
   const found = [];
   const missing = [];
-  for (const [id, slug] of Object.entries(slugs)) {
-    if (!isServableId(id)) throw new Error(`${id}: not an id the Worker serves (letters, digits, - and _ only)`);
-    const file = join(dir, `${id}.mp4`);
-    if (!existsSync(file)) { missing.push(id); continue; }
+  for (const { id, name } of approved) {
+    const file = clipFile(outDir, id);
+    if (!file) { missing.push(id); continue; }
     const data = readFileSync(file);
-    found.push({ id, slug, file, bytes: data.length, sha256: createHash("sha256").update(data).digest("hex") });
+    found.push({ id, name, slug: slugs[id] ?? null, file, bytes: data.length, sha256: createHash("sha256").update(data).digest("hex") });
   }
-  if (missing.length) console.log(`not in ${dir}, skipped: ${missing.join(", ")}`);
-  if (!found.length) throw new Error("no clip from clip-slugs.json was found; nothing uploaded");
+  if (missing.length) console.log(`approved but no 1080p H.264 file, skipped: ${missing.join(", ")}`);
+  if (!found.length) throw new Error("no approved clip was found; nothing uploaded");
 
-  for (const clip of found) put(`clips/${clip.id}.mp4`, clip.file, "video/mp4", dryRun);
+  found.forEach((clip, i) => {
+    put(`clips/${clip.id}.mp4`, clip.file, "video/mp4", dryRun);
+    if (!dryRun) console.log(`${i + 1}/${found.length} ${clip.id} ${clip.name}`);
+  });
 
   // Seconds since 1970 as the version: always larger than the last, with no state to keep.
   const catalogue = catalogueFor(found, Math.floor(Date.now() / 1000), new Date().toISOString().slice(0, 10));
   const local = join(ROOT, "clips-catalogue.local.json"); // gitignored
   writeFileSync(local, JSON.stringify(catalogue, null, 2));
   put("clips/catalogue.json", local, "application/json", dryRun);
-  console.log(`${dryRun ? "would upload" : "uploaded"} ${found.length} clip(s) and catalogue version ${catalogue.version}`);
+  const paired = found.filter((clip) => clip.slug).length;
+  console.log(`${dryRun ? "would upload" : "uploaded"} ${found.length} clip(s), ${paired} paired with a drawing, catalogue version ${catalogue.version}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

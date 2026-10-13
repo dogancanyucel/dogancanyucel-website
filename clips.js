@@ -16,7 +16,9 @@ import { APP_CHECK, ID_TOKEN, verifiedClaims } from "./firebase-tokens.js";
 // theft: one script downloading all 2,500.
 //
 // The contract the apps code against (owner-approved 2026-10-13):
-//   GET /api/clips/catalogue  → {"version", "clips": [{"id", "slug", "bytes", "sha256", "updatedAt"}]}
+//   GET /api/clips/catalogue  → {"version", "clips": [{"id", "name", "slug", "bytes", "sha256", "updatedAt"}]}
+//       "name" is the movement's English name; "slug" is the drawing the clip replaces in the apps,
+//       null until the owner pairs them (only when it is the same movement).
 //   GET /api/clips/<id>.mp4   → the clip, 206 for a Range request
 //   both need  X-Firebase-AppCheck: <token>  and  Authorization: Bearer <ID token>
 //   401 without them, 429 + Retry-After past the limit.

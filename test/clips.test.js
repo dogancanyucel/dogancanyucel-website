@@ -7,7 +7,7 @@ import worker from "../index.js";
 import { clipsResponse, clipRouteOf } from "../clips.js";
 import { APP_CHECK, ID_TOKEN, clearKeyCache, verifiedClaims } from "../firebase-tokens.js";
 import { apiRouteOf } from "../traffic.js";
-import { catalogueFor, isServableId } from "../scripts/upload-clips.mjs";
+import { approvedClips, catalogueFor, isServableId, parseCsv } from "../scripts/upload-clips.mjs";
 import { readFileSync } from "node:fs";
 
 // ── A signing key standing in for Google's ──────────────────────────────────
@@ -49,7 +49,7 @@ const deps = { fetchImpl, nowMs };
 
 // ── A bucket and a limiter standing in for Cloudflare's ─────────────────────
 const CLIP_BYTES = new Uint8Array(1000).map((_, i) => i % 256);
-const CATALOGUE = { version: 1, clips: [{ id: "EIeI8Vf", slug: "bench-press", bytes: 1000, sha256: "abc", updatedAt: "2026-10-13" }] };
+const CATALOGUE = { version: 1, clips: [{ id: "EIeI8Vf", name: "barbell bench press", slug: "bench-press", bytes: 1000, sha256: "abc", updatedAt: "2026-10-13" }] };
 
 function bucket() {
   return {
@@ -246,15 +246,27 @@ await test("no bucket bound yet: 503, after the caller was checked", async () =>
 });
 
 // ── The upload's catalogue ───────────────────────────────────────────────────
-await test("the uploaded catalogue has the contract's shape, sorted by slug", () => {
+await test("the uploaded catalogue has the contract's shape, sorted by name, unpaired slugs null", () => {
   const made = catalogueFor(
-    [{ id: "b", slug: "squat", bytes: 2, sha256: "y", file: "/x/b.mp4" }, { id: "a", slug: "bench-press", bytes: 1, sha256: "x", file: "/x/a.mp4" }],
+    [{ id: "b", name: "barbell squat", bytes: 2, sha256: "y", file: "/x/b.mp4" },
+     { id: "a", name: "barbell bench press", slug: "bench-press", bytes: 1, sha256: "x", file: "/x/a.mp4" }],
     7, "2026-10-13",
   );
   assert.deepStrictEqual(made, { version: 7, clips: [
-    { id: "a", slug: "bench-press", bytes: 1, sha256: "x", updatedAt: "2026-10-13" },
-    { id: "b", slug: "squat", bytes: 2, sha256: "y", updatedAt: "2026-10-13" },
+    { id: "a", name: "barbell bench press", slug: "bench-press", bytes: 1, sha256: "x", updatedAt: "2026-10-13" },
+    { id: "b", name: "barbell squat", slug: null, bytes: 2, sha256: "y", updatedAt: "2026-10-13" },
   ] });
+});
+
+await test("only the clips the owner approved go up, notes with commas and quotes kept apart", () => {
+  const log = parseCsv(
+    'sira,medya_id,egzersiz_adi,durum,tarih,exrx_referansi,not\n' +
+    '1,7HcfMBP,assisted standing triceps extension (with towel),onaylandi,2026-09-26,X,"partnerli, kamera -60"\n' +
+    '2,abc1234,cable curl,bekliyor,2026-10-13,Y,\n' +
+    '3,../bad,evil,onaylandi,2026-10-13,Z,\n',
+  );
+  assert.strictEqual(log[0].not, "partnerli, kamera -60");
+  assert.deepStrictEqual(approvedClips(log), [{ id: "7HcfMBP", name: "assisted standing triceps extension (with towel)" }]);
 });
 
 await test("the upload accepts exactly the ids the Worker serves", () => {
