@@ -114,8 +114,15 @@ export async function clipsResponse(request, env, url, deps = {}) {
     });
   }
 
-  // R2 reads the Range header itself and answers with the slice it asked for.
-  const clip = await env.CLIPS.get(clipKey(which.id), { range: request.headers });
+  // R2 reads the Range header itself and answers with the slice it asked for. A Range it cannot read is answered with the
+  // whole clip, as if none had been sent — a guard, not a measured fault: what R2 does with a malformed one was not tried
+  // against the real bucket (2026-10-13), and a 500 for a clip that exists is the worse answer either way.
+  let clip;
+  try {
+    clip = await env.CLIPS.get(clipKey(which.id), { range: request.headers });
+  } catch {
+    clip = await env.CLIPS.get(clipKey(which.id));
+  }
   if (!clip) return json(404, { error: "No such clip." });
 
   const headers = new Headers({
@@ -126,7 +133,7 @@ export async function clipsResponse(request, env, url, deps = {}) {
   // R2's own tag. The sha256 the app checks a download against is in the catalogue.
   if (clip.httpEtag) headers.set("ETag", clip.httpEtag);
   const range = clip.range;
-  if (range && request.headers.has("range")) {
+  if (range && request.headers.has("range") && (range.offset != null || range.suffix != null || range.length != null)) {
     const offset = range.offset ?? (range.suffix != null ? clip.size - range.suffix : 0);
     const length = range.length ?? (range.suffix ?? clip.size - offset);
     headers.set("Content-Range", `bytes ${offset}-${offset + length - 1}/${clip.size}`);

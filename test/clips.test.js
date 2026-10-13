@@ -59,7 +59,9 @@ function bucket() {
       const header = options.range?.get?.("range");
       let range;
       if (header) {
-        const [, from, to] = /bytes=(\d+)-(\d*)/.exec(header);
+        const parsed = /bytes=(\d+)-(\d*)/.exec(header);
+        if (!parsed) throw new RangeError("unreadable range");
+        const [, from, to] = parsed;
         const offset = Number(from);
         const end = to ? Number(to) : CLIP_BYTES.length - 1;
         range = { offset, length: end - offset + 1 };
@@ -175,6 +177,33 @@ await test("the key set is fetched once and kept", async () => {
   assert.strictEqual(keyFetches, 1);
 });
 
+await test("a key Google starts signing with is fetched, at most once a minute", async () => {
+  const fresh = await crypto.subtle.generateKey(
+    { name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" },
+    true, ["sign", "verify"],
+  );
+  const freshJwk = { ...(await crypto.subtle.exportKey("jwk", fresh.publicKey)), kid: "k2", alg: "RS256" };
+  let rotated = false;
+  let fetches = 0;
+  const rotating = async () => {
+    fetches++;
+    return new Response(JSON.stringify({ keys: rotated ? [publicJwk, freshJwk] : [publicJwk] }), { headers: { "cache-control": "max-age=21600" } });
+  };
+  assert.ok(await verifiedClaims(await token(appCheckClaims()), APP_CHECK, { fetchImpl: rotating, nowMs }));
+  rotated = true;
+  const signedWithNew = await token(appCheckClaims(), { key: fresh.privateKey, kid: "k2" });
+  assert.strictEqual(await verifiedClaims(signedWithNew, APP_CHECK, { fetchImpl: rotating, nowMs: nowMs + 1000 }), null,
+    "within the minute the set is not fetched again");
+  assert.strictEqual(fetches, 1);
+  assert.ok(await verifiedClaims(signedWithNew, APP_CHECK, { fetchImpl: rotating, nowMs: nowMs + 61_000 }),
+    "after it, the new key is fetched and the token is good — not six hours later");
+  assert.strictEqual(fetches, 2);
+  for (const kid of ["x1", "x2", "x3"]) {
+    await verifiedClaims(await token(appCheckClaims(), { kid }), APP_CHECK, { fetchImpl: rotating, nowMs: nowMs + 62_000 });
+  }
+  assert.strictEqual(fetches, 2, "made-up key ids cannot make the Worker call Google on every request");
+});
+
 // ── What a genuine caller gets ───────────────────────────────────────────────
 await test("the catalogue, for the genuine app", async () => {
   const response = await ask("/api/clips/catalogue");
@@ -197,6 +226,12 @@ await test("a Range request: 206 with the slice and its place", async () => {
   assert.strictEqual(response.status, 206);
   assert.strictEqual(response.headers.get("content-range"), "bytes 100-199/1000");
   assert.strictEqual((await response.arrayBuffer()).byteLength, 100);
+});
+
+await test("a Range the bucket cannot read: the whole clip, not a 500", async () => {
+  const response = await ask("/api/clips/EIeI8Vf.mp4", { range: "bytes=nonsense" });
+  assert.strictEqual(response.status, 200);
+  assert.strictEqual((await response.arrayBuffer()).byteLength, 1000);
 });
 
 await test("an unknown clip: 404", async () => {

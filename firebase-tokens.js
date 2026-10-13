@@ -30,7 +30,16 @@ const CLOCK_SKEW_SECONDS = 300;
 /** How long a key set is kept when Google's answer names no max-age. */
 const DEFAULT_KEY_SECONDS = 3600;
 
-const keyCache = new Map(); // jwksUrl → { keys: Map<kid, CryptoKey>, until: ms }
+const keyCache = new Map(); // jwksUrl → { keys: Map<kid, CryptoKey>, until: ms, fetchedAt: ms }
+/**
+ * How soon a key set may be fetched again because a token named a key it does not hold.
+ *
+ * **A key Google started signing with must not wait for the cache** (found 2026-10-13, scanning the day's work: a set kept
+ * for its six-hour max-age refused every token signed with a key added after it was fetched). So an unknown key fetches the
+ * set once more — but at most once a minute, or anybody could make this Worker call Google on every request by sending
+ * made-up key ids.
+ */
+const UNKNOWN_KEY_REFETCH_MS = 60_000;
 
 /** Forgets every cached key set. Tests only. */
 export function clearKeyCache() {
@@ -49,9 +58,9 @@ function base64UrlJson(text) {
   return JSON.parse(new TextDecoder().decode(base64UrlBytes(text)));
 }
 
-async function keysFor(jwksUrl, fetchImpl, nowMs) {
+async function keysFor(jwksUrl, fetchImpl, nowMs, { force = false } = {}) {
   const cached = keyCache.get(jwksUrl);
-  if (cached && cached.until > nowMs) return cached.keys;
+  if (cached && cached.until > nowMs && !force) return cached.keys;
   const response = await fetchImpl(jwksUrl);
   if (!response.ok) throw new Error(`key set answered ${response.status}`);
   const body = await response.json();
@@ -66,7 +75,7 @@ async function keysFor(jwksUrl, fetchImpl, nowMs) {
   }
   const maxAge = /max-age=(\d+)/.exec(response.headers.get("cache-control") || "");
   const seconds = maxAge ? Number(maxAge[1]) : DEFAULT_KEY_SECONDS;
-  keyCache.set(jwksUrl, { keys, until: nowMs + seconds * 1000 });
+  keyCache.set(jwksUrl, { keys, until: nowMs + seconds * 1000, fetchedAt: nowMs });
   return keys;
 }
 
@@ -90,7 +99,12 @@ export async function verifiedClaims(token, expected, { fetchImpl = fetch, nowMs
   }
   if (header.alg !== "RS256" || !header.kid) return null;
 
-  const keys = await keysFor(expected.jwksUrl, fetchImpl, nowMs);
+  let keys = await keysFor(expected.jwksUrl, fetchImpl, nowMs);
+  if (!keys.has(header.kid)) {
+    const fetchedAt = keyCache.get(expected.jwksUrl)?.fetchedAt ?? 0;
+    if (nowMs - fetchedAt < UNKNOWN_KEY_REFETCH_MS) return null;
+    keys = await keysFor(expected.jwksUrl, fetchImpl, nowMs, { force: true });
+  }
   const key = keys.get(header.kid);
   if (!key) return null;
 
