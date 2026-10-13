@@ -20,6 +20,27 @@
       "name": "EMAIL"
     }
   ],
+  // The exercise clips, private — see clips.js. The bucket is created by the owner.
+  "r2_buckets": [
+    {
+      "binding": "CLIPS",
+      "bucket_name": "turquoise-exercise-clips"
+    }
+  ],
+  // Per signed-in user, per minute; Cloudflare allows only 10 or 60 second windows.
+  // 20 clips covers opening a whole training day at once; 2,500 in bulk would take two hours.
+  "ratelimits": [
+    {
+      "name": "CLIP_LIMIT",
+      "namespace_id": "1001",
+      "simple": { "limit": 20, "period": 60 }
+    },
+    {
+      "name": "CATALOGUE_LIMIT",
+      "namespace_id": "1002",
+      "simple": { "limit": 5, "period": 60 }
+    }
+  ],
   "d1_databases": [
     {
       "binding": "DB",

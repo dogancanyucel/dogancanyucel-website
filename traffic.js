@@ -59,6 +59,10 @@ const API_ROUTES = new Set(["exercises", "supplements", "feedback", "verify-emai
 /** The API route a request is for, or "" when it is not an API request at all. */
 export function apiRouteOf(url) {
   if (url.hostname === APP_LINKS_HOST) return "";
+  // The clips are two routes under one prefix, and a clip's id is never part of the name:
+  // a tally per clip would be a list of what people train.
+  if (url.pathname === "/api/clips/catalogue") return "clips-catalogue";
+  if (url.pathname.startsWith("/api/clips/")) return "clips";
   const match = /^\/api\/([a-z-]+)\/?$/.exec(url.pathname);
   return match && API_ROUTES.has(match[1]) ? match[1] : "";
 }

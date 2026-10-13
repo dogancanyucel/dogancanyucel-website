@@ -1,5 +1,6 @@
 import { APP_LINKS_HOST, appLinksResponse } from "./app-links.js";
 import { statsResponse } from "./site-stats.js";
+import { clipsResponse } from "./clips.js";
 import { apiRouteOf, countsAsVisit, recordApiCall, recordVisit } from "./traffic.js";
 
 /** Everything the site answers. One return per route, counted by fetch below. */
@@ -13,6 +14,10 @@ async function handle(request, env, ctx, url) {
     // The owner's view of the tally. Answers 404 unless STATS_PASSWORD is set.
     const stats = await statsResponse(request, env, url);
     if (stats) return stats;
+
+    // The exercise clips: App Check and sign-in, never public — see clips.js.
+    const clips = await clipsResponse(request, env, url);
+    if (clips) return clips;
 
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",

@@ -31,3 +31,11 @@ Thumbs.db
 # are gone, and a fresh clone of this repo will not have them.
 contextwindows.md
 CLAUDE.md
+
+# Exercise clips never enter this public repository (owner, 2026-10-13): they live in
+# the private R2 bucket — see clips.js and scripts/upload-clips.mjs.
+*.mp4
+clips-catalogue.local.json
+# Which clip is which movement stays on this machine too (owner, 2026-10-13: "Yalnız bu
+# makinede"). clip-slugs.example.json shows the shape.
+clip-slugs.json
