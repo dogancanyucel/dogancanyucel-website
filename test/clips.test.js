@@ -7,7 +7,7 @@ import worker from "../index.js";
 import { clipsResponse, clipRouteOf } from "../clips.js";
 import { APP_CHECK, ID_TOKEN, clearKeyCache, verifiedClaims } from "../firebase-tokens.js";
 import { apiRouteOf } from "../traffic.js";
-import { approvedClips, catalogueFor, isServableId, parseCsv } from "../scripts/upload-clips.mjs";
+import { approvedClips, catalogueFor, clipsToUpload, isServableId, parseCsv } from "../scripts/upload-clips.mjs";
 import { readFileSync } from "node:fs";
 
 // ── A signing key standing in for Google's ──────────────────────────────────
@@ -302,6 +302,14 @@ await test("only the clips the owner approved go up, notes with commas and quote
   );
   assert.strictEqual(log[0].not, "partnerli, kamera -60");
   assert.deepStrictEqual(approvedClips(log), [{ id: "7HcfMBP", name: "assisted standing triceps extension (with towel)" }]);
+});
+
+await test("a run sends only new clips and re-renders, nothing when the bucket already has them", () => {
+  const found = [{ id: "a", sha256: "1" }, { id: "b", sha256: "2" }, { id: "c", sha256: "3" }];
+  const held = { clips: [{ id: "a", sha256: "1" }, { id: "b", sha256: "old" }] };
+  assert.deepStrictEqual(clipsToUpload(found, held).map((c) => c.id), ["b", "c"]);
+  assert.deepStrictEqual(clipsToUpload(found, { clips: found }), []);
+  assert.strictEqual(clipsToUpload(found, null).length, 3, "an unreadable bucket gets everything");
 });
 
 await test("the upload accepts exactly the ids the Worker serves", () => {

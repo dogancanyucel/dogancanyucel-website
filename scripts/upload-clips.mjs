@@ -13,10 +13,10 @@
 // owner pairs a clip with a drawing only when it is the same movement ("sadece urettiklerimle
 // ayni ise"), so nothing here guesses one.
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join, resolve } from "node:path";
-import { homedir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 
 const BUCKET = "turquoise-exercise-clips";
 const ROOT = new URL("..", import.meta.url).pathname;
@@ -66,6 +66,22 @@ export function catalogueFor(found, version, updatedAt) {
   };
 }
 
+/** The clips whose bytes the bucket does not hold yet: new ids, or ids whose checksum changed. Pure, so it is tested. */
+export function clipsToUpload(found, held) {
+  const bucket = new Map((held?.clips || []).map((clip) => [clip.id, clip.sha256]));
+  return found.filter((clip) => bucket.get(clip.id) !== clip.sha256);
+}
+
+/** The catalogue the bucket holds now, or null when it cannot be read (then everything is sent). */
+function bucketCatalogue() {
+  const dir = mkdtempSync(join(tmpdir(), "clips-"));
+  const file = join(dir, "catalogue.json");
+  const run = spawnSync("npx", ["--yes", "wrangler@4", "r2", "object", "get", `${BUCKET}/clips/catalogue.json`, "--file", file, "--remote"],
+    { stdio: "ignore", cwd: ROOT });
+  if (run.status !== 0 || !existsSync(file)) return null;
+  try { return JSON.parse(readFileSync(file, "utf8")); } catch { return null; }
+}
+
 /** The 1080p H.264 file of a clip in the production's out/ folder, or null. */
 function clipFile(outDir, id) {
   const folder = readdirSync(outDir).find((name) => name.split("_")[1] === id);
@@ -109,13 +125,29 @@ function main(argv) {
   if (missing.length) console.log(`approved but no 1080p H.264 file, skipped: ${missing.join(", ")}`);
   if (!found.length) throw new Error("no approved clip was found; nothing uploaded");
 
-  found.forEach((clip, i) => {
+  // Only what the bucket does not already hold, byte for byte (owner, 2026-10-14: uploads run on their own when the production
+  // log changes, so a run must cost nothing when nothing changed). The bucket's own catalogue is the record of what it holds.
+  const held = bucketCatalogue();
+  const changes = clipsToUpload(found, held);
+  const sameSlugs = held && !changes.length && found.length === held.clips.length &&
+    found.every((clip) => held.clips.some((h) => h.id === clip.id && (h.slug ?? null) === (clip.slug ?? null) && h.name === clip.name));
+  if (sameSlugs && !argv.includes("--all")) {
+    console.log(`nothing changed: ${found.length} approved clip(s), all in the bucket`);
+    return;
+  }
+  const toSend = argv.includes("--all") ? found : changes;
+  toSend.forEach((clip, i) => {
     put(`clips/${clip.id}.mp4`, clip.file, "video/mp4", dryRun);
-    if (!dryRun) console.log(`${i + 1}/${found.length} ${clip.id} ${clip.name}`);
+    if (!dryRun) console.log(`${i + 1}/${toSend.length} ${clip.id} ${clip.name}`);
   });
 
-  // Seconds since 1970 as the version: always larger than the last, with no state to keep.
-  const catalogue = catalogueFor(found, Math.floor(Date.now() / 1000), new Date().toISOString().slice(0, 10));
+  // Seconds since 1970 as the version: always larger than the last, with no state to keep. Kept dates for unchanged clips.
+  const today = new Date().toISOString().slice(0, 10);
+  const catalogue = catalogueFor(found, Math.floor(Date.now() / 1000), today);
+  for (const clip of catalogue.clips) {
+    const before = held?.clips.find((h) => h.id === clip.id && h.sha256 === clip.sha256);
+    if (before?.updatedAt) clip.updatedAt = before.updatedAt;
+  }
   const local = join(ROOT, "clips-catalogue.local.json"); // gitignored
   writeFileSync(local, JSON.stringify(catalogue, null, 2));
   put("clips/catalogue.json", local, "application/json", dryRun);
