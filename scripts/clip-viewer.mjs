@@ -58,8 +58,12 @@ function main(argv) {
   const outDir = join(from, "pilot", "out");
   const log = parseCsv(readFileSync(join(from, "uretim-kaydi.csv"), "utf8"));
   const byId = new Map(log.map((row) => [row.medya_id, row]));
-  const drawings = JSON.parse(readFileSync(join(ROOT, "public/exercise-illustrations/catalogue.json"), "utf8"))
-    .map(({ slug, name }) => ({ slug, name }));
+  // The free drawings left the site on 2026-10-15 (owner: "Hepsini şimdi kaldır"), so there is nothing left to pair a clip
+  // with on the page: a pairing (clip-slugs.json) is shown as its slug, and no closest drawings are guessed.
+  const drawingsFile = join(ROOT, "public/exercise-illustrations/catalogue.json");
+  const drawings = existsSync(drawingsFile)
+    ? JSON.parse(readFileSync(drawingsFile, "utf8")).map(({ slug, name }) => ({ slug, name }))
+    : [];
   const drawingName = new Map(drawings.map((d) => [d.slug, d.name]));
   const slugsFile = join(ROOT, "clip-slugs.json");
   const pairs = existsSync(slugsFile) ? JSON.parse(readFileSync(slugsFile, "utf8")) : {};
@@ -146,8 +150,12 @@ ${cards.map((c) => `  <article data-text="${escape(`${c.name} ${c.id} ${c.order}
       <div class="title"><span class="order">#${c.order}</span><span class="name">${escape(c.name)}</span></div>
       <div class="meta"><code>${escape(c.id)}</code><span>approved ${escape(c.date)}</span><span class="pill ${badge[c.state][0]}">${badge[c.state][1]}</span></div>
       ${c.paired
-        ? `<div class="label">Replaces</div><div class="drawings">${drawingFigure(c.paired, drawingName.get(c.paired) || c.paired, true)}</div>`
-        : `<div class="label">Closest drawings — not paired</div><div class="drawings">${c.candidates.map((d) => drawingFigure(d.slug, d.name, false)).join("")}</div>`}
+        ? (drawings.length
+          ? `<div class="label">Replaces</div><div class="drawings">${drawingFigure(c.paired, drawingName.get(c.paired) || c.paired, true)}</div>`
+          : `<div class="label">Paired with <code>${escape(c.paired)}</code></div>`)
+        : (c.candidates.length
+          ? `<div class="label">Closest drawings — not paired</div><div class="drawings">${c.candidates.map((d) => drawingFigure(d.slug, d.name, false)).join("")}</div>`
+          : "")}
     </div>
   </article>`).join("\n")}
 </main>
