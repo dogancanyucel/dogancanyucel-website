@@ -57,6 +57,27 @@ export function approvedClips(logRows) {
 }
 
 /**
+ * The other names the production log gives each clip: its "diger_adlar" column, names separated by "|".
+ *
+ * **Written when the clip is made** (owner, 2026-10-15, choosing "A" for 2,500 clips): the one who renders a movement knows
+ * what people call it, and a name written then costs nothing later — no list in the coach's prompt, no app update. Merged
+ * with clip-aliases.json, which held the first 23 clips' names until the log had the column. Pure, so it is tested.
+ */
+export function aliasesFrom(logRows, extra = {}) {
+  const merged = {};
+  const add = (id, names) => {
+    const list = merged[id] || (merged[id] = []);
+    for (const name of names) if (name && !list.some((n) => n.toLowerCase() === name.toLowerCase())) list.push(name);
+  };
+  for (const row of logRows) {
+    if (row.durum !== "onaylandi" || !isServableId(row.medya_id)) continue;
+    add(row.medya_id, String(row.diger_adlar || "").split("|").map((n) => n.trim()).filter(Boolean));
+  }
+  for (const [id, names] of Object.entries(extra)) add(id, names);
+  return merged;
+}
+
+/**
  * The catalogue for the clips found, in the shape clips.js serves. Pure, so it is tested.
  *
  * **Other names as rows of their own** (owner, 2026-10-15: the coach writes "Squat", the clip is "barbell full squat", and no
@@ -132,19 +153,21 @@ function main(argv) {
   const from = resolve(fromArg.replace(/^~(?=$|\/)/, homedir()));
   const dryRun = argv.includes("--dry-run");
   const outDir = join(from, "pilot", "out");
-  const approved = approvedClips(parseCsv(readFileSync(join(from, "uretim-kaydi.csv"), "utf8")));
+  const logRows = parseCsv(readFileSync(join(from, "uretim-kaydi.csv"), "utf8"));
+  const approved = approvedClips(logRows);
 
   const slugsFile = join(ROOT, "clip-slugs.json");
   const slugs = existsSync(slugsFile) ? JSON.parse(readFileSync(slugsFile, "utf8")) : {};
   for (const id of Object.keys(slugs)) {
     if (!isServableId(id)) throw new Error(`clip-slugs.json: ${id} is not an id the Worker serves`);
   }
-  // Kept on this machine like the pairings (clip-aliases.example.json shows the shape).
+  // Names not yet in the log's "diger_adlar" column, kept on this machine (clip-aliases.example.json shows the shape).
   const aliasesFile = join(ROOT, "clip-aliases.json");
-  const aliases = existsSync(aliasesFile) ? JSON.parse(readFileSync(aliasesFile, "utf8")) : {};
-  for (const id of Object.keys(aliases)) {
+  const extraAliases = existsSync(aliasesFile) ? JSON.parse(readFileSync(aliasesFile, "utf8")) : {};
+  for (const id of Object.keys(extraAliases)) {
     if (!isServableId(id)) throw new Error(`clip-aliases.json: ${id} is not an id the Worker serves`);
   }
+  const aliases = aliasesFrom(logRows, extraAliases);
 
   const found = [];
   const missing = [];

@@ -7,7 +7,7 @@ import worker from "../index.js";
 import { clipsResponse, clipRouteOf } from "../clips.js";
 import { APP_CHECK, ID_TOKEN, clearKeyCache, verifiedClaims } from "../firebase-tokens.js";
 import { apiRouteOf } from "../traffic.js";
-import { approvedClips, catalogueFor, clipsToUpload, isServableId, parseCsv, sameRows } from "../scripts/upload-clips.mjs";
+import { aliasesFrom, approvedClips, catalogueFor, clipsToUpload, isServableId, parseCsv, sameRows } from "../scripts/upload-clips.mjs";
 import { readFileSync } from "node:fs";
 
 // ── A signing key standing in for Google's ──────────────────────────────────
@@ -304,6 +304,20 @@ await test("other names are rows of their own with the clip's file, and one name
   assert.throws(() => catalogueFor(found, 7, "x", { r: ["barbell full squat"] }), /claimed by s and r/);
   assert.ok(sameRows(made, catalogueFor(found, 9, "2026-10-16", { s: ["back squat", "Squat"], r: ["Romanian Deadlift"] })), "versions and dates aside");
   assert.ok(!sameRows(made, catalogueFor(found, 7, "2026-10-15", {})), "a removed name is a change");
+});
+
+await test("the log's other-names column feeds the catalogue, approved clips only, merged with the local file", () => {
+  const log = parseCsv(
+    'sira,medya_id,egzersiz_adi,durum,diger_adlar\n' +
+    '1,qXTaZnJ,barbell full squat,onaylandi,Squat | Back Squat\n' +
+    '2,P2lNrGL,cable preacher curl,sahibine gonderildi,Preacher Curl\n' +
+    '3,wQ2c4XD,barbell romanian deadlift,onaylandi,\n',
+  );
+  assert.deepStrictEqual(aliasesFrom(log, { qXTaZnJ: ["back squat", "Barbell Squat"], wQ2c4XD: ["RDL"] }), {
+    qXTaZnJ: ["Squat", "Back Squat", "Barbell Squat"], wQ2c4XD: ["RDL"],
+  });
+  assert.deepStrictEqual(aliasesFrom(parseCsv("sira,medya_id,egzersiz_adi,durum\n1,qXTaZnJ,x,onaylandi\n")), { qXTaZnJ: [] },
+    "a log without the column still uploads");
 });
 
 await test("only the clips the owner approved go up, notes with commas and quotes kept apart", () => {
