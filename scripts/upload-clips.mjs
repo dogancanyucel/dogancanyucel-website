@@ -56,14 +56,40 @@ export function approvedClips(logRows) {
     .map((row) => ({ id: row.medya_id, name: row.egzersiz_adi }));
 }
 
-/** The catalogue for the clips found, in the shape clips.js serves. Pure, so it is tested. */
-export function catalogueFor(found, version, updatedAt) {
-  return {
-    version,
-    clips: found
-      .map(({ id, name, slug, bytes, sha256 }) => ({ id, name, slug: slug ?? null, bytes, sha256, updatedAt }))
-      .sort((a, b) => a.name.localeCompare(b.name)),
-  };
+/**
+ * The catalogue for the clips found, in the shape clips.js serves. Pure, so it is tested.
+ *
+ * **Other names as rows of their own** (owner, 2026-10-15: the coach writes "Squat", the clip is "barbell full squat", and no
+ * clip played). `aliases` maps a clip id to the short names people and the coach use for that same movement; each becomes one
+ * more row with the clip's id, bytes and checksum, so the apps already in the stores find it by the exact-name rule they have
+ * — one file, several names, no app update. An alias names one movement only: two clips claiming it is refused, since an app
+ * would play whichever came first.
+ */
+export function catalogueFor(found, version, updatedAt, aliases = {}) {
+  const rows = found.map(({ id, name, slug, bytes, sha256 }) => ({ id, name, slug: slug ?? null, bytes, sha256, updatedAt }));
+  const taken = new Map(rows.map((row) => [fold(row.name), row.id]));
+  for (const clip of found) {
+    for (const alias of aliases[clip.id] || []) {
+      const key = fold(alias);
+      if (!key) continue;
+      const owner = taken.get(key);
+      if (owner === clip.id) continue;
+      if (owner) throw new Error(`clip-aliases.json: "${alias}" is claimed by ${owner} and ${clip.id}`);
+      taken.set(key, clip.id);
+      rows.push({ id: clip.id, name: alias, slug: null, bytes: clip.bytes, sha256: clip.sha256, updatedAt });
+    }
+  }
+  return { version, clips: rows.sort((a, b) => a.name.localeCompare(b.name)) };
+}
+
+/** A name as the apps compare it: case and spacing folded (the apps also fold accents and punctuation). */
+const fold = (name) => String(name).toLowerCase().trim().replace(/\s+/g, " ");
+
+/** Whether two catalogues list the same rows, versions and dates aside. Pure, so it is tested. */
+export function sameRows(a, b) {
+  const key = (c) => JSON.stringify((c?.clips || []).map(({ id, name, slug, bytes, sha256 }) => [id, name, slug ?? null, bytes, sha256])
+    .sort((x, y) => JSON.stringify(x).localeCompare(JSON.stringify(y))));
+  return key(a) === key(b);
 }
 
 /** The clips whose bytes the bucket does not hold yet: new ids, or ids whose checksum changed. Pure, so it is tested. */
@@ -113,6 +139,12 @@ function main(argv) {
   for (const id of Object.keys(slugs)) {
     if (!isServableId(id)) throw new Error(`clip-slugs.json: ${id} is not an id the Worker serves`);
   }
+  // Kept on this machine like the pairings (clip-aliases.example.json shows the shape).
+  const aliasesFile = join(ROOT, "clip-aliases.json");
+  const aliases = existsSync(aliasesFile) ? JSON.parse(readFileSync(aliasesFile, "utf8")) : {};
+  for (const id of Object.keys(aliases)) {
+    if (!isServableId(id)) throw new Error(`clip-aliases.json: ${id} is not an id the Worker serves`);
+  }
 
   const found = [];
   const missing = [];
@@ -129,9 +161,10 @@ function main(argv) {
   // log changes, so a run must cost nothing when nothing changed). The bucket's own catalogue is the record of what it holds.
   const held = bucketCatalogue();
   const changes = clipsToUpload(found, held);
-  const sameSlugs = held && !changes.length && found.length === held.clips.length &&
-    found.every((clip) => held.clips.some((h) => h.id === clip.id && (h.slug ?? null) === (clip.slug ?? null) && h.name === clip.name));
-  if (sameSlugs && !argv.includes("--all")) {
+  // Seconds since 1970 as the version: always larger than the last, with no state to keep. Kept dates for unchanged clips.
+  const today = new Date().toISOString().slice(0, 10);
+  const catalogue = catalogueFor(found, Math.floor(Date.now() / 1000), today, aliases);
+  if (held && !changes.length && sameRows(catalogue, held) && !argv.includes("--all")) {
     console.log(`nothing changed: ${found.length} approved clip(s), all in the bucket`);
     return;
   }
@@ -141,9 +174,6 @@ function main(argv) {
     if (!dryRun) console.log(`${i + 1}/${toSend.length} ${clip.id} ${clip.name}`);
   });
 
-  // Seconds since 1970 as the version: always larger than the last, with no state to keep. Kept dates for unchanged clips.
-  const today = new Date().toISOString().slice(0, 10);
-  const catalogue = catalogueFor(found, Math.floor(Date.now() / 1000), today);
   for (const clip of catalogue.clips) {
     const before = held?.clips.find((h) => h.id === clip.id && h.sha256 === clip.sha256);
     if (before?.updatedAt) clip.updatedAt = before.updatedAt;
@@ -152,7 +182,8 @@ function main(argv) {
   writeFileSync(local, JSON.stringify(catalogue, null, 2));
   put("clips/catalogue.json", local, "application/json", dryRun);
   const paired = found.filter((clip) => clip.slug).length;
-  console.log(`${dryRun ? "would upload" : "uploaded"} ${found.length} clip(s), ${paired} paired with a drawing, catalogue version ${catalogue.version}`);
+  const named = catalogue.clips.length - found.length;
+  console.log(`${dryRun ? "would upload" : "uploaded"} ${found.length} clip(s), ${paired} paired with a drawing, ${named} other name(s), catalogue version ${catalogue.version}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

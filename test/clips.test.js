@@ -7,7 +7,7 @@ import worker from "../index.js";
 import { clipsResponse, clipRouteOf } from "../clips.js";
 import { APP_CHECK, ID_TOKEN, clearKeyCache, verifiedClaims } from "../firebase-tokens.js";
 import { apiRouteOf } from "../traffic.js";
-import { approvedClips, catalogueFor, clipsToUpload, isServableId, parseCsv } from "../scripts/upload-clips.mjs";
+import { approvedClips, catalogueFor, clipsToUpload, isServableId, parseCsv, sameRows } from "../scripts/upload-clips.mjs";
 import { readFileSync } from "node:fs";
 
 // ── A signing key standing in for Google's ──────────────────────────────────
@@ -293,6 +293,19 @@ await test("the uploaded catalogue has the contract's shape, sorted by name, unp
   ] });
 });
 
+await test("other names are rows of their own with the clip's file, and one name never names two clips", () => {
+  const found = [{ id: "s", name: "barbell full squat", bytes: 2, sha256: "y" }, { id: "r", name: "barbell romanian deadlift", bytes: 3, sha256: "z" }];
+  const made = catalogueFor(found, 7, "2026-10-15", { s: ["Squat", "back squat", "BARBELL FULL SQUAT"], r: ["Romanian Deadlift"] });
+  assert.deepStrictEqual(made.clips.map((c) => [c.name, c.id, c.sha256, c.slug]), [
+    ["back squat", "s", "y", null], ["barbell full squat", "s", "y", null], ["barbell romanian deadlift", "r", "z", null],
+    ["Romanian Deadlift", "r", "z", null], ["Squat", "s", "y", null],
+  ], "the clip's own name is not repeated");
+  assert.throws(() => catalogueFor(found, 7, "x", { s: ["deadlift"], r: ["Deadlift"] }), /claimed by s and r/);
+  assert.throws(() => catalogueFor(found, 7, "x", { r: ["barbell full squat"] }), /claimed by s and r/);
+  assert.ok(sameRows(made, catalogueFor(found, 9, "2026-10-16", { s: ["back squat", "Squat"], r: ["Romanian Deadlift"] })), "versions and dates aside");
+  assert.ok(!sameRows(made, catalogueFor(found, 7, "2026-10-15", {})), "a removed name is a change");
+});
+
 await test("only the clips the owner approved go up, notes with commas and quotes kept apart", () => {
   const log = parseCsv(
     'sira,medya_id,egzersiz_adi,durum,tarih,exrx_referansi,not\n' +
@@ -315,8 +328,10 @@ await test("a run sends only new clips and re-renders, nothing when the bucket a
 await test("the upload accepts exactly the ids the Worker serves", () => {
   for (const id of ["EIeI8Vf", "a_b-9"]) assert.ok(isServableId(id), id);
   for (const id of ["../x", "a.b", "", "x".repeat(33)]) assert.ok(!isServableId(id), id);
-  const example = JSON.parse(readFileSync(new URL("../clip-slugs.example.json", import.meta.url), "utf8"));
-  for (const id of Object.keys(example)) assert.ok(isServableId(id), id);
+  for (const file of ["../clip-slugs.example.json", "../clip-aliases.example.json"]) {
+    const example = JSON.parse(readFileSync(new URL(file, import.meta.url), "utf8"));
+    for (const id of Object.keys(example)) assert.ok(isServableId(id), id);
+  }
 });
 
 console.log(`clips: ${passed} passed`);
