@@ -306,16 +306,14 @@ await test("other names are rows of their own with the clip's file, and one name
   assert.ok(!sameRows(made, catalogueFor(found, 7, "2026-10-15", {})), "a removed name is a change");
 });
 
-await test("the log's other-names column feeds the catalogue, approved clips only, merged with the local file", () => {
+await test("the log's other-names column feeds the catalogue, approved clips only", () => {
   const log = parseCsv(
     'sira,medya_id,egzersiz_adi,durum,diger_adlar\n' +
     '1,qXTaZnJ,barbell full squat,onaylandi,Squat | Back Squat\n' +
     '2,P2lNrGL,cable preacher curl,sahibine gonderildi,Preacher Curl\n' +
     '3,wQ2c4XD,barbell romanian deadlift,onaylandi,\n',
   );
-  assert.deepStrictEqual(aliasesFrom(log, { qXTaZnJ: ["back squat", "Barbell Squat"], wQ2c4XD: ["RDL"] }), {
-    qXTaZnJ: ["Squat", "Back Squat", "Barbell Squat"], wQ2c4XD: ["RDL"],
-  });
+  assert.deepStrictEqual(aliasesFrom(log), { qXTaZnJ: ["Squat", "Back Squat"], wQ2c4XD: [] });
   assert.deepStrictEqual(aliasesFrom(parseCsv("sira,medya_id,egzersiz_adi,durum\n1,qXTaZnJ,x,onaylandi\n")), { qXTaZnJ: [] },
     "a log without the column still uploads");
 });
@@ -342,7 +340,7 @@ await test("a run sends only new clips and re-renders, nothing when the bucket a
 await test("the upload accepts exactly the ids the Worker serves", () => {
   for (const id of ["EIeI8Vf", "a_b-9"]) assert.ok(isServableId(id), id);
   for (const id of ["../x", "a.b", "", "x".repeat(33)]) assert.ok(!isServableId(id), id);
-  for (const file of ["../clip-slugs.example.json", "../clip-aliases.example.json"]) {
+  for (const file of ["../clip-slugs.example.json"]) {
     const example = JSON.parse(readFileSync(new URL(file, import.meta.url), "utf8"));
     for (const id of Object.keys(example)) assert.ok(isServableId(id), id);
   }

@@ -60,10 +60,11 @@ export function approvedClips(logRows) {
  * The other names the production log gives each clip: its "diger_adlar" column, names separated by "|".
  *
  * **Written when the clip is made** (owner, 2026-10-15, choosing "A" for 2,500 clips): the one who renders a movement knows
- * what people call it, and a name written then costs nothing later — no list in the coach's prompt, no app update. Merged
- * with clip-aliases.json, which held the first 23 clips' names until the log had the column. Pure, so it is tested.
+ * what people call it, and a name written then costs nothing later — no list in the coach's prompt, no app update. The one
+ * source: the first 23 clips' names lived in a local clip-aliases.json until the log had the column (retired the same day,
+ * once the log alone gave the live catalogue). Pure, so it is tested.
  */
-export function aliasesFrom(logRows, extra = {}) {
+export function aliasesFrom(logRows) {
   const merged = {};
   const add = (id, names) => {
     const list = merged[id] || (merged[id] = []);
@@ -73,7 +74,6 @@ export function aliasesFrom(logRows, extra = {}) {
     if (row.durum !== "onaylandi" || !isServableId(row.medya_id)) continue;
     add(row.medya_id, String(row.diger_adlar || "").split("|").map((n) => n.trim()).filter(Boolean));
   }
-  for (const [id, names] of Object.entries(extra)) add(id, names);
   return merged;
 }
 
@@ -161,13 +161,7 @@ function main(argv) {
   for (const id of Object.keys(slugs)) {
     if (!isServableId(id)) throw new Error(`clip-slugs.json: ${id} is not an id the Worker serves`);
   }
-  // Names not yet in the log's "diger_adlar" column, kept on this machine (clip-aliases.example.json shows the shape).
-  const aliasesFile = join(ROOT, "clip-aliases.json");
-  const extraAliases = existsSync(aliasesFile) ? JSON.parse(readFileSync(aliasesFile, "utf8")) : {};
-  for (const id of Object.keys(extraAliases)) {
-    if (!isServableId(id)) throw new Error(`clip-aliases.json: ${id} is not an id the Worker serves`);
-  }
-  const aliases = aliasesFrom(logRows, extraAliases);
+  const aliases = aliasesFrom(logRows);
 
   const found = [];
   const missing = [];
