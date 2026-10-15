@@ -62,6 +62,7 @@ export function apiRouteOf(url) {
   // The clips are two routes under one prefix, and a clip's id is never part of the name:
   // a tally per clip would be a list of what people train.
   if (url.pathname === "/api/clips/catalogue") return "clips-catalogue";
+  if (url.pathname === "/api/clips/missing") return "clips-missing";
   if (url.pathname.startsWith("/api/clips/")) return "clips";
   const match = /^\/api\/([a-z-]+)\/?$/.exec(url.pathname);
   return match && API_ROUTES.has(match[1]) ? match[1] : "";

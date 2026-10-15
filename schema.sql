@@ -55,3 +55,12 @@ CREATE TABLE IF NOT EXISTS api_calls (
     hits    INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (day, route, outcome)
 );
+
+-- The movement names the apps asked for a clip by and found none (owner, 2026-10-15). A tally, not a trail: day, the
+-- standard English name, count — no user, no device. Read it to know which other names to write into the production log.
+CREATE TABLE IF NOT EXISTS clip_misses (
+    day  TEXT    NOT NULL,          -- YYYY-MM-DD, UTC
+    name TEXT    NOT NULL,          -- folded: lower case, single spaces
+    hits INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (day, name)
+);

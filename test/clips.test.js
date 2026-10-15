@@ -4,7 +4,7 @@
 // Run: node test/clips.test.js
 import assert from "node:assert";
 import worker from "../index.js";
-import { clipsResponse, clipRouteOf } from "../clips.js";
+import { MAX_MISSING, clipsResponse, clipRouteOf, missingNames } from "../clips.js";
 import { APP_CHECK, ID_TOKEN, clearKeyCache, verifiedClaims } from "../firebase-tokens.js";
 import { apiRouteOf } from "../traffic.js";
 import { aliasesFrom, approvedClips, catalogueFor, clipsToUpload, isServableId, parseCsv, sameRows } from "../scripts/upload-clips.mjs";
@@ -80,13 +80,13 @@ function limiter(allowed) {
 
 const envWith = (over = {}) => ({ CLIPS: bucket(), CLIP_LIMIT: limiter(20), CATALOGUE_LIMIT: limiter(5), ...over });
 
-async function ask(path, { app, id, range, env = envWith(), method = "GET" } = {}) {
+async function ask(path, { app, id, range, env = envWith(), method = "GET", body } = {}) {
   const headers = new Headers();
   if (app !== null) headers.set("X-Firebase-AppCheck", app ?? await token(appCheckClaims()));
   if (id !== null) headers.set("Authorization", `Bearer ${id ?? await token(idClaims())}`);
   if (range) headers.set("Range", range);
   const url = new URL(`https://dogancanyucel.com${path}`);
-  return clipsResponse(new Request(url, { method, headers }), env, url, deps);
+  return clipsResponse(new Request(url, { method, headers, body }), env, url, deps);
 }
 
 let passed = 0;
@@ -273,6 +273,40 @@ await test("the catalogue has its own, smaller limit", async () => {
 await test("no limiter on the account: the genuine app still gets its clip", async () => {
   const env = envWith({ CLIP_LIMIT: undefined });
   assert.strictEqual((await ask("/api/clips/EIeI8Vf.mp4", { env })).status, 200);
+});
+
+function database() {
+  const rows = [];
+  return {
+    rows,
+    prepare(sql) { return { bind: (...args) => ({ sql, args }) }; },
+    async batch(statements) { for (const statement of statements) rows.push(statement.args); },
+  };
+}
+
+await test("missing names are counted per day and name, folded, from the genuine app only", async () => {
+  assert.deepStrictEqual(clipRouteOf("/api/clips/missing"), { route: "missing" });
+  assert.strictEqual(apiRouteOf(new URL("https://dogancanyucel.com/api/clips/missing")), "clips-missing");
+  const DB = database();
+  const env = envWith({ DB });
+  const body = JSON.stringify({ names: ["Face  Pull", "face pull", "Lat Pulldown"] });
+  assert.strictEqual((await ask("/api/clips/missing", { method: "POST", body, id: null, env })).status, 401);
+  assert.strictEqual((await ask("/api/clips/missing", { method: "GET", env })).status, 405);
+  assert.strictEqual(DB.rows.length, 0, "nothing counted before the caller is known");
+  const response = await ask("/api/clips/missing", { method: "POST", body, env });
+  assert.strictEqual(response.status, 204);
+  assert.deepStrictEqual(DB.rows.map(([, name]) => name), ["face pull", "lat pulldown"]);
+  assert.ok(DB.rows.every(([day, , extra]) => /^\d{4}-\d{2}-\d{2}$/.test(day) && extra === undefined), "a day and a name, nothing else");
+});
+
+await test("a report that is not names is refused", async () => {
+  for (const bad of [null, {}, { names: [] }, { names: "Squat" }, { names: [3] }, { names: ["x".repeat(65)] },
+                     { names: ["<script>"] }, { names: Array(MAX_MISSING + 1).fill("Squat") }]) {
+    assert.strictEqual(missingNames(bad), null, JSON.stringify(bad));
+  }
+  assert.deepStrictEqual(missingNames({ names: ["Pull-Up (weighted)", "Leg press, calf"] }), ["pull-up (weighted)", "leg press, calf"]);
+  const status = (await ask("/api/clips/missing", { method: "POST", body: "not json", env: envWith({ DB: database() }) })).status;
+  assert.strictEqual(status, 400);
 });
 
 await test("no bucket bound yet: 503, after the caller was checked", async () => {

@@ -20,7 +20,11 @@ import { APP_CHECK, ID_TOKEN, verifiedClaims } from "./firebase-tokens.js";
 //       "name" is the movement's English name; "slug" is the drawing the clip replaces in the apps,
 //       null until the owner pairs them (only when it is the same movement).
 //   GET /api/clips/<id>.mp4   → the clip, 206 for a Range request
-//   both need  X-Firebase-AppCheck: <token>  and  Authorization: Bearer <ID token>
+//   POST /api/clips/missing   {"names": ["Face Pull", ...]} → 204
+//       The standard English names a movement had and no clip answered to (owner, 2026-10-15,
+//       idea 1: "which names are missing" tells which other names to write). Counted per day
+//       and name only — no user, no device, nothing joining two requests (`clip_misses`).
+//   all three need  X-Firebase-AppCheck: <token>  and  Authorization: Bearer <ID token>
 //   401 without them, 429 + Retry-After past the limit.
 
 /** Where the objects sit in the bucket. */
@@ -45,6 +49,7 @@ const json = (status, body, extra = {}) =>
 /** Which of the two clip routes a path is, with the clip's id; null for neither. */
 export function clipRouteOf(pathname) {
   if (pathname === "/api/clips/catalogue") return { route: "catalogue" };
+  if (pathname === "/api/clips/missing") return { route: "missing" };
   const match = /^\/api\/clips\/([^/]+)\.mp4$/.exec(pathname);
   if (match) return { route: "clip", id: match[1] };
   if (pathname.startsWith("/api/clips/")) return { route: "unknown" };
@@ -87,7 +92,8 @@ async function withinLimit(limiter, user) {
 export async function clipsResponse(request, env, url, deps = {}) {
   const which = clipRouteOf(url.pathname);
   if (!which) return null;
-  if (request.method !== "GET") return json(405, { error: "Method not allowed." }, { Allow: "GET" });
+  const method = which.route === "missing" ? "POST" : "GET";
+  if (request.method !== method) return json(405, { error: "Method not allowed." }, { Allow: method });
   if (which.route === "unknown") return json(404, { error: "Not found." });
   if (which.route === "clip" && !CLIP_ID.test(which.id)) return json(400, { error: "Bad clip id." });
 
@@ -99,9 +105,17 @@ export async function clipsResponse(request, env, url, deps = {}) {
   }
   if (!user) return json(401, { error: "Unauthorized." });
 
-  const limiter = which.route === "catalogue" ? env.CATALOGUE_LIMIT : env.CLIP_LIMIT;
+  // A report of missing names is asked for as rarely as the list, so it shares the list's limit.
+  const limiter = which.route === "clip" ? env.CLIP_LIMIT : env.CATALOGUE_LIMIT;
   if (!(await withinLimit(limiter, user))) {
     return json(429, { error: "Too many requests." }, { "Retry-After": String(RETRY_AFTER_SECONDS) });
+  }
+
+  if (which.route === "missing") {
+    const names = missingNames(await request.json().catch(() => null));
+    if (!names) return json(400, { error: "Bad names." });
+    await recordMisses(env, names);
+    return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
   }
 
   if (!env.CLIPS) return json(503, { error: "Clips unavailable." });
@@ -142,4 +156,37 @@ export async function clipsResponse(request, env, url, deps = {}) {
   }
   headers.set("Content-Length", String(clip.size));
   return new Response(clip.body, { status: 200, headers });
+}
+
+/** At most this many names in one report: a training day is four to nine movements. */
+export const MAX_MISSING = 12;
+
+/**
+ * The names of a report, folded the way the catalogue's names are compared, or null when the body is not a report.
+ * A name is a movement's name: letters, digits, spaces and a little punctuation, up to 64 characters. Pure, so it is tested.
+ */
+export function missingNames(body) {
+  const names = body?.names;
+  if (!Array.isArray(names) || names.length === 0 || names.length > MAX_MISSING) return null;
+  const folded = [];
+  for (const name of names) {
+    if (typeof name !== "string") return null;
+    const one = name.toLowerCase().trim().replace(/\s+/g, " ");
+    if (!/^[\p{L}\p{N} ()'\-\/.&+,]{1,64}$/u.test(one)) return null;
+    if (!folded.includes(one)) folded.push(one);
+  }
+  return folded;
+}
+
+/** One more for each name today. Never throws at the caller: a lost count must not cost the app its answer. */
+async function recordMisses(env, names, now = new Date()) {
+  if (!env?.DB) return;
+  const day = now.toISOString().slice(0, 10);
+  try {
+    await env.DB.batch(names.map((name) => env.DB.prepare(
+      "INSERT INTO clip_misses (day, name, hits) VALUES (?, ?, 1) ON CONFLICT(day, name) DO UPDATE SET hits = hits + 1"
+    ).bind(day, name)));
+  } catch {
+    // The table may not exist yet, or D1 may be having a moment; the count is lost and the app is answered.
+  }
 }
