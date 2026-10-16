@@ -1,34 +1,63 @@
 /* ══════════════════════════════════════════════════════════════
    dogancanyucel.com — design system
-   Light, typographic, contemporary: a floating capsule nav, a soft
-   mesh-gradient field behind the hero, and a bento grid where the
-   work is shown. Grid, corner steps and type weights come from
-   ~/.claude/design/apple-style.md; the colours are measured here
-   (every pair in use clears WCAG AA — see CLAUDE.md).
+   Cairn's "Aurora" backdrop, dark (owner, 2026-10-16: "I want my
+   website like this too", then "completely Cairn's background and
+   font"). The light theme it replaces is gone; there is one theme.
+
+   The colours are not from the written brief — they are sampled from
+   the owner's own screenshot of Cairn, because the owner's photo
+   beats the written rule. What that sampling found, and what the
+   brief had back to front:
+     the field  #303d52 at the top-left, losing its blue toward the
+                bottom-right until it is the plain macOS window grey
+                #323232 — accent blue at 16 %, exactly as Cairn's
+                RootView.swift composes it;
+     the cards  a flat #1e1e1e, DARKER than the field, not lighter.
+   Every pair in use is measured against those two backdrops; the
+   numbers and the rules that fall out of them are in CLAUDE.md.
+
+   The font is Inter, not Cairn's. Cairn is a native app and gets San
+   Francisco from macOS; SF may not be served on the web, and Inter is
+   what the Aurora web token block already specifies.
    ══════════════════════════════════════════════════════════════ */
 
 :root {
-  --bg:            #eff3f8;         /* the aura fades into this, so it carries the same blue */
-  --surface:       #ffffff;
-  --surface-sunk:  #ececed;
-  --ink:           #0b1424;         /* the dark panel, same blue cast */
-  --ink-2:         #16223a;
+  /* The field: Cairn's window grey, with the aurora laid over it below. */
+  --bg:            #323232;
+  --aurora:        rgba(10, 132, 255, .16);   /* the accent at 16 %, top-leading */
 
-  --label:         #1b3157;         /* blue ink, not black: 8.15:1 over the aura floor */
-  --label-2:       #41506b;         /* 5.12:1 over the aura floor #cdcdcf */
-  --label-3:       #606c85;         /* white/--surface ONLY: 2.9:1 over the aura, never place it there */
+  /* Cards are darker than the field — measured, and the opposite of the brief. */
+  --surface:       #1e1e1e;
+  --surface-2:     #262628;                   /* a row lifted inside a card */
+  --surface-lit:   #1b2e42;                   /* the product panel, blue-lifted */
 
-  --on-ink:        #eef2f8;
-  --on-ink-2:      rgba(238, 242, 248, .70);
+  --label:         #f5f5f7;                   /* 15.31:1 on a card, 10.07:1 on the field */
+  --label-3:       #8e8e93;                   /* cards ONLY: 2.8:1 on the field, never place it there */
+  --accent:        #0a84ff;                   /* fills and marks */
 
-  --accent:        #00707e;          /* 5.80:1 on white */
-  --accent-strong: #005a66;
-  --accent-bright: #00c8de;          /* fills and glow only, never small text */
-  --accent-wash:   #e4f6f8;
-  --accent-on-ink: #4fdced;          /* 9.9:1 on --ink */
+  /* Two tones per role, because the field and a card are different rooms. The field
+     values are the lighter pair: the cursor glow adds light wherever it goes, and a
+     tone sitting at 4.96:1 would be pushed under AA by it. Measured ceiling — these
+     two hold 4.6:1 with the glow at its strongest; Cairn's own #a1a1a6 would cap the
+     glow at α .075, which is too faint to see. Cards keep the Cairn-side pair. */
+  --label-2:       #bcbcc0;                   /* on the field */
+  --accent-text:   #7cc2ff;                   /* on the field */
+  --accent-wash:   rgba(10, 132, 255, .16);
+  --good:          #30d158;
+  --bad:           #ff453a;
 
-  --hairline:      rgba(0, 0, 0, .09);
+  --edge:          rgba(255, 255, 255, .08);  /* Cairn's card edge */
+  --edge-strong:   rgba(255, 255, 255, .16);
+  --hairline:      rgba(255, 255, 255, .08);
   --hairline-ink:  rgba(255, 255, 255, .12);
+
+  /* Kept so older markup that still says .on-ink renders as the page does. */
+  --ink:           #1e1e1e;
+  --on-ink:        #f5f5f7;
+  --on-ink-2:      #aeaeb2;
+  --accent-on-ink: #64b5ff;
+  --accent-strong: #64b5ff;
+  --accent-bright: #0a84ff;
 
   --r-control: 14px;
   --r-card:    20px;
@@ -42,7 +71,7 @@
   --dur:       250ms;
 
   --nav-h:     56px;
-  --nav-gap:   14px;                 /* capsule inset from the top */
+  --nav-gap:   14px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -60,53 +89,57 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* ── Aura ─────────────────────────────────────────────────────
-   Two fixed fields of wide radial gradients, drifting slowly in
-   opposite directions. Fixed rather than scrolled, so it reads as
-   light in the room rather than a picture glued to the page, and
-   it costs one composited layer instead of a repaint.
-   One hue only (owner, 2026-09-21): a soft blue, no purple and no
-   black. Body text sits directly on this field, so how deep the blue
-   may go is a measured ceiling, not a taste call — see CLAUDE.md. */
+/* ── Aurora ───────────────────────────────────────────────────
+   One fixed layer, not two drifting ones: Cairn's backdrop is a
+   still gradient, and the drifting mesh that used to live here was
+   the light theme's. Fixed rather than scrolled so it reads as light
+   in the room rather than a picture glued to the page, and it costs
+   one composited layer instead of a repaint.
+   The stop at 50 % is Cairn's: its LinearGradient is
+   [accent@0.16, windowBg, windowBg], so the blue is spent by halfway
+   and the rest of the page is the plain window grey. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(135deg, var(--aurora) 0%, rgba(10, 132, 255, 0) 50%);
+}
 
-body::before,
+/* ── The glow under the cursor ────────────────────────────────
+   Owner, 2026-10-16: wherever the mouse goes, that spot lights up in
+   the aurora's own tone. It is one more fixed layer over the aurora
+   and under everything else, moved by two custom properties that
+   script.js writes — the element is never re-laid-out, only its
+   gradient is re-read, so this is a composited repaint of one layer
+   rather than work on the page.
+
+   The strength is a measured ceiling, not a taste call: the glow adds
+   light to the field, and the field is where the lighter text sits.
+   At rgba(10,132,255,.18) over the aurora's brightest corner the
+   on-field pair still holds 4.6:1. Raising it means re-measuring —
+   the method is in CLAUDE.md.
+
+   Off by default: it only turns on for a device that actually has a
+   pointer, and it is motion tied to input, so Reduce Motion drops it. */
 body::after {
   content: "";
   position: fixed;
-  inset: -25%;
-  z-index: -2;
+  inset: 0;
+  z-index: -1;
   pointer-events: none;
-  will-change: transform;
+  opacity: 0;
+  transition: opacity 400ms var(--ease);
+  background: radial-gradient(
+    38vmax 38vmax at var(--glow-x, 50%) var(--glow-y, 40%),
+    rgba(10, 132, 255, .18),
+    rgba(10, 132, 255, .07) 38%,
+    rgba(10, 132, 255, 0) 70%);
 }
 
-body::before {
-  background:
-    radial-gradient(38% 34% at 18% 22%, rgba(116, 176, 226, .104), transparent 68%),
-    radial-gradient(34% 32% at 82% 14%, rgba(150, 200, 238, .09), transparent 70%),
-    radial-gradient(40% 36% at 68% 78%, rgba(255, 255, 255, .80), transparent 70%);
-  animation: aura-a 34s var(--ease) infinite alternate;
-}
-
-body::after {
-  background:
-    radial-gradient(32% 30% at 74% 42%, rgba(132, 190, 232, .076), transparent 70%),
-    radial-gradient(36% 32% at 26% 76%, rgba(100, 162, 218, .081), transparent 70%),
-    radial-gradient(30% 28% at 48% 6%,  rgba(255, 255, 255, .78), transparent 72%);
-  animation: aura-b 46s var(--ease) infinite alternate;
-}
-
-@keyframes aura-a {
-  from { transform: translate3d(-3%, -2%, 0) scale(1);    }
-  to   { transform: translate3d( 4%,  3%, 0) scale(1.14); }
-}
-@keyframes aura-b {
-  from { transform: translate3d( 3%,  2%, 0) scale(1.1); }
-  to   { transform: translate3d(-4%, -3%, 0) scale(1);   }
-}
-
-/* Motion is decoration here; the colour field stays, the drift goes. */
-@media (prefers-reduced-motion: reduce) {
-  body::before, body::after { animation: none; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body.glow-on::after { opacity: 1; }
 }
 
 body > * { position: relative; }
@@ -125,7 +158,32 @@ img, svg { max-width: 100%; }
 /* Navigation, buttons and cards carry their own shape, so a link there needs
    no underline. A link inside a sentence does: colour alone is not a
    distinguishing mark (WCAG 1.4.1, axe link-in-text-block). */
-a { color: var(--accent); text-decoration: none; }
+/* Anything with a surface of its own is a card, and a card is a darker room than the
+   field: the Cairn-side tones belong there, and redefining the two variables on the
+   container means every rule below picks the right one without knowing where it is. */
+.bento-cell, .rows, .prose, footer, .eyebrow, .linklist a {
+  --label-2:     #aeaeb2;
+  --accent-text: var(--accent);
+}
+
+/* Rooms that look like cards but are lit like the field, so they keep the field's
+   lighter pair. The product panel carries the aurora gathered on it; the nav capsule
+   is translucent and the field shows through it; a pill is a wash of the accent
+   rather than a surface of its own. Measured — with the darker --accent the wordmark
+   dot falls to 3.73:1 and the panel's link to 3.8:1. */
+.bento-cell.feature, #navbar {
+  --label-2:     #bcbcc0;
+  --accent-text: #7cc2ff;
+}
+
+/* A pill is the lightest thing on the page: its own blue wash sits on top of
+   whatever it is on. #7cc2ff measured 4.13:1 there; this clears it. */
+.pill {
+  --label-2:     #bcbcc0;
+  --accent-text: #a3d4ff;
+}
+
+a { color: var(--accent-text); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 p a, li a, dd a, .prose a, .credits a {
@@ -172,7 +230,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
   padding: 0 14px;
   border-radius: 999px;
   background: var(--surface);
-  border: 1px solid var(--hairline);
+  border: 1px solid var(--edge);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: .02em;
@@ -181,7 +239,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
 .eyebrow::before {
   content: "";
   width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent-bright);
+  background: var(--accent);
 }
 
 .muted { color: var(--label-2); }
@@ -208,16 +266,14 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
 }
 .btn:active { transform: scale(.97); }
 
-.btn-primary { background: var(--label); color: #fff; }
-.btn-primary:hover { background: #000; }
+/* A light fill, not the accent: white on #0a84ff measures 3.65:1 and fails. */
+.btn-primary { background: var(--label); color: var(--surface); }
+.btn-primary:hover { background: #ffffff; }
 
-.btn-ghost { background: rgba(255, 255, 255, .6); color: var(--label); border-color: var(--hairline); }
-.btn-ghost:hover { background: #fff; border-color: rgba(0, 0, 0, .2); }
+.btn-ghost { background: rgba(255, 255, 255, .06); color: var(--label); border-color: var(--edge-strong); }
+.btn-ghost:hover { background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .28); }
 
-.on-ink .btn-primary { background: var(--on-ink); color: var(--ink); }
-.on-ink .btn-primary:hover { background: #fff; }
-.on-ink .btn-ghost { background: transparent; color: var(--on-ink); border-color: var(--hairline-ink); }
-.on-ink .btn-ghost:hover { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .3); }
+/* The page is the dark panel now, so .on-ink needs no overrides of its own. */
 
 /* App Store button. Apple ships an official "Download on the App Store" badge, but
    it is a licensed image with its own placement rules and the mark is a trademark —
@@ -239,12 +295,9 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
 }
 .btn-store .store-name { font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
 
-/* The dark product panel is not .on-ink, so it names its own button colours. */
-.feature .btn-primary { background: var(--on-ink); color: var(--ink); }
-.feature .btn-primary:hover { background: #fff; }
 
-.store-note { margin: 12px 0 0; font-size: 14px; color: var(--label-2); }   /* --label-3 would be 4.15:1 here: this line sits on the aura */
-.feature .store-note, .on-ink .store-note { color: var(--on-ink-2); }
+
+.store-note { margin: 12px 0 0; font-size: 14px; color: var(--label-2); }   /* --label-3 is 2.8:1 on the field; this line can sit there */
 
 /* A bento cell whose whole job is the store link. */
 .bento-cell .store-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 20px; }
@@ -260,17 +313,17 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
   z-index: 100;
   width: min(calc(100% - 2 * var(--nav-gap)), var(--measure));
   border-radius: var(--r-capsule);
-  background: rgba(255, 255, 255, .72);
-  border: 1px solid rgba(255, 255, 255, .6);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
+  background: rgba(30, 30, 30, .78);
+  border: 1px solid var(--edge);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .30);
   transition: box-shadow var(--dur) var(--ease), background var(--dur) var(--ease);
 }
 @supports (backdrop-filter: saturate(180%) blur(20px)) {
-  #navbar { background: rgba(255, 255, 255, .6); backdrop-filter: saturate(180%) blur(20px); }
+  #navbar { background: rgba(30, 30, 30, .62); backdrop-filter: saturate(180%) blur(20px); }
 }
 #navbar.scrolled {
-  background: rgba(255, 255, 255, .86);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, .07);
+  background: rgba(30, 30, 30, .90);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .45);
 }
 
 .nav-container {
@@ -289,7 +342,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
   letter-spacing: -.02em;
   color: var(--label);
 }
-.dot { color: var(--accent-strong); }   /* the wordmark sits on the aura: --accent is 3.48:1 there, --accent-strong 4.75:1 */
+.dot { color: var(--accent-text); }   /* the wordmark rides the translucent nav over the field */
 
 .nav-links { display: flex; gap: 2px; margin: 0; padding: 0; list-style: none; }
 .nav-links a {
@@ -302,7 +355,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
   color: var(--label-2);
   transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
 }
-.nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--label); background: rgba(0, 0, 0, .055); }
+.nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--label); background: rgba(255, 255, 255, .10); }
 
 .hamburger {
   display: none;
@@ -325,7 +378,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
   font-size: 17px; color: var(--label);
   border-top: 1px solid var(--hairline);
 }
-.mobile-link:hover { color: var(--accent); }
+.mobile-link:hover { color: var(--accent-text); }
 
 @media (max-width: 760px) {
   .nav-links { display: none; }
@@ -375,7 +428,7 @@ section { padding-block: clamp(72px, 12vw, 148px); }
   border-radius: var(--r-card);
   background: var(--surface);
   color: inherit;
-  border: 1px solid transparent;
+  border: 1px solid var(--edge);
   transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease),
               box-shadow var(--dur) var(--ease);
 }
@@ -384,23 +437,26 @@ section { padding-block: clamp(72px, 12vw, 148px); }
 
 a.bento-cell:hover, .bento-cell.is-link:hover {
   transform: translateY(-3px);
-  border-color: rgba(0, 0, 0, .1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .07);
+  border-color: var(--edge-strong);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .42);
 }
 
 .bento-cell.wide  { grid-column: span 3; }
 .bento-cell.half  { grid-column: span 3; }
 .bento-cell.full  { grid-column: span 6; }
 
-/* The one dark cell: the product itself. */
+/* The product itself. On the old light page this was the only dark thing and that
+   is how it carried; every card is dark now, so it carries by being the only lit
+   one — the aurora gathered on it, and an edge in the accent. */
 .bento-cell.feature {
   grid-column: span 6;
   position: relative;
   overflow: hidden;
   padding: clamp(28px, 4vw, 48px);
   border-radius: var(--r-panel);
-  background: var(--ink);
-  color: var(--on-ink);
+  background: var(--surface-lit);
+  border-color: rgba(10, 132, 255, .34);
+  color: var(--label);
 }
 .bento-cell.feature::before {
   content: "";
@@ -408,17 +464,17 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   inset: -40% -10% auto -10%;
   height: 150%;
   background:
-    radial-gradient(38% 46% at 82% 18%, rgba(0, 200, 222, .30), transparent 72%),
-    radial-gradient(40% 44% at 18% 88%, rgba(0, 112, 126, .34), transparent 72%);
+    radial-gradient(40% 48% at 14% 10%, rgba(10, 132, 255, .30), transparent 72%),
+    radial-gradient(36% 44% at 88% 92%, rgba(10, 132, 255, .14), transparent 72%);
   pointer-events: none;
 }
 .bento-cell.feature > * { position: relative; }
-.bento-cell.feature p { color: var(--on-ink-2); font-size: 17px; }
-.bento-cell.feature a { color: var(--accent-on-ink); }
+.bento-cell.feature p { color: var(--label-2); font-size: 17px; }
+.bento-cell.feature a { color: var(--accent-text); }
 
 .feature-head { display: flex; align-items: center; gap: 18px; margin-bottom: 22px; }
 .feature-logo { flex: none; width: 68px; height: 68px; border-radius: 15px; }
-.feature-sub { margin: 4px 0 0; color: var(--on-ink-2); font-size: 15px; }
+.feature-sub { margin: 4px 0 0; color: var(--label-2); font-size: 15px; }
 
 .cell-label {
   display: block;
@@ -429,14 +485,14 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   text-transform: uppercase;
   color: var(--accent);
 }
-.feature .cell-label { color: var(--accent-on-ink); }
+.feature .cell-label { color: var(--accent-text); }
 
 .cell-more {
   display: inline-flex; align-items: center; gap: 7px;
   margin-top: auto; padding-top: 20px;
   font-size: 16px; font-weight: 500; color: var(--accent);
 }
-.feature .cell-more { color: var(--accent-on-ink); }
+.feature .cell-more { color: var(--accent-text); }
 .bento-cell:hover .arrow { transform: translateX(4px); }
 .arrow { display: inline-block; transition: transform var(--dur) var(--ease); }
 
@@ -459,19 +515,19 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   height: 30px; padding: 0 13px;
   border-radius: 999px;
   background: var(--accent-wash);
-  color: var(--accent-strong);
+  color: var(--accent-text);
   font-size: 13px; font-weight: 500;
 }
 .feature .pill, .on-ink .pill {
-  background: rgba(255, 255, 255, .1);
-  color: var(--on-ink);
+  background: rgba(255, 255, 255, .10);
+  color: var(--label);
   border: 1px solid var(--hairline-ink);
 }
-.pill .dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-bright); }
+.pill .dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
 
 /* ── Rows (contact) ───────────────────────────────────────── */
 
-.rows { margin: 0; border-radius: var(--r-card); background: var(--surface); overflow: hidden; }
+.rows { margin: 0; border-radius: var(--r-card); background: var(--surface); border: 1px solid var(--edge); overflow: hidden; }
 .row {
   display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 20px;
   min-height: 56px; padding: 14px 20px;
@@ -492,7 +548,7 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   text-decoration: none;
   overflow-wrap: anywhere;
 }
-.big-mail:hover { color: var(--accent); text-decoration: none; }
+.big-mail:hover { color: var(--accent-text); text-decoration: none; }
 
 /* ── Link pills ───────────────────────────────────────────── */
 
@@ -500,11 +556,11 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
 .linklist a {
   display: inline-flex; align-items: center; gap: 9px;
   min-height: 48px; padding: 0 20px;
-  border: 1px solid var(--hairline); border-radius: var(--r-capsule);
+  border: 1px solid var(--edge); border-radius: var(--r-capsule);
   background: var(--surface); color: var(--label); font-size: 15px;
   transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease), transform 90ms var(--ease);
 }
-.linklist a:hover { border-color: rgba(0, 0, 0, .25); color: var(--accent); transform: translateY(-2px); }
+.linklist a:hover { border-color: var(--edge-strong); color: var(--accent); transform: translateY(-2px); }
 .linklist svg { width: 17px; height: 17px; flex: none; }
 
 /* ── Sub-pages ────────────────────────────────────────────── */
@@ -515,7 +571,7 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   display: inline-flex; align-items: center; gap: 7px;
   min-height: 44px; font-size: 15px; color: var(--label-2);
 }
-.back-link:hover { color: var(--accent); }
+.back-link:hover { color: var(--accent-text); }
 
 .page-head { max-width: 760px; margin: 12px 0 clamp(40px, 6vw, 72px); }
 .page-head .eyebrow { margin-bottom: 20px; }
@@ -533,6 +589,7 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   padding: clamp(28px, 5vw, 56px);
   border-radius: var(--r-panel);
   background: var(--surface);
+  border: 1px solid var(--edge);
   color: var(--label-2);
   line-height: 1.68;
   overflow-wrap: break-word;
@@ -550,11 +607,11 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
 
 /* ── Footer ───────────────────────────────────────────────── */
 
-/* The footer carries --label-3, which only clears AA on white — so it brings its
-   own surface rather than sitting on the aura. */
+/* The footer carries --label-3, which only clears AA on a card — so it brings its
+   own surface rather than sitting on the field. */
 footer {
   background: var(--surface);
-  border-top: 1px solid var(--hairline);
+  border-top: 1px solid var(--edge);
   padding-block: 36px;
   font-size: 14px;
   color: var(--label-3);

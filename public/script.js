@@ -58,3 +58,52 @@ if (revealEls.length) {
     revealEls.forEach(el => revealObserver.observe(el));
   }
 }
+
+// ── The glow under the cursor ─────────────────────────────
+// Writes where the pointer is into two custom properties; the gradient that reads
+// them lives in style.css. Two things keep it cheap: the value is only written once
+// per frame no matter how many move events arrive, and it is written on <html>, so
+// nothing in the page is invalidated — only the one fixed layer repaints.
+//
+// It stays off unless the device really has a pointer and the reader has not asked
+// for less motion. A glow chasing a finger on a touchscreen is nothing but a
+// repaint, and this is motion tied to input, which Reduce Motion covers.
+{
+  const pointer = matchMedia('(hover: hover) and (pointer: fine)');
+  const still = matchMedia('(prefers-reduced-motion: reduce)');
+  const root = document.documentElement;
+  let queued = false, x = 0, y = 0;
+
+  const write = () => {
+    queued = false;
+    root.style.setProperty('--glow-x', x.toFixed(2) + '%');
+    root.style.setProperty('--glow-y', y.toFixed(2) + '%');
+  };
+
+  const onMove = (e) => {
+    x = (e.clientX / window.innerWidth) * 100;
+    y = (e.clientY / window.innerHeight) * 100;
+    if (!queued) { queued = true; requestAnimationFrame(write); }
+    document.body.classList.add('glow-on');
+  };
+
+  // The glow follows a pointer, so it goes out when the pointer does.
+  const onLeave = () => document.body.classList.remove('glow-on');
+
+  const apply = () => {
+    const on = pointer.matches && !still.matches;
+    window.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerleave', onLeave);
+    if (on) {
+      window.addEventListener('pointermove', onMove, { passive: true });
+      document.addEventListener('pointerleave', onLeave);
+    } else {
+      document.body.classList.remove('glow-on');
+    }
+  };
+
+  apply();
+  // A mouse can be plugged in, and Reduce Motion can be switched on, mid-visit.
+  pointer.addEventListener('change', apply);
+  still.addEventListener('change', apply);
+}
