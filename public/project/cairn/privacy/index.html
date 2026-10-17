@@ -36,7 +36,7 @@
 
   <main class="prose">
     <h1>Privacy Policy — Cairn: Skill Tree</h1>
-    <p><strong>Effective date:</strong> October 8, 2026<br /><strong>Last updated:</strong> October 16, 2026</p>
+    <p><strong>Effective date:</strong> October 8, 2026<br /><strong>Last updated:</strong> October 17, 2026</p>
 
     <h2>1. Who we are, and what this covers</h2>
     <p>This policy covers <strong>Cairn: Skill Tree</strong> ("Cairn", "the App"), made by Dogancan Yucel, Poland ("we", "us"). Dogancan Yucel is the controller of the personal data described here.</p>
@@ -54,15 +54,16 @@
     <h2>3. Your account</h2>
     <p>Cairn asks you to sign in or create an account the first time it opens. You can use <strong>Sign in with Apple</strong>, <strong>Google</strong>, or an <strong>e-mail address and password</strong>. Accounts are run by <strong>Firebase Authentication</strong> and <strong>Cloud Firestore</strong>, services of Google.</p>
     <ul>
-      <li><strong>Firebase Authentication</strong> keeps your e-mail address, an account identifier, the way you sign in, and — for an e-mail account — your password, which Google stores in protected form; we never see it. Firebase also records the technical information any sign-in service needs to work and to protect accounts, such as the time of sign-in and your IP address.</li>
+      <li><strong>Firebase Authentication</strong> keeps your e-mail address, an account identifier, the way you sign in, and — for an e-mail account, or a Google or Apple account you set a password for in Edit Profile — your password, which Google stores in protected form; we never see it. Firebase also records the technical information any sign-in service needs to work and to protect accounts, such as the time of sign-in and your IP address.</li>
       <li><strong>Sign in with Apple</strong> asks Apple only for your e-mail address. You can choose to hide it; then Apple gives us a private relay address instead of your real one.</li>
       <li><strong>Google sign-in</strong> asks Google only for your e-mail address and basic identity (the <em>openid</em> and <em>email</em> permissions). It happens in your own web browser.</li>
       <li><strong>Your account record</strong> in Cloud Firestore holds your e-mail address, the time the account was made, and which plan you are on. Only you can read it; the plan is written only by our server.</li>
+      <li><strong>Your username</strong>, if you choose one in Edit Profile, is kept in your account record and, together with your account identifier, in a list of usernames on our server, so that no two accounts have the same one. Nobody but our server can read that list, and the App shows your username only to you.</li>
       <li><strong>The seven-day trial of Cairn Cloud + AI</strong> is given once per account, per e-mail address and per device. When you start it, your account record keeps when it started and ends, and our server keeps two marks with no account attached: a fingerprint (a SHA-256 hash) of your e-mail address, and a fingerprint of your device. The device's fingerprint is made in the App from the identifier your device keeps for itself — on a Mac, its hardware UUID — together with Cairn's own text, so neither the address nor the identifier leaves your device, and the fingerprint cannot be matched with another app's. Nobody but our server can read the marks.</li>
       <li><strong>E-mail checks:</strong> to stop throwaway accounts, the App checks the domain of an e-mail address you sign up with against a list kept inside the App. Nothing is sent anywhere for this check. An e-mail account must be verified through a link Firebase sends you before it can be used.</li>
       <li>Your session is kept in your device's secure storage (the Keychain on Apple devices), so you stay signed in.</li>
     </ul>
-    <p><strong>Why:</strong> to give you an account and to know what your account is entitled to (legal basis: performance of our contract with you). The trial's marks are kept so that the free trial is given once and not again to the same person or device (legal basis: our legitimate interest in offering a free trial without it being taken again and again).</p>
+    <p><strong>Why:</strong> to give you an account, the username you choose, and to know what your account is entitled to (legal basis: performance of our contract with you). The trial's marks are kept so that the free trial is given once and not again to the same person or device (legal basis: our legitimate interest in offering a free trial without it being taken again and again).</p>
 
     <h2>4. What stays on your device</h2>
     <p>On the free plan, everything you create in Cairn is stored on your device only. On Cairn Cloud and Cairn Cloud + AI it is stored on your device and synced as section 4a says.</p>
@@ -131,13 +132,14 @@
     <ul>
       <li>Your account and its record are kept until you delete your account.</li>
       <li>The trial's two marks — the fingerprints of an e-mail address and of a device (section 3) — are kept after the account is deleted, for as long as the free trial is offered, so that deleting an account and signing up again does not give a second trial. They name no account and say only that a trial was taken.</li>
+      <li>A username you change, and the username of an account you delete, is not removed from the list of usernames: it is marked released and kept with the account identifier it belonged to, so that nobody else can take it and its owner can have it back. It is not shown to anyone.</li>
       <li>On Cairn Cloud + AI, your account's use of the current week and month is kept until the next week or month replaces it, or until you delete your account. The server's log lines, which carry no account, are kept for 30 days.</li>
       <li>Data on your device is kept until you delete it, delete your account, or remove the App. Skills, books, notebooks and pages you delete wait 30 days in Recently Deleted, then go for good; you can also empty it at once.</li>
       <li>The synced copy (section 4a) is kept until you delete it or your account. Something you delete is marked deleted on our server at the next sync, so your other devices delete it too; 30 days after the delete, its contents are removed from our server, and only the note that it was deleted stays, so a device that was away longer still learns of it. A deleted book's PDF file is removed from Cloud Storage at the same time, unless another of your books uses the same file.</li>
     </ul>
 
     <h2>9. Deleting your data and your account</h2>
-    <p>In the App, open <strong>Settings → Delete Account &amp; Data</strong>. You can delete one kind of data at a time (skills, books, notes, focus history, calendar and goals, what the coach remembers, your AI keys) — with sync, it is deleted from our server and your other devices too at the next sync, as section 8 says — or tick <strong>Entire Account</strong>: this deletes your account and its record first — and with them the synced copy of your learning, your books' files in Cloud Storage, and what our server keeps of your use of Cairn's AI — and then everything Cairn keeps on that device. The trial's marks stay, as section 8 says. If you signed in with Apple, the App also asks Apple to remove Cairn from your Apple ID's sign-in permissions.</p>
+    <p>In the App, open <strong>Settings → Delete Account &amp; Data</strong>. You can delete one kind of data at a time (skills, books, notes, focus history, calendar and goals, what the coach remembers, your AI keys) — with sync, it is deleted from our server and your other devices too at the next sync, as section 8 says — or tick <strong>Entire Account</strong>: this deletes your account and its record first — and with them the synced copy of your learning, your books' files in Cloud Storage, and what our server keeps of your use of Cairn's AI — and then everything Cairn keeps on that device. The trial's marks, and your username in the list of usernames (marked released), stay, as section 8 says. If you signed in with Apple, the App also asks Apple to remove Cairn from your Apple ID's sign-in permissions.</p>
     <p>Data you sent to an AI provider is kept under that provider's own rules; you can manage it in your account with them.</p>
 
     <h2>10. Your rights</h2>
