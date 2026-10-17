@@ -135,7 +135,7 @@ body::after {
   opacity: 0;
   transition: opacity 400ms var(--ease);
   background: radial-gradient(
-    19vmax 19vmax at var(--glow-x, 50%) var(--glow-y, 40%),
+    9.5vmax 9.5vmax at var(--glow-x, 50%) var(--glow-y, 40%),
     rgba(10, 132, 255, .18),
     rgba(10, 132, 255, .07) 38%,
     rgba(10, 132, 255, 0) 70%);
