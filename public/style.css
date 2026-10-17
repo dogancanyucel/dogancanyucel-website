@@ -119,7 +119,10 @@ body::before {
    light to the field, and the field is where the lighter text sits.
    At rgba(10,132,255,.18) over the aurora's brightest corner the
    on-field pair still holds 4.6:1. Raising it means re-measuring —
-   the method is in CLAUDE.md.
+   the method is in CLAUDE.md. Narrowing the circle does not: the
+   stops keep their alphas and only land closer in, so the brightest
+   point the page can reach is the same .18 it was (owner, 2026-10-17:
+   halve the circle).
 
    Off by default: it only turns on for a device that actually has a
    pointer, and it is motion tied to input, so Reduce Motion drops it. */
@@ -132,7 +135,7 @@ body::after {
   opacity: 0;
   transition: opacity 400ms var(--ease);
   background: radial-gradient(
-    38vmax 38vmax at var(--glow-x, 50%) var(--glow-y, 40%),
+    19vmax 19vmax at var(--glow-x, 50%) var(--glow-y, 40%),
     rgba(10, 132, 255, .18),
     rgba(10, 132, 255, .07) 38%,
     rgba(10, 132, 255, 0) 70%);
