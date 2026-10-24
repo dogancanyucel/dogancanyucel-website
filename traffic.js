@@ -47,8 +47,10 @@ export async function recordVisit(request, env, now = new Date()) {
 // What this answers is how much, not who. Who would mean an address or something
 // standing in for one, and that is personal data about the people using the app.
 // How much is a number: day, route, outcome, count. The useful signal is the
-// rejected column — the apps hold a valid key, so requests arriving without one are
-// somebody trying the door, and a day with thousands of them says so plainly.
+// rejected column for the clips — the apps hold a valid token, so requests arriving
+// without one are somebody trying the door — and the refused column for the routes
+// retired on 2026-10-24, which nothing should call: any count there is a caller
+// nobody knew about.
 //
 // It cannot tell one heavy caller from a hundred ordinary ones. That needs something
 // per-caller, which is the line this stays on the safe side of. What it is for is

@@ -15,11 +15,6 @@
       "zone_name": "dogancanyucel.com"
     }
   ],
-  "send_email": [
-    {
-      "name": "EMAIL"
-    }
-  ],
   // The exercise clips, private — see clips.js. The bucket is created by the owner.
   "r2_buckets": [
     {

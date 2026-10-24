@@ -51,16 +51,16 @@ await recordApiCall("exercises", 200, {});   // no binding
 // ── The worker counts through the wrapper, and still answers ─────────────────
 const seen = [];
 const env = {
-  ANDROID_API_KEY: "the-key",
   ASSETS: { fetch: async () => new Response("asset") },
   DB: { prepare(q) { return { bind: (...a) => { if (q.includes("api_calls")) seen.push(a); return { run: async () => ({}), all: async () => ({ results: [] }) }; } }; } },
 };
 const ctx = { waitUntil: (p) => p };
 
-const rejected = await worker.fetch(new Request("https://dogancanyucel.com/api/exercises"), env, ctx);
-assert.strictEqual(rejected.status, 401, "an unkeyed call should still be refused");
+// A retired route still answers, and the knock is still counted: that is how a caller nobody knew about shows up.
+const gone = await worker.fetch(new Request("https://dogancanyucel.com/api/exercises"), env, ctx);
+assert.strictEqual(gone.status, 410, "a retired route should answer 410");
 await new Promise((r) => setTimeout(r, 0));
-assert.deepStrictEqual(seen.at(-1)?.slice(1), ["exercises", "rejected"], "the rejection was not counted");
+assert.deepStrictEqual(seen.at(-1)?.slice(1), ["exercises", "refused"], "the call to a retired route was not counted");
 
 const before = seen.length;
 await worker.fetch(new Request("https://dogancanyucel.com/", { headers: { accept: "text/html" } }), env, ctx);

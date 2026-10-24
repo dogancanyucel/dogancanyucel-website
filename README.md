@@ -4,7 +4,7 @@ Personal portfolio website for [dogancanyucel.com](https://dogancanyucel.com)
 
 ## Stack
 - Pure HTML5, CSS3, Vanilla JS (no dependencies, no build step)
-- Cloudflare Workers + D1 (`exercises`, `supplements`, feedback/email APIs)
+- Cloudflare Workers + D1 (site tallies) + R2 (the Turquoise exercise clips, `/api/clips/`)
 - Google Fonts: Outfit + JetBrains Mono
 
 ## Features
@@ -15,25 +15,11 @@ Personal portfolio website for [dogancanyucel.com](https://dogancanyucel.com)
 - Dark theme with turquoise accents
 - SEO optimized
 
-## Supplement macros API (NIH DSLD)
+## Retired APIs
 
-Slim copy of the NIH Dietary Supplement Label Database lives in D1.
-This is a **backend API for the Android app**, not a visible website page.
-
-1. Build slim JSON (one-time / when updating dump):
-   ```bash
-   node scripts/etl-dsld.mjs "C:/path/to/DSLD-full-database-JSON"
-   ```
-2. Import into D1:
-   ```bash
-   node scripts/import-supplements-d1.mjs
-   ```
-3. Endpoint (requires `x-api-key`):
-   ```
-   GET /api/supplements?q=whey+protein&limit=20
-   ```
-
-Returns: `id, name, brand, serving, calories, protein, carbs, fat, ingredients`.
+`/api/exercises`, `/api/supplements` and `/api/feedback` answer `410 Gone` since 2026-10-24: nothing calls them
+(see `index.js`). The D1 tables they read and the scripts that filled them (`scripts/etl-dsld.mjs`,
+`scripts/import-supplements-d1.mjs`) are still there until the owner decides whether to drop them.
 
 ## Deployment: Cloudflare Pages / Workers
 
