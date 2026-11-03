@@ -58,6 +58,7 @@
       <li><strong>Your username</strong>, if you choose one in Edit Profile, is kept in your account record and, together with your account identifier, in a list of usernames on our server, so that no two accounts have the same one. Nobody but our server can read that list, and the App shows your username only to you.</li>
       <li><strong>The seven-day trial of Cairn Cloud + AI</strong> is given once per account, per e-mail address and per device. When you start it, your account record keeps when it started and ends, and our server keeps marks with no account attached: a fingerprint (a SHA-256 hash) of your e-mail address — and, when the address is an alias of another inbox (a +tag, or a Gmail address with dots or at googlemail.com), a second fingerprint of the inbox it reaches — and a fingerprint of your device. The device's fingerprint is made in the App from the identifier your device keeps for itself — on a Mac, its hardware UUID — together with Cairn's own text, so neither the address nor the identifier leaves your device, and the fingerprint cannot be matched with another app's. Nobody but our server can read the marks.</li>
       <li><strong>E-mail checks:</strong> to stop throwaway accounts, the App checks the domain of an e-mail address you sign up with against a list kept inside the App. Nothing is sent anywhere for this check. An e-mail account must be verified through a link Firebase sends you before it can be used.</li>
+      <li><strong>Proof that sign-in comes from Cairn:</strong> when you sign up, sign in, ask for a password reset or your sign-in is renewed, the App sends the same App Check token described in section 5 — made from a DeviceCheck token your Apple device creates, which Apple checks — so that accounts cannot be made or reset e-mails sent by a script. The token says nothing about you.</li>
       <li>Your session is kept in your device's secure storage (the Keychain on Apple devices), so you stay signed in.</li>
     </ul>
     <p><strong>Why:</strong> to give you an account, the username you choose, and to know what your account is entitled to (legal basis: performance of our contract with you). The trial's marks are kept so that the free trial is given once and not again to the same person or device (legal basis: our legitimate interest in offering a free trial without it being taken again and again).</p>
@@ -119,7 +120,7 @@
 
     <h2>7. Who receives your data</h2>
     <ul>
-      <li><strong>Google (Firebase Authentication and Cloud Firestore)</strong> — your account, as in section 3.</li>
+      <li><strong>Google (Firebase Authentication, Cloud Firestore and Firebase App Check)</strong> and <strong>Apple (DeviceCheck)</strong> — your account, as in section 3.</li>
       <li><strong>Google (Cloud Firestore, Cloud Storage, Cloud Functions, Firebase App Check)</strong> and <strong>Apple (DeviceCheck)</strong> — only on Cairn Cloud and Cairn Cloud + AI, the synced copy of your learning and your books' files, as in section 4a.</li>
       <li><strong>Google (Cloud Functions, Vertex AI, Firebase App Check)</strong> and <strong>Apple (DeviceCheck)</strong> — only on the Cairn Cloud + AI plan, when you use Cairn's own AI, as in section 5.</li>
       <li><strong>Apple or Google</strong> — only if you sign in with them.</li>
