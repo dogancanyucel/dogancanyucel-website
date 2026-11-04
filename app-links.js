@@ -11,6 +11,8 @@
 
 export const APP_LINKS_HOST = "app.dogancanyucel.com";
 export const APPLE_APP_ID = "9V3ZFD8DXN.com.aistudio.fitai.trfity";
+export const ANDROID_PACKAGE = "com.aistudio.fitai.trfity";
+export const PLAY_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
 export const OPEN_PATH = "/open/";
 
 export const APPLE_ASSOCIATION = {
@@ -41,7 +43,9 @@ const LANDING = `<!DOCTYPE html>
   <a id="open" href="com.aistudio.fitai.trfity://auth-done"><img src="https://dogancanyucel.com/assets/turquoise-ai-logo.svg" alt="" /><span>Turquoise</span><span aria-hidden="true">↗</span></a>
   <script>
     if (/Android/i.test(navigator.userAgent)) {
-      document.getElementById("open").href = "intent://auth-done#Intent;scheme=com.aistudio.fitai.trfity;package=com.aistudio.fitai.trfity;end";
+      // browser_fallback_url is what Chrome loads when the package is not installed; before the app
+      // was on Google Play (2026-11-04) there was nowhere to fall back to, so the link simply failed.
+      document.getElementById("open").href = "intent://auth-done#Intent;scheme=${ANDROID_PACKAGE};package=${ANDROID_PACKAGE};S.browser_fallback_url=${encodeURIComponent(PLAY_URL)};end";
     }
   </script>
 </body>
