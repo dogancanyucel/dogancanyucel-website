@@ -193,7 +193,7 @@ img, svg { max-width: 100%; }
 /* Anything with a surface of its own is a card, and a card is a darker room than the
    field: the Cairn-side tones belong there, and redefining the two variables on the
    container means every rule below picks the right one without knowing where it is. */
-.bento-cell, .rows, .prose, footer, .eyebrow, .linklist a {
+.bento-cell, .project-card, .rows, .prose, footer, .eyebrow, .linklist a {
   --label-2:     #aeaeb2;
   --accent-text: var(--accent);
 }
@@ -223,8 +223,15 @@ p a, li a, dd a, .prose a, .credits a {
   text-underline-offset: 2px;
   text-decoration-thickness: from-font;
 }
+/* A link that already carries a shape — a nav item, a whole card, a button — needs no
+   underline, and must say so for :hover too. `a:hover` above is a class plus a
+   pseudo-class, which outranks a bare class name, so a card answered it with nothing
+   and underlined its entire text under the pointer (found 2026-11-06 while building
+   the project cards; it was doing this to the store cards on the live site as well). */
 .nav-links a, .mobile-link, .linklist a, .footer-links a, .back-link,
-.bento-cell, .bento-cell a, .btn { text-decoration: none; }
+.bento-cell, .bento-cell a, .project-more, .btn,
+.nav-links a:hover, .mobile-link:hover, .linklist a:hover, .footer-links a:hover, .back-link:hover,
+a.bento-cell:hover, .bento-cell a:hover, .project-more:hover, .btn:hover { text-decoration: none; }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
 .on-ink :focus-visible { outline-color: var(--accent-on-ink); }
@@ -425,6 +432,10 @@ section { padding-block: clamp(72px, 12vw, 148px); }
 [id] { scroll-margin-top: calc(var(--nav-h) + var(--nav-gap) + 16px); }
 
 .section-head { max-width: 720px; margin-bottom: clamp(36px, 5vw, 64px); }
+/* The Work section is the row and nothing else (owner, 2026-11-06: "bu yazıyı sil, tuhaf
+   tuhaf yazılar koyma şuralara"). One word names the section, so the heading IS the
+   eyebrow — a section with no heading at all would leave the row unlabelled. */
+h2.eyebrow { margin: 0; }
 .section-head .eyebrow { margin-bottom: 20px; }
 .section-head p { margin: 20px 0 0; }
 
@@ -538,6 +549,50 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   .bento-cell, .bento-cell.wide, .bento-cell.half,
   .bento-cell.full, .bento-cell.feature { grid-column: span 1; }
 }
+
+/* ── The project cards ───────────────────────────────────────
+   Owner, 2026-11-06, in three steps: a row that moved sideways, with one frame per
+   project; then "details dediğinde kendi sayfası açılsın"; then "home da sağ sol iptal,
+   cairn kartını bi alta al ve kartları genişlet". So: no scroller, no arrows — two wide
+   frames, one under the other, and Details is a link to that project's own page.
+
+   The frame is NOT a link. Turquoise's frame holds the store card (owner, same day: "bu
+   out now kartı turkuaz çerçevesinin içinde olmalı") and a link cannot hold other links,
+   so the card holds its links instead of being one. Counter-argument: a whole card that
+   can be pressed is a bigger target. Not taken — the download buttons are what deserve
+   protection from a stray thumb, and an overlay would put the detail page right on top
+   of them. */
+.project-list { display: grid; gap: 16px; margin: clamp(22px, 3vw, 32px) 0 0; padding: 0; list-style: none; }
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: clamp(24px, 3.4vw, 40px);
+  border-radius: var(--r-panel);
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.project-card:hover { border-color: var(--edge-strong); box-shadow: 0 14px 34px rgba(0, 0, 0, .42); }
+.project-card p { margin: 0; color: var(--label-2); font-size: 16px; line-height: 1.55; max-width: 62ch; }
+.project-card .pills { margin: 0 0 18px; }
+.project-card .feature-head { margin-bottom: 18px; }
+
+/* The one link out of the frame; margin-top:auto keeps it on the frame's last line. */
+.project-more {
+  display: inline-flex; align-self: flex-start; align-items: center; gap: 7px;
+  margin-top: auto; padding-top: 22px;
+  font-size: 16px; font-weight: 500; color: var(--accent);
+}
+.project-more:hover .arrow { transform: translateX(4px); }
+
+/* The store card, inside Turquoise's own frame. A hairline rather than a second box:
+   a card drawn inside a card is one frame too many for something this small. */
+.card-store { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--edge); }
+.card-store .cell-label { margin-bottom: 8px; }
+.card-store .store-note { margin: 0 0 14px; font-size: 14px; }
+.card-store .store-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 
 /* ── Status pills ─────────────────────────────────────────── */
 
