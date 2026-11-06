@@ -97,6 +97,10 @@ function page({ places, days, total, since, api }) {
   .stats .lead { margin: 0 0 32px; }
   .figure { font-size: clamp(40px, 8vw, 64px); font-weight: 600; letter-spacing: -.04em; line-height: 1; }
   .figure-label { color: var(--label-2); font-size: 15px; margin-top: 6px; }
+  /* style.css says --label-3 (#8e8e93) is for cards only: it is 2.8:1 on the field, and this
+     page puts its small print straight on the field with no card under it. The field's own
+     pair is #bcbcc0, measured to hold 4.6:1 with the cursor glow at its strongest. */
+  .stats .footnote { color: var(--label-2); }
   table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: var(--r-card); overflow: hidden; }
   th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--hairline); font-size: 15px; }
   th { color: var(--label-2); font-weight: 500; font-size: 13px; letter-spacing: .02em; text-transform: uppercase; }
