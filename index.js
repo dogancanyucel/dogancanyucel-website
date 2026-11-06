@@ -3,6 +3,17 @@ import { statsResponse } from "./site-stats.js";
 import { clipsResponse } from "./clips.js";
 import { apiRouteOf, countsAsVisit, recordApiCall, recordVisit } from "./traffic.js";
 
+/**
+ * The Work page is gone (owner, 2026-11-06: *"work tuşu farklı bir sayfa çıkıyor, orası ne
+ * alaka ki, zaten home sayfasında var"*). It listed the same two projects as the row on the
+ * home page, so "Work" now means that row. The address is answered rather than dropped: the
+ * legal pages, the two project pages and anything that indexed it all pointed here.
+ *
+ * Only this one path. The project pages below it are real pages still, and Cairn's privacy
+ * and terms are written into store listings — an exact-path lookup cannot swallow them.
+ */
+const WORK_PAGE_MOVED = "/project";
+
 /** API routes nothing calls any more; they answer 410 — see the route below. */
 const RETIRED_ROUTES = new Set(["/api/exercises", "/api/supplements", "/api/feedback"]);
 
@@ -21,6 +32,11 @@ async function handle(request, env, ctx, url) {
     // The exercise clips: App Check and sign-in, never public — see clips.js.
     const clips = await clipsResponse(request, env, url);
     if (clips) return clips;
+
+    // Before ASSETS, so a stale link gets the row it was renamed to, not the 404 page.
+    if (url.pathname.replace(/\/$/, "") === WORK_PAGE_MOVED) {
+      return Response.redirect(new URL("/#work", url).toString(), 301);
+    }
 
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",
