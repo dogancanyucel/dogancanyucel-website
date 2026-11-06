@@ -58,6 +58,11 @@ for (const path of ["/stats", "/stats/"]) {
     assert.ok(html.includes(`>${column}<`), `the API table has no ${column} column`);
   }
   assert.ok(/switched off/.test(html), "the page does not say what a refused call means");
+  // A table of seven columns is 629px at its narrowest, and a phone is 320-430: in normal flow
+  // it drags the whole page sideways. It scrolls inside its own box instead, and that box can be
+  // reached and scrolled from the keyboard (axe: scrollable-region-focusable).
+  assert.match(html, /<div class="scroller" tabindex="0" role="region" aria-label="[^"]+">\s*<table>/,
+    "the API table is not in a focusable scroll container");
   assert.strictEqual(r.headers.get("cache-control"), "no-store", "the page may be cached");
   assert.ok(/noindex/.test(r.headers.get("x-robots-tag") || ""), "the page is indexable");
   assert.ok(/<meta name="robots" content="noindex/.test(html), "no robots meta");

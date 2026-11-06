@@ -62,10 +62,15 @@ function apiSection(api) {
       `<td class="n">${Number(r.ok) || 0}</td><td${mark(rejected)}>${rejected}</td>` +
       `<td${mark(refused)}>${refused}</td><td class="n">${failed}</td></tr>`;
   }).join("");
-  return `<table>
+  // Seven columns are 629px at their narrowest and a phone is 320-430 wide, so in normal flow
+  // this table would drag the whole page sideways. It scrolls inside its own box; the box is
+  // focusable, or a keyboard could not scroll it (axe: scrollable-region-focusable).
+  return `<div class="scroller" tabindex="0" role="region" aria-label="API calls by day and route">
+      <table>
       <thead><tr><th>Day</th><th>Route</th><th class="n">Calls</th><th class="n">Answered</th><th class="n">Rejected</th><th class="n">Refused</th><th class="n">Failed</th></tr></thead>
       <tbody>${rows}</tbody>
-    </table>`;
+    </table>
+    </div>`;
 }
 
 function page({ places, days, total, since, api }) {
@@ -99,6 +104,8 @@ function page({ places, days, total, since, api }) {
   td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
   td.empty { color: var(--label-2); }
   td.warn { color: #9a3412; font-weight: 600; }
+  .scroller { overflow-x: auto; border-radius: var(--r-card); }
+  .scroller table { min-width: 560px; }      /* narrower than this the columns crush into each other */
   .two { display: grid; gap: 20px; grid-template-columns: 1fr; margin-top: 20px; }
   @media (min-width: 720px) { .two { grid-template-columns: 1.4fr 1fr; align-items: start; } }
 </style>
