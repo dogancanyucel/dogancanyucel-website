@@ -36,8 +36,13 @@ of the Turquoise apps.
 
 ```
 npm test                      # node, no dependencies
-(cd mail-auth && npx vitest run)
 ```
+
+Twelve files, no dependencies and no runner: each one is a node script that throws on the first
+thing that is wrong. Three of them are structural and read the site rather than run it — no file
+loads anything from another company (`no-third-party`), every class a page asks for has a rule
+(`classes-have-rules`), and the retired routes and the removed media map stay gone
+(`retired-routes`).
 
 ## Deployment: commit + push = live
 
