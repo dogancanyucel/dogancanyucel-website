@@ -620,6 +620,21 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   color: var(--label);
   border: 1px solid var(--hairline-ink);
 }
+
+/* A platform that has not shipped. The markup has asked for this since 2026-09-20 and the
+   stylesheet never had it, so Cairn's five "in development" pills were drawn exactly like
+   Turquoise's two live ones — the accent wash and the light blue type. Quiet is the absence of
+   the accent: a plain white wash, grey type, and no green dot beside it.
+   The ink is measured, not chosen: these pills sit on the field on Cairn's page (`.page-head`)
+   and on a card on the home page, and the pill's own wash lifts whatever is under it. Over the
+   worst field this site can reach (#294a71, the glow's centre on the aurora's lightest corner)
+   the wash is #36557a, where --label-2's #bcbcc0 is 4.05:1 and fails; #d1d1d6 is 5.04:1, and
+   8.3:1 on a card. Raising the wash means measuring again — the method is in CLAUDE.md. */
+.pill-quiet {
+  background: rgba(255, 255, 255, .06);
+  color: #d1d1d6;
+  border: 1px solid var(--edge);
+}
 .pill .dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
 
 /* ── Rows (contact) ───────────────────────────────────────── */
