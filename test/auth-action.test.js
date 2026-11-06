@@ -2,6 +2,7 @@
 import assert from "node:assert";
 import { readdirSync, readFileSync } from "node:fs";
 import { askFirebase, firstCall, openAppLink, pickLanguage, readLink, refusalKey } from "../public/turquoise/auth/action.js";
+import { PLAY_URL } from "../app-links.js";
 import { KEYS } from "../scripts/auth-page-strings.mjs";
 
 const folder = new URL("../public/turquoise/auth/strings/", import.meta.url);
@@ -32,7 +33,15 @@ assert.strictEqual(refusalKey("WEAK_PASSWORD : Password should be at least 6 cha
 // Back to the app on a phone; nothing to open on a computer.
 assert.strictEqual(openAppLink("Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)"), "https://app.dogancanyucel.com/open/auth-done",
   "a Universal Link on another host, which Edge hands to the app");
-assert.match(openAppLink("Mozilla/5.0 (Linux; Android 15; Pixel 9)"), /package=com\.aistudio\.fitai\.trfity/);
+const android = openAppLink("Mozilla/5.0 (Linux; Android 15; Pixel 9)");
+assert.match(android, /package=com\.aistudio\.fitai\.trfity/);
+// Android, app not installed. Chrome loads browser_fallback_url; with none, the link does nothing at all
+// and the reader is stranded on this page after changing their password (the same fault the landing page
+// had until c1b510a — fixed there, missed here). The Play address is app-links.js's, so the two agree.
+assert.ok(
+  android.includes(`S.browser_fallback_url=${encodeURIComponent(PLAY_URL)};end`),
+  "the Android link has no fallback: without the app installed it does nothing",
+);
 assert.strictEqual(openAppLink("Mozilla/5.0 (Windows NT 10.0; Win64; x64)"), null);
 
 // The link's parts, and which modes the page answers.

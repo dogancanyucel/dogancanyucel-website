@@ -51,13 +51,25 @@ export function refusalKey(firebaseMessage) {
   }
 }
 
+/** The app's own id, and where an Android visitor lands when the app is not installed. */
+const ANDROID_PACKAGE = "com.aistudio.fitai.trfity";
+const PLAY_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
+
 /**
  * The link that opens the app on this device, or null where there is no app to open (a computer).
  * iOS: a Universal Link on app.dogancanyucel.com, which falls back to the URL scheme. Android: by package, through an intent link.
+ *
+ * **The Android link needs somewhere to fall to** (found 2026-11-06, reading this file against app-links.js): an intent link
+ * with no `browser_fallback_url` does nothing at all when the package is not installed, so a reader who changed their password
+ * in a browser and does not have the app was left on this page with a dead button. The landing page was given the fallback on
+ * 2026-11-04 (`c1b510a`) once the app was on Google Play; this page, which has the same button, was missed.
+ * The address is app-links.js's `PLAY_URL`. This file is served to the browser and cannot import from the Worker, so the
+ * string is here twice in the repository and test/auth-action.test.js holds the two together.
  */
 export function openAppLink(userAgent) {
   if (/Android/i.test(userAgent)) {
-    return "intent://auth-done#Intent;scheme=com.aistudio.fitai.trfity;package=com.aistudio.fitai.trfity;end";
+    return `intent://auth-done#Intent;scheme=${ANDROID_PACKAGE};package=${ANDROID_PACKAGE};` +
+      `S.browser_fallback_url=${encodeURIComponent(PLAY_URL)};end`;
   }
   if (/iPhone|iPad|iPod/i.test(userAgent) || (/Macintosh/i.test(userAgent) && /Mobile/i.test(userAgent))) {
     // A Universal Link, not the URL scheme: Edge on iPhone ignores the scheme (owner, 2026-09-16). See app-links.js.
