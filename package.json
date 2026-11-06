@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node test/verify-email.test.js && node test/password-rules.test.js && node test/auth-action.test.js && node test/app-links.test.js && node test/work-page-moved.test.js && node test/retired-routes.test.js && node test/site-visits.test.js && node test/site-stats.test.js && node test/no-third-party.test.js && node test/classes-have-rules.test.js && node test/api-calls.test.js && node test/clips.test.js"
+    "test": "node test/verify-email.test.js && node test/password-rules.test.js && node test/auth-action.test.js && node test/app-links.test.js && node test/work-page-moved.test.js && node test/retired-routes.test.js && node test/site-visits.test.js && node test/site-stats.test.js && node test/no-third-party.test.js && node test/classes-have-rules.test.js && node test/api-calls.test.js && node test/clips.test.js && node test/security-headers.test.js"
   },
   "keywords": [],
   "author": "Dogan Can Yucel",

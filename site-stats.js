@@ -73,7 +73,7 @@ function apiSection(api) {
     </div>`;
 }
 
-function page({ places, days, total, since, api }) {
+function page({ places, days, total, since, api, nonce }) {
   const placeRows = places.length
     ? places.map((r) => `<tr><td>${flag(r.country)} ${escape(r.country)}</td><td>${escape(r.city || "—")}</td><td class="n">${r.hits}</td></tr>`).join("")
     : `<tr><td colspan="3" class="empty">Nothing recorded yet. If the site is live and this stays empty, the site_visits table is missing — see scripts/migrate-site-visits.sql.</td></tr>`;
@@ -91,8 +91,13 @@ function page({ places, days, total, since, api }) {
      there would hand the reader's IP address to Google (owner's decision, 2026-10-21), and this
      page kept doing it until 2026-11-06 because that pass went through public/ only. -->
 <link rel="stylesheet" href="/style.css" />
-<style>
+<!-- The nonce is this request's own: the page's policy (see statsResponse) allows this one block and no other inline
+     style, so a nonce beats 'unsafe-inline' on the one page of the site that sits behind a password. A style="..."
+     ATTRIBUTE is not covered by a nonce, which is why the two this page used to carry are classes below. -->
+<style nonce="${nonce}">
   .stats { max-width: 820px; margin: 0 auto; padding: 64px var(--gutter) 96px; }
+  .stats h2.api-heading { margin: 48px 0 8px; }
+  .stats p.api-note { margin: 0 0 16px; }
   .stats h1 { font-size: clamp(30px, 5vw, 42px); letter-spacing: -.03em; margin-bottom: 8px; }
   .stats .lead { margin: 0 0 32px; }
   .figure { font-size: clamp(40px, 8vw, 64px); font-weight: 600; letter-spacing: -.04em; line-height: 1; }
@@ -132,8 +137,8 @@ function page({ places, days, total, since, api }) {
     </table>
   </div>
 
-  <h2 class="title-2" style="margin: 48px 0 8px;">What the API answered</h2>
-  <p class="footnote" style="margin: 0 0 16px;">How much, not who. <strong>Rejected</strong>: no valid key — the apps have one, so that is somebody else. <strong>Refused</strong>: a route that is switched off was called, so somebody is knocking that nobody knew about. <strong>Failed</strong>: the route itself broke.</p>
+  <h2 class="title-2 api-heading">What the API answered</h2>
+  <p class="footnote api-note">How much, not who. <strong>Rejected</strong>: no valid key — the apps have one, so that is somebody else. <strong>Refused</strong>: a route that is switched off was called, so somebody is knocking that nobody knew about. <strong>Failed</strong>: the route itself broke.</p>
   ${apiSection(api)}
 </main>
 </body>
@@ -180,12 +185,19 @@ export async function statsResponse(request, env, url) {
     // The table may not exist yet. The page says so rather than showing an error.
   }
 
-  return new Response(page({ places, days, total, since, api }), {
+  // This page's own policy, because it is the one page built here and the only one with an inline <style>. index.js
+  // adds the site's headers but never overwrites one a route set itself, so this stays.
+  const nonce = crypto.randomUUID();
+  return new Response(page({ places, days, total, since, api, nonce }), {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
       "X-Robots-Tag": "noindex, nofollow",
       "Referrer-Policy": "no-referrer",
+      "Content-Security-Policy":
+        "default-src 'self'; script-src 'none'; " +
+        `style-src 'self' 'nonce-${nonce}'; img-src 'self'; font-src 'self'; connect-src 'none'; ` +
+        "base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'",
     },
   });
 }
