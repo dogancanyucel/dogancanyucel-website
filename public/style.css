@@ -426,7 +426,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
 
 /* ── Sections ─────────────────────────────────────────────── */
 
-section { padding-block: clamp(72px, 12vw, 148px); }
+section { padding-block: clamp(52px, 7vw, 96px); }   /* owner, 2026-11-06: too much empty space */
 
 /* An in-page link must not park its heading underneath the floating nav. */
 [id] { scroll-margin-top: calc(var(--nav-h) + var(--nav-gap) + 16px); }
@@ -445,7 +445,7 @@ h2.eyebrow { margin: 0; }
   position: relative;
   display: flex;
   align-items: center;
-  min-height: min(92vh, 860px);
+  min-height: min(74vh, 660px);                      /* the work should be reachable without a long scroll */
   padding-top: calc(var(--nav-h) + var(--nav-gap) + 40px);
 }
 
