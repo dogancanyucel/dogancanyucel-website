@@ -410,8 +410,12 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
 .hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
 
+/* The panel belongs to the button, and the button only exists under 760px (below). Opened on a
+   narrow window and then widened — a phone turned sideways, a window dragged out — an unscoped
+   `.open` left the panel showing under the nav with the same links repeated, next to a menu
+   button nobody can see any more (found 2026-11-06). The breakpoint decides, not a resize
+   event: there is nothing to listen for and nothing to miss. */
 .mobile-menu { display: none; flex-direction: column; padding: 4px 16px 12px; }
-.mobile-menu.open { display: flex; }
 .mobile-link {
   display: flex; align-items: center; min-height: 48px;
   font-size: 17px; color: var(--label);
@@ -422,6 +426,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.022em; line-height: 
 @media (max-width: 760px) {
   .nav-links { display: none; }
   .hamburger { display: block; }
+  .mobile-menu.open { display: flex; }
 }
 
 /* ── Sections ─────────────────────────────────────────────── */
