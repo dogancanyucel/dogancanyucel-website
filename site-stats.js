@@ -82,9 +82,9 @@ function page({ places, days, total, since, api }) {
 <meta name="robots" content="noindex, nofollow" />
 <title>Where the site is read</title>
 <link rel="icon" href="/assets/dcy-icon.svg" type="image/svg+xml" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<!-- Inter comes from /style.css, which serves it from this site. No font from Google: a <link>
+     there would hand the reader's IP address to Google (owner's decision, 2026-10-21), and this
+     page kept doing it until 2026-11-06 because that pass went through public/ only. -->
 <link rel="stylesheet" href="/style.css" />
 <style>
   .stats { max-width: 820px; margin: 0 auto; padding: 64px var(--gutter) 96px; }
