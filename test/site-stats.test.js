@@ -5,7 +5,11 @@ import worker from "../index.js";
 const PASSWORD = "correct horse battery staple";
 const basic = (pw, user = "owner") => ({ authorization: "Basic " + Buffer.from(`${user}:${pw}`).toString("base64") });
 
+// The api query also says "GROUP BY day", so its key comes first: with the page's own
+// query matched to the day rows, the API table rendered from the wrong shape and the
+// test still passed (found 2026-11-06).
 const rows = {
+  "FROM api_calls": [{ day: "2026-10-30", route: "exercises", total: 41, ok: 0, rejected: 2, refused: 39, err: 0 }],
   "GROUP BY country, city": [{ country: "PL", city: "Wroclaw", hits: 14 }, { country: "TR", city: "Istanbul", hits: 9 }],
   "GROUP BY day": [{ day: "2026-09-26", hits: 23 }],
   "MIN(day)": [{ hits: 23, since: "2026-09-25" }],
@@ -44,6 +48,16 @@ for (const path of ["/stats", "/stats/"]) {
   for (const expected of ["Wroclaw", "Istanbul", "2026-09-26", "23", "🇵🇱", "🇹🇷"]) {
     assert.ok(html.includes(expected), `the page is missing ${expected}`);
   }
+  // Every outcome the table holds is on the page. A retired route answers 410, which is
+  // "refused": showing only ok and rejected turned 39 calls from a caller nobody knows
+  // about into a row of zeros — the very thing this page is read for (found 2026-11-06).
+  for (const expected of ["exercises", "39", "41"]) {
+    assert.ok(html.includes(expected), `the API table is missing ${expected}`);
+  }
+  for (const column of ["Answered", "Rejected", "Refused", "Failed"]) {
+    assert.ok(html.includes(`>${column}<`), `the API table has no ${column} column`);
+  }
+  assert.ok(/switched off/.test(html), "the page does not say what a refused call means");
   assert.strictEqual(r.headers.get("cache-control"), "no-store", "the page may be cached");
   assert.ok(/noindex/.test(r.headers.get("x-robots-tag") || ""), "the page is indexable");
   assert.ok(/<meta name="robots" content="noindex/.test(html), "no robots meta");

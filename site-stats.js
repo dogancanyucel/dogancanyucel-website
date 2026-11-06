@@ -38,18 +38,32 @@ function flag(code) {
   return String.fromCodePoint(...[...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
 }
 
+/**
+ * The API tally, one row per day and route, with EVERY outcome the table holds.
+ *
+ * **All four, not two** (found 2026-11-06): the page summed only `ok` and `rejected`, so the
+ * `refused` and `error` rows that traffic.js writes were counted and then thrown away here. The
+ * routes retired on 2026-10-24 answer 410, which is "refused" — meaning the one thing this page is
+ * read for, a caller nobody knew about still knocking, rendered as a row of zeros. schema.sql has
+ * named the four outcomes since the table was made.
+ */
 function apiSection(api) {
   if (!api.length) {
     return `<p class="footnote">No API calls recorded yet. If the apps are live and this stays empty, the api_calls table is missing — see scripts/migrate-api-calls.sql.</p>`;
   }
   const rows = api.map((r) => {
     const rejected = Number(r.rejected) || 0;
-    // Somebody without a valid key, in numbers worth looking at twice.
-    const flag = rejected > 0 ? ` class="warn"` : "";
-    return `<tr><td>${escape(r.day)}</td><td>${escape(r.route)}</td><td class="n">${r.ok || 0}</td><td class="n"${flag}>${rejected}</td></tr>`;
+    const refused = Number(r.refused) || 0;
+    const failed = Number(r.err) || 0;
+    // Somebody without a valid key, or somebody calling a route that is switched off: both are
+    // callers who should not be there, and both are worth looking at twice.
+    const mark = (n) => (n > 0 ? ` class="n warn"` : ' class="n"');
+    return `<tr><td>${escape(r.day)}</td><td>${escape(r.route)}</td><td class="n">${Number(r.total) || 0}</td>` +
+      `<td class="n">${Number(r.ok) || 0}</td><td${mark(rejected)}>${rejected}</td>` +
+      `<td${mark(refused)}>${refused}</td><td class="n">${failed}</td></tr>`;
   }).join("");
   return `<table>
-      <thead><tr><th>Day</th><th>Route</th><th class="n">Answered</th><th class="n">Rejected</th></tr></thead>
+      <thead><tr><th>Day</th><th>Route</th><th class="n">Calls</th><th class="n">Answered</th><th class="n">Rejected</th><th class="n">Refused</th><th class="n">Failed</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
@@ -108,7 +122,7 @@ function page({ places, days, total, since, api }) {
   </div>
 
   <h2 class="title-2" style="margin: 48px 0 8px;">What the API answered</h2>
-  <p class="footnote" style="margin: 0 0 16px;">How much, not who. Rejected means a request arrived without a valid key — the apps have one, so those are somebody else.</p>
+  <p class="footnote" style="margin: 0 0 16px;">How much, not who. <strong>Rejected</strong>: no valid key — the apps have one, so that is somebody else. <strong>Refused</strong>: a route that is switched off was called, so somebody is knocking that nobody knew about. <strong>Failed</strong>: the route itself broke.</p>
   ${apiSection(api)}
 </main>
 </body>
@@ -137,10 +151,13 @@ export async function statsResponse(request, env, url) {
       env.DB.prepare("SELECT day, SUM(hits) AS hits FROM site_visits GROUP BY day ORDER BY day DESC LIMIT 30").all(),
       env.DB.prepare("SELECT SUM(hits) AS hits, MIN(day) AS since FROM site_visits").all(),
       env.DB.prepare(
-        "SELECT day, route, " +
+        "SELECT day, route, SUM(hits) AS total, " +
         "SUM(CASE WHEN outcome = 'ok' THEN hits ELSE 0 END) AS ok, " +
-        "SUM(CASE WHEN outcome = 'rejected' THEN hits ELSE 0 END) AS rejected " +
-        "FROM api_calls GROUP BY day, route ORDER BY day DESC, ok DESC LIMIT 60"
+        "SUM(CASE WHEN outcome = 'rejected' THEN hits ELSE 0 END) AS rejected, " +
+        "SUM(CASE WHEN outcome = 'refused' THEN hits ELSE 0 END) AS refused, " +
+        // "err", not "error": an alias nothing has to quote.
+        "SUM(CASE WHEN outcome = 'error' THEN hits ELSE 0 END) AS err " +
+        "FROM api_calls GROUP BY day, route ORDER BY day DESC, total DESC LIMIT 60"
       ).all(),
     ]);
     places = byPlace.results ?? [];
