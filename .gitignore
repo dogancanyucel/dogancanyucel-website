@@ -31,6 +31,10 @@ Thumbs.db
 # are gone, and a fresh clone of this repo will not have them.
 contextwindows.md
 CLAUDE.md
+# The scan log and its coverage maps, for the same reason (2026-11-06): working state, not a
+# deliverable. CLAUDE.md points at them.
+tarama-kaydi.md
+tarama-haritasi-*.md
 
 # Exercise clips never enter this public repository (owner, 2026-10-13): they live in
 # the private R2 bucket — see clips.js and scripts/upload-clips.mjs.
