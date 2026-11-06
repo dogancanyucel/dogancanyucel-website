@@ -574,7 +574,9 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   border-radius: var(--r-panel);
   background: var(--surface);
   border: 1px solid var(--edge);
-  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  /* transform is in the list because :hover moves the card: left out, the lift jumped to its
+     end in one frame while the border and shadow took 250ms with it (found 2026-11-06). */
+  transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
 /* The lift is honest again: the whole frame really does open something. */
 .project-card:hover { transform: translateY(-3px); border-color: var(--edge-strong); box-shadow: 0 14px 34px rgba(0, 0, 0, .42); }
