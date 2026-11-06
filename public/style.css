@@ -556,15 +556,17 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
    cairn kartını bi alta al ve kartları genişlet". So: no scroller, no arrows — two wide
    frames, one under the other, and Details is a link to that project's own page.
 
-   The frame is NOT a link. Turquoise's frame holds the store card (owner, same day: "bu
-   out now kartı turkuaz çerçevesinin içinde olmalı") and a link cannot hold other links,
-   so the card holds its links instead of being one. Counter-argument: a whole card that
-   can be pressed is a bigger target. Not taken — the download buttons are what deserve
-   protection from a stray thumb, and an overlay would put the detail page right on top
-   of them. */
+   The whole frame opens the project's page (owner, same day: "sadece details'e basınca sayfa
+   açılıyor, bunu tüm karta yapar mısın … ama mağazaya giden butonları bozma"). The frame is
+   still not a <a>, because it holds the store buttons and a link cannot hold other links.
+   Instead the Details link is stretched over the frame with an ::after, and the store block
+   is lifted above that overlay — so a press anywhere opens the page, and a press on a store
+   button still goes to the store. Known cost: dragging to select text inside the card is
+   awkward, because the overlay takes the drag. */
 .project-list { display: grid; gap: 16px; margin: clamp(22px, 3vw, 32px) 0 0; padding: 0; list-style: none; }
 
 .project-card {
+  position: relative;                       /* the stretched Details link is placed against this */
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -574,7 +576,9 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   border: 1px solid var(--edge);
   transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
-.project-card:hover { border-color: var(--edge-strong); box-shadow: 0 14px 34px rgba(0, 0, 0, .42); }
+/* The lift is honest again: the whole frame really does open something. */
+.project-card:hover { transform: translateY(-3px); border-color: var(--edge-strong); box-shadow: 0 14px 34px rgba(0, 0, 0, .42); }
+@media (prefers-reduced-motion: reduce) { .project-card:hover { transform: none; } }
 .project-card p { margin: 0; color: var(--label-2); font-size: 16px; line-height: 1.55; max-width: 62ch; }
 .project-card .pills { margin: 0 0 18px; }
 .project-card .feature-head { margin-bottom: 18px; }
@@ -586,13 +590,19 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   font-size: 16px; font-weight: 500; color: var(--accent);
 }
 .project-more:hover .arrow { transform: translateX(4px); }
+/* The press target for the whole frame. It sits under everything that is raised below. */
+.project-more::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.project-card:hover .project-more .arrow { transform: translateX(4px); }
 
 /* The store card, inside Turquoise's own frame. A hairline rather than a second box:
    a card drawn inside a card is one frame too many for something this small. */
 .card-store { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--edge); }
 .card-store .cell-label { margin-bottom: 8px; }
 .card-store .store-note { margin: 0 0 14px; font-size: 14px; }
-.card-store .store-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+/* Only the buttons are lifted above the stretched link, not the whole block: raising the
+   block as well left a dead strip where its label and note are, and a press there did
+   nothing instead of opening the page. */
+.card-store .store-actions { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 10px; }
 
 /* ── Status pills ─────────────────────────────────────────── */
 
