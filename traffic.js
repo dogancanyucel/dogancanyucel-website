@@ -61,6 +61,12 @@ const API_ROUTES = new Set(["exercises", "supplements", "feedback", "verify-emai
 /** The API route a request is for, or "" when it is not an API request at all. */
 export function apiRouteOf(url) {
   if (url.hostname === APP_LINKS_HOST) return "";
+  // /stats is the owner's own page rather than an API, and it is counted here for one reason: its password is the only
+  // guard on this site, and until 2026-11-06 nothing counted the attempts on it. A wrong password answered 401 and left
+  // no trace anywhere, so somebody could stand there guessing and the owner's own stats page — the thing behind the
+  // door — would show nothing. Now a run of `stats / rejected` rows is the owner seeing it. Still day, route and
+  // outcome only: no address, nothing about who was knocking.
+  if (url.pathname === "/stats" || url.pathname === "/stats/") return "stats";
   // The clips are two routes under one prefix, and a clip's id is never part of the name:
   // a tally per clip would be a list of what people train.
   if (url.pathname === "/api/clips/catalogue") return "clips-catalogue";

@@ -12,7 +12,12 @@ for (const [u, expected] of [
   ["https://dogancanyucel.com/api/feedback", "feedback"],
   ["https://dogancanyucel.com/api/contact", "contact"],
   ["https://dogancanyucel.com/", ""],
-  ["https://dogancanyucel.com/stats", ""],
+  // /stats used to be "" here, as a page rather than an API. It is counted from 2026-11-06 for one reason: its password
+  // is the only guard on this site, and nothing counted the attempts on it — a wrong password answered 401 and left no
+  // trace, so somebody could stand there guessing and the page behind the door would show nothing. Still no address and
+  // nothing about who: day, route, outcome.
+  ["https://dogancanyucel.com/stats", "stats"],
+  ["https://dogancanyucel.com/stats/", "stats"],
   ["https://dogancanyucel.com/api/", ""],
   ["https://dogancanyucel.com/api/made-up", ""],          // unknown routes are not counted
   ["https://app.dogancanyucel.com/api/exercises", ""],     // the app's own host
@@ -67,4 +72,4 @@ await worker.fetch(new Request("https://dogancanyucel.com/", { headers: { accept
 await new Promise((r) => setTimeout(r, 0));
 assert.strictEqual(seen.length, before, "a page view was counted as an API call");
 
-console.log("api-calls: routes identified, outcomes classed, only day/route/outcome kept, pages never counted");
+console.log("api-calls: routes identified, outcomes classed, only day/route/outcome kept, pages not counted except /stats");
