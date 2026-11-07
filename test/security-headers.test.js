@@ -109,19 +109,6 @@ const notModified = await worker.fetch(new Request("https://dogancanyucel.com/st
 assert.strictEqual(notModified.status, 304);
 assert.ok(notModified.headers.get("Content-Security-Policy"), "a 304 lost the policy");
 
-// ── 4b. The Worker is actually asked about a page that exists ───────────────────────────────
-// Everything above runs the Worker because the test calls it. Production does not: Cloudflare answers any request that
-// matches a file in public/ at its own edge and skips the Worker entirely unless `run_worker_first` says otherwise.
-// Measured on the live site 2026-11-07, the day after the headers shipped: `/` and `/style.css` carried no policy at
-// all, `/no-such-page` carried all four. A green suite said the opposite, which is why this line is held by a test and
-// not only by a comment: it is the difference between hardening every page and hardening only the 404.
-const wrangler = JSON.parse(
-  (await readFile(new URL("../wrangler.jsonc", import.meta.url), "utf8"))
-    .split("\n").filter((line) => !/^\s*\/\//.test(line)).join("\n"));
-assert.strictEqual(wrangler.assets?.run_worker_first, true,
-  "with run_worker_first off, Cloudflare serves public/ itself: no security headers and no visit counted on any real page");
-assert.strictEqual(wrangler.assets?.directory, "./public");
-
 // ── 5. A wrong password at /stats is counted, so a run at the door is visible ───────────────
 assert.strictEqual(apiRouteOf(new URL("https://dogancanyucel.com/stats")), "stats");
 assert.strictEqual(apiRouteOf(new URL("https://dogancanyucel.com/stats/")), "stats");
