@@ -8,7 +8,13 @@
     // for as long as Cloudflare answered those files at its own edge and the Worker only ever saw the misses — where
     // `if (env.ASSETS)` quietly fell through to "Not Found". Measured 2026-11-07: /no-such-page came back
     // `text/plain;charset=UTF-8`, which is the Worker's own fallback, not the asset layer's 404.
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    // Without this, Cloudflare answers every request matching a file in public/ at its own edge and never runs the
+    // Worker. Measured live 2026-11-07: `/` and `/style.css` carried no Content-Security-Policy while `/no-such-page`
+    // carried all four, because only the miss reached index.js — and `recordVisit` was skipped the same way, so the
+    // page tally behind /stats counted nothing. Turning it on once without the binding above took the home page down
+    // for two minutes; the binding is proved live (the 404 is the asset layer's, not the Worker's) before this line.
+    "run_worker_first": true
   },
   "routes": [
     {

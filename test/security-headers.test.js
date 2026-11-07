@@ -121,6 +121,8 @@ const wrangler = JSON.parse(
 assert.strictEqual(wrangler.assets?.directory, "./public");
 assert.strictEqual(wrangler.assets?.binding, "ASSETS",
   "without this binding env.ASSETS is undefined and index.js answers 404 for every file it is asked to serve");
+assert.strictEqual(wrangler.assets?.run_worker_first, true,
+  "with this off, Cloudflare serves public/ itself: no security header and no visit counted on any real page");
 if (wrangler.assets?.run_worker_first) {
   assert.strictEqual(wrangler.assets.binding, "ASSETS",
     "run_worker_first sends every request through the Worker, so the Worker must be able to read the files");
