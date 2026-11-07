@@ -3,7 +3,14 @@
   "main": "index.js",
   "compatibility_date": "2026-07-07",
   "assets": {
-    "directory": "./public"
+    "directory": "./public",
+    // Without this, Cloudflare answers every request that matches a file in public/ at the edge and NEVER runs the
+    // Worker. Measured on the live site 2026-11-07: `/` and `/style.css` came back with no Content-Security-Policy at
+    // all, while `/no-such-page` (no file, so the Worker ran) carried all four headers — the hardening shipped the day
+    // before reached nothing a reader actually opens. The same short-circuit skipped `recordVisit`, so the page tally
+    // behind /stats was counting no page views either. Everything now goes through index.js, which serves the file via
+    // env.ASSETS and adds the headers.
+    "run_worker_first": true
   },
   "routes": [
     {
