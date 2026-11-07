@@ -3,7 +3,12 @@
   "main": "index.js",
   "compatibility_date": "2026-07-07",
   "assets": {
-    "directory": "./public"
+    "directory": "./public",
+    // `env.ASSETS` does not exist without this line, and index.js serves every static file through it. Nobody noticed
+    // for as long as Cloudflare answered those files at its own edge and the Worker only ever saw the misses — where
+    // `if (env.ASSETS)` quietly fell through to "Not Found". Measured 2026-11-07: /no-such-page came back
+    // `text/plain;charset=UTF-8`, which is the Worker's own fallback, not the asset layer's 404.
+    "binding": "ASSETS"
   },
   "routes": [
     {

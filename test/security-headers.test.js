@@ -109,6 +109,23 @@ const notModified = await worker.fetch(new Request("https://dogancanyucel.com/st
 assert.strictEqual(notModified.status, 304);
 assert.ok(notModified.headers.get("Content-Security-Policy"), "a 304 lost the policy");
 
+// ── 4b. The Worker can actually reach the files it is written to serve ──────────────────────
+// Everything above hands the Worker a mock ASSETS, so the suite cannot see that production has none: `assets` had no
+// `binding`, `env.ASSETS` was undefined, and `if (env.ASSETS)` in index.js fell through to a bare 404. It stayed
+// invisible because Cloudflare answered every real file at its own edge and the Worker only ever saw the misses.
+// It stopped being invisible on 2026-11-07, when `run_worker_first` was turned on and the home page went 404 in
+// production for two minutes. Both halves are asserted here, and the second one only once the first is proved live.
+const wrangler = JSON.parse(
+  (await readFile(new URL("../wrangler.jsonc", import.meta.url), "utf8"))
+    .split("\n").filter((line) => !/^\s*\/\//.test(line)).join("\n"));
+assert.strictEqual(wrangler.assets?.directory, "./public");
+assert.strictEqual(wrangler.assets?.binding, "ASSETS",
+  "without this binding env.ASSETS is undefined and index.js answers 404 for every file it is asked to serve");
+if (wrangler.assets?.run_worker_first) {
+  assert.strictEqual(wrangler.assets.binding, "ASSETS",
+    "run_worker_first sends every request through the Worker, so the Worker must be able to read the files");
+}
+
 // ── 5. A wrong password at /stats is counted, so a run at the door is visible ───────────────
 assert.strictEqual(apiRouteOf(new URL("https://dogancanyucel.com/stats")), "stats");
 assert.strictEqual(apiRouteOf(new URL("https://dogancanyucel.com/stats/")), "stats");
