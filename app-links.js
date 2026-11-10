@@ -15,11 +15,31 @@ export const ANDROID_PACKAGE = "com.aistudio.fitai.trfity";
 export const PLAY_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
 export const OPEN_PATH = "/open/";
 
+// Cairn's "Add to Cairn" links live here too (owner, 2026-11-10: "app.dogancanyucel.com olsun ama baska domainim yok"):
+// the buttons stand on dogancanyucel.com/project/cairn/, and a link tapped on its own host stays in Safari. The link
+// carries only a course's key; the course comes from inside the app (Cairn's `CourseLink`, SCAN_PLAN 27b). One file
+// for two apps: a broken entry here breaks Turquoise's links too, which the test keeps watch on.
+export const CAIRN_APP_ID = "9V3ZFD8DXN.com.dogancanyucel.cairn";
+export const CAIRN_COURSE_PATH = "/cairn/course/";
+export const CAIRN_PAGE = "https://dogancanyucel.com/project/cairn/";
+// The app's own rule for a key (`CourseLink.isWellFormed`): lower-case words of letters and digits, single dashes.
+const COURSE_KEY = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
 export const APPLE_ASSOCIATION = {
   applinks: {
-    details: [{ appIDs: [APPLE_APP_ID], components: [{ "/": `${OPEN_PATH}*`, comment: "Opens the app" }] }],
+    details: [
+      { appIDs: [APPLE_APP_ID], components: [{ "/": `${OPEN_PATH}*`, comment: "Opens the app" }] },
+      { appIDs: [CAIRN_APP_ID], components: [{ "/": `${CAIRN_COURSE_PATH}*`, comment: "Adds a course to Cairn" }] },
+    ],
   },
 };
+
+/** Where a course link goes when Cairn does not take it: the course on the project page, or the page itself. */
+export function cairnCourseFallback(pathname) {
+  let key = pathname.slice(CAIRN_COURSE_PATH.length);
+  if (key.endsWith("/")) key = key.slice(0, -1);
+  return key.length <= 64 && COURSE_KEY.test(key) ? `${CAIRN_PAGE}#course-${key}` : CAIRN_PAGE;
+}
 
 const LANDING = `<!DOCTYPE html>
 <html lang="en">
@@ -59,6 +79,11 @@ export function appLinksResponse(url) {
     return new Response(JSON.stringify(APPLE_ASSOCIATION), {
       headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=3600" },
     });
+  }
+  if (url.pathname.startsWith(CAIRN_COURSE_PATH)) {
+    // Reached only when the app did not take the link (not installed, or a browser that keeps links). 302, not 301: a
+    // permanent redirect is cached by the browser and would outlive a change of where the courses stand.
+    return Response.redirect(cairnCourseFallback(url.pathname), 302);
   }
   if (url.pathname === OPEN_PATH.slice(0, -1) || url.pathname.startsWith(OPEN_PATH)) {
     return new Response(LANDING, { headers: { "Content-Type": "text/html; charset=utf-8", "Referrer-Policy": "no-referrer" } });

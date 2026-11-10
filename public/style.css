@@ -752,3 +752,11 @@ footer {
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
 .reveal.visible { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } }
+
+/* Cairn's course cards (written by the Cairn repository's Courses/site.py, SCAN_PLAN 27b): the stages as a quiet line
+   and the "Add to Cairn" button set off below them. The anchor `course-<key>` is where a course link lands without the
+   app, so it stops clear of the fixed navbar. */
+.course { display: flex; flex-direction: column; gap: 10px; scroll-margin-top: 96px; }
+.course-stages { color: var(--label-2); font-size: 15px; }
+.course-add { align-self: flex-start; margin-top: auto; }
+

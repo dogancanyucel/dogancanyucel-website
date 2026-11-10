@@ -1,7 +1,7 @@
 // app.dogancanyucel.com: Apple's association file and the landing page, and nothing of the main site's.
 import assert from "node:assert";
 import worker from "../index.js";
-import { ANDROID_PACKAGE, APPLE_APP_ID, PLAY_URL } from "../app-links.js";
+import { ANDROID_PACKAGE, APPLE_APP_ID, CAIRN_APP_ID, PLAY_URL } from "../app-links.js";
 
 const env = { ASSETS: { fetch: async () => new Response("asset") }, EMAIL: { send: async () => { throw new Error("no mail here"); } } };
 const get = (address) => worker.fetch(new Request(address), env);
@@ -13,6 +13,24 @@ const body = await association.json();
 assert.deepStrictEqual(body.applinks.details[0].appIDs, [APPLE_APP_ID]);
 assert.strictEqual(APPLE_APP_ID, "9V3ZFD8DXN.com.aistudio.fitai.trfity", "team id and bundle id of the app");
 assert.deepStrictEqual(body.applinks.details[0].components.map((c) => c["/"]), ["/open/*"]);
+// Cairn beside Turquoise in the same file (owner, 2026-11-10); Turquoise's entry above is unchanged by it.
+assert.strictEqual(body.applinks.details.length, 2);
+assert.deepStrictEqual(body.applinks.details[1].appIDs, [CAIRN_APP_ID]);
+assert.strictEqual(CAIRN_APP_ID, "9V3ZFD8DXN.com.dogancanyucel.cairn", "team id and bundle id of Cairn");
+assert.deepStrictEqual(body.applinks.details[1].components.map((c) => c["/"]), ["/cairn/course/*"]);
+
+// Without the app, a course link lands on the course in the project page; anything malformed on the page itself.
+for (const [address, expected] of [
+  ["https://app.dogancanyucel.com/cairn/course/python", "https://dogancanyucel.com/project/cairn/#course-python"],
+  ["https://app.dogancanyucel.com/cairn/course/python-web/", "https://dogancanyucel.com/project/cairn/#course-python-web"],
+  ["https://app.dogancanyucel.com/cairn/course/Python", "https://dogancanyucel.com/project/cairn/"],
+  ["https://app.dogancanyucel.com/cairn/course/%3Cscript%3E", "https://dogancanyucel.com/project/cairn/"],
+  ["https://app.dogancanyucel.com/cairn/course/", "https://dogancanyucel.com/project/cairn/"],
+]) {
+  const answer = await get(address);
+  assert.strictEqual(answer.status, 302, address);
+  assert.strictEqual(answer.headers.get("Location"), expected, address);
+}
 
 const landing = await get("https://app.dogancanyucel.com/open/auth-done");
 assert.strictEqual(landing.status, 200);
