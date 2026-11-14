@@ -54,7 +54,10 @@ assert.ok(script.includes("requestAnimationFrame") && script.includes("cancelAni
   "the walk must be a cancellable animation frame");
 assert.ok(!/setInterval|setTimeout\s*\([^)]*scrollLeft/.test(script),
   "a timer would keep scrolling a strip nobody is looking at");
-assert.ok(script.includes("IntersectionObserver"), "the walk stops when the strip is off screen");
+// Static text is all a node suite can see, so this holds both halves of the guard: the feature
+// test and the observer itself. Either one gone and the loop runs against a strip off screen.
+assert.ok(script.includes("'IntersectionObserver' in window") && /new IntersectionObserver\(/.test(script),
+  "the walk must be guarded by an IntersectionObserver so it stops when the strip is off screen");
 
 const css = readFileSync("public/style.css", "utf8");
 assert.ok(/\.shot-play\[aria-pressed="true"\][\s\S]*icon-pause/.test(css),
