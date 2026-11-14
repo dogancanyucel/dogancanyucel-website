@@ -1,0 +1,23 @@
+# This file exists for one line: where the sitemap is. A crawler does not probe /sitemap.xml;
+# it reads robots.txt and follows the pointer, so without this line the sitemap is only found
+# by someone submitting it in Search Console by hand.
+#
+# Deliberately nothing else. Cloudflare serves this zone a MANAGED robots.txt from its own edge
+# (measured live 2026-11-14, before this file existed: 2,676 bytes carrying
+# "User-agent: * / Content-Signal: search=yes,ai-train=no,use=reference / Allow: /" and 31 named
+# AI and scraper agents at Disallow: /, between "# BEGIN Cloudflare Managed content" and
+# "# END Cloudflare Managed Content"). That block is the owner's crawler and AI-training stance
+# and it is kept in Cloudflare's dashboard, not here: a copy of it in this file would be a second
+# source of truth that silently contradicts the dashboard the day either one changes, and the
+# 31-agent list is one Cloudflare keeps updating.
+#
+# Cloudflare's documented behaviour is to APPEND its managed block to the origin's robots.txt.
+# That cannot be proved from here — the managed block lives at the edge and the sandbox cannot
+# run wrangler dev — so it is proved on the live site right after the push: fetch
+# https://dogancanyucel.com/robots.txt and check that BOTH this Sitemap line and
+# "# BEGIN Cloudflare Managed content" are in it. If the managed block is gone, this file
+# REPLACED it instead of being appended to: delete public/robots.txt, push again (the managed
+# block comes back by itself), and point search engines at the sitemap from Search Console or
+# from Cloudflare's own AI Crawl Control instead.
+
+Sitemap: https://dogancanyucel.com/sitemap.xml

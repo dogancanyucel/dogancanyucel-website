@@ -31,6 +31,9 @@ Thumbs.db
 # are gone, and a fresh clone of this repo will not have them.
 contextwindows.md
 CLAUDE.md
+# The task queue, for the same reason (2026-11-14): it carries the owner's open decisions and
+# half-done work, and a public repo is the wrong place for either.
+TASKS.md
 # The scan log and its coverage maps, for the same reason (2026-11-06): working state, not a
 # deliverable. CLAUDE.md points at them.
 tarama-kaydi.md

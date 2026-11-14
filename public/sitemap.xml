@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Every page of this site a search engine should index, in the URL form that answers 200.
+
+  Measured 2026-11-14 on the live site: the asset layer's default html_handling redirects
+  /privacy.html → /privacy (307) and /project/cairn → /project/cairn/ (307). A sitemap that
+  listed the redirecting form would hand every crawler a hop; these are the 200 forms. The
+  store privacy address /privacy.html is unchanged and still resolves — it simply is not the
+  URL search engines are pointed at.
+
+  Left out on purpose: /turquoise/auth/, the landing page for the links in Turquoise's own
+  e-mails, which carries <meta name="robots" content="noindex"> and is nobody's search result.
+  /project/ is a 301 to /#work, so it is not a page any more.
+
+  No <lastmod>, <changefreq> or <priority>. Google ignores the last two outright, and a lastmod
+  written by hand goes stale the first time a page changes without this file being touched —
+  a wrong date is read as a lie and the whole file is then distrusted. Eight pages are crawled
+  in full anyway.
+
+  test/sitemap.test.js derives this list from public/ and fails if a page is added, removed or
+  renamed without this file following.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://dogancanyucel.com/</loc></url>
+  <url><loc>https://dogancanyucel.com/project/turquoise-ai-calorie-fitness/</loc></url>
+  <url><loc>https://dogancanyucel.com/project/cairn/</loc></url>
+  <url><loc>https://dogancanyucel.com/privacy</loc></url>
+  <url><loc>https://dogancanyucel.com/terms</loc></url>
+  <url><loc>https://dogancanyucel.com/project/cairn/privacy/</loc></url>
+  <url><loc>https://dogancanyucel.com/project/cairn/terms/</loc></url>
+  <url><loc>https://dogancanyucel.com/website-privacy</loc></url>
+</urlset>
