@@ -72,6 +72,12 @@ const SECURITY_HEADERS = {
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
   "Referrer-Policy": "no-referrer",
+  // Ported from stonefoldstudio.com, which was built later out of this file's lessons and came out with one header
+  // more than its teacher (found 2026-11-14, comparing the two live sites header by header). Nothing this site
+  // serves asks for a camera, a microphone or a location, so saying so costs nothing and takes the three away from
+  // anything that is ever embedded or injected here. The site's own flows are unaffected — measured: no page, and
+  // no file under public/, names any of the three.
+  "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
 };
 
 /**

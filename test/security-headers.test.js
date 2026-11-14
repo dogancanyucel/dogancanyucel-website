@@ -26,7 +26,10 @@ const env = {
 
 const get = (path, init) => worker.fetch(new Request(`https://dogancanyucel.com${path}`, init), env);
 
-const REQUIRED = ["Content-Security-Policy", "X-Content-Type-Options", "X-Frame-Options", "Referrer-Policy"];
+// Permissions-Policy joined the four on 2026-11-14: stonefoldstudio.com, built later from this site's lessons,
+// shipped with it and this site had never had it. Nothing here asks for a camera, a microphone or a location.
+const REQUIRED = ["Content-Security-Policy", "X-Content-Type-Options", "X-Frame-Options", "Referrer-Policy",
+  "Permissions-Policy"];
 
 // ── 1. On every kind of answer ──────────────────────────────────────────────────────────────
 for (const path of ["/", "/index.html", "/privacy.html", "/api/feedback", "/no-such-page"]) {
@@ -35,6 +38,11 @@ for (const path of ["/", "/index.html", "/privacy.html", "/api/feedback", "/no-s
     assert.ok(response.headers.get(header), `${path} (${response.status}) has no ${header}`);
   }
   assert.strictEqual(response.headers.get("X-Content-Type-Options"), "nosniff", path);
+  // The same three the studio site switches off, worded the same way: one design language, one answer.
+  for (const feature of ["geolocation", "microphone", "camera"]) {
+    assert.match(response.headers.get("Permissions-Policy"), new RegExp(`${feature}=\\(\\)`),
+      `${path}: ${feature} is not switched off`);
+  }
 }
 
 // ── 2. The policy fits what the site actually serves ────────────────────────────────────────
