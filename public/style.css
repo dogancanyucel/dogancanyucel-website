@@ -220,7 +220,7 @@ ul, ol, dl, dd { margin: 0; padding: 0; }
 .display .mark, .title-1 .mark, .title-2 .mark { padding: .02em .16em; }
 
 html.js .mark-wipe { clip-path: inset(0 100% 0 0); }
-html.js .mark-wipe.visible { clip-path: inset(0); transition: clip-path 520ms var(--ease); }
+html.js .mark-wipe.visible { clip-path: inset(0); transition: clip-path 520ms var(--ease) 240ms; }
 @media (prefers-reduced-motion: reduce) {
   html.js .mark-wipe, html.js .mark-wipe.visible { clip-path: none; transition: none; }
 }
@@ -360,7 +360,7 @@ html.js .mark-wipe.visible { clip-path: inset(0); transition: clip-path 520ms va
 .mobile-link {
   display: flex; align-items: center; min-height: 56px;
   font-family: 'Oswald', 'Inter', sans-serif;
-  font-size: 28px; font-weight: 600;
+  font-size: 32px; font-weight: 600;
   color: var(--ink);
   border-top: 1px solid var(--line);
 }
@@ -369,7 +369,43 @@ html.js .mark-wipe.visible { clip-path: inset(0); transition: clip-path 520ms va
 @media (max-width: 760px) {
   .nav-links { display: none; }
   .hamburger { display: block; }
+
+  /* The panel takes the whole viewport, and its own top padding clears the
+     bar. The ladder in the spec puts the panel above the nav, which would
+     bury the one control that closes it — the button, which the CSS has
+     already turned into an X. So the bar keeps the top layer and the panel
+     starts below it. */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    gap: 0;
+    padding: calc(var(--nav-h) + var(--s3)) var(--gutter) var(--s6);
+    background: var(--paper);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
   .mobile-menu.open { display: flex; }
+  .nav-container { position: relative; z-index: 51; background: var(--paper); }
+
+  /* The links arrive 60ms apart. An animation, not a transition: the panel
+     goes from `display:none`, and nothing transitions out of that. */
+  .mobile-menu.open .mobile-link { animation: panel-in .36s var(--ease) both; }
+  .mobile-menu.open .mobile-link:nth-child(1) { animation-delay: 40ms; }
+  .mobile-menu.open .mobile-link:nth-child(2) { animation-delay: 100ms; }
+  .mobile-menu.open .mobile-link:nth-child(3) { animation-delay: 160ms; }
+}
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* While the panel is open the page behind it must not scroll. */
+html.menu-open, html.menu-open body { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu.open .mobile-link { animation: none; }
 }
 
 /* ── Sections ─────────────────────────────────────────────── */

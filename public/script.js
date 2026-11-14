@@ -1,26 +1,47 @@
 /* ══ script.js ══
-   Four behaviours, nothing else: the nav gains a hairline once the page
-   scrolls, the small-screen menu opens, sections fade in once, and the
-   Turquoise page's screenshot strip walks when its button is pressed.
-   Every page on the site loads this file, so each lookup is optional —
-   a missing element means that page simply doesn't have the behaviour. */
+   Five behaviours, nothing else: the page says it has a script, the nav gains
+   a hairline once it scrolls, the small-screen panel opens, sections and the
+   hero's marker arrive once, and the Turquoise page's screenshot strip walks
+   when its button is pressed.
+   Every page on the site loads this file, so each lookup is optional — a
+   missing element means that page simply doesn't have the behaviour. */
+
+// ── This page has a script ────────────────────────────────
+// First line, and the one that arms everything else. Until it runs, the CSS
+// leaves every .reveal finished and every marker plane drawn: a reader whose
+// script is blocked, slow or broken gets the whole page, just without motion.
+document.documentElement.classList.add('js');
 
 // ── Nav hairline on scroll ────────────────────────────────
+// A scroll event arrives many times a second; the class is only touched when
+// the answer actually changes.
 const navbar = document.getElementById('navbar');
 if (navbar) {
-  const setScrolled = () => navbar.classList.toggle('scrolled', window.scrollY > 8);
+  let hairline = null;
+  const setScrolled = () => {
+    const on = window.scrollY > 8;
+    if (on === hairline) return;
+    hairline = on;
+    navbar.classList.toggle('scrolled', on);
+  };
   setScrolled();                                   // correct on a reload mid-page
   window.addEventListener('scroll', setScrolled, { passive: true });
 }
 
-// ── Small-screen menu ─────────────────────────────────────
+// ── Small-screen panel ────────────────────────────────────
 const hamburger  = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobileMenu');
 
 if (hamburger && mobileMenu) {
+  const wide = matchMedia('(min-width: 761px)');    // the CSS breakpoint, said once
+
   const setMenu = (open) => {
     mobileMenu.classList.toggle('open', open);
     hamburger.setAttribute('aria-expanded', String(open));
+    // The panel covers the viewport, so the page behind it must not scroll
+    // under the reader's finger. A class, not a style attribute: the policy is
+    // `style-src 'self'`.
+    document.documentElement.classList.toggle('menu-open', open);
   };
 
   hamburger.addEventListener('click', () => {
@@ -36,12 +57,17 @@ if (hamburger && mobileMenu) {
       hamburger.focus();
     }
   });
+
+  // A phone turned sideways, or a window dragged wide: the button that opens
+  // the panel disappears at 761px, so the panel must not be left open behind
+  // it, and nothing must be left claiming to be expanded.
+  wide.addEventListener('change', (e) => { if (e.matches) setMenu(false); });
 }
 
-// ── Reveal on scroll ──────────────────────────────────────
-// The CSS already hides .reveal, so anything marked in the HTML must be
-// shown again if this cannot run — otherwise a browser without
-// IntersectionObserver would show a blank page.
+// ── Reveal, and the hero's one marker ─────────────────────
+// The CSS only hides .reveal once `js` is on <html>, so this cannot leave a
+// page blank — but a browser with no IntersectionObserver still gets
+// everything shown at once rather than nothing.
 const revealEls = document.querySelectorAll('.reveal');
 
 if (revealEls.length) {
@@ -54,11 +80,18 @@ if (revealEls.length) {
         entry.target.classList.add('visible');
         revealObserver.unobserve(entry.target);
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0.12, rootMargin: '0px 0px -12% 0px' });
 
     revealEls.forEach(el => revealObserver.observe(el));
   }
 }
+
+// The marker plane opens left to right, once, on load. The wait is a frame and
+// not a timer: the clipped state has to be painted before the open state can
+// be transitioned to, or the browser sees one style and animates nothing. The
+// delay and the duration live in the stylesheet with the rest of the motion.
+const wipe = document.querySelector('.mark-wipe');
+if (wipe) requestAnimationFrame(() => requestAnimationFrame(() => wipe.classList.add('visible')));
 
 // ── The screenshot strip walks itself ─────────────────────
 // Only the Turquoise page has one. It starts stopped: the button is the whole contract
