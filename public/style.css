@@ -727,6 +727,9 @@ a.bento-cell:hover { transform: translateY(-2px); border-color: var(--ink-2); }
   min-height: 44px; font-size: 15px; color: var(--ink-2);
 }
 .back-link:hover { color: var(--accent-ink); }
+/* Drawn, like every other arrow on the site: U+2190 is outside the two Inter
+   subsets this site serves, so it was being painted by the reader's OS. */
+.arrow-back { display: block; width: 14px; height: 14px; flex: none; }
 
 .page-head { max-width: 760px; margin: var(--s1) 0 clamp(26px, 3.4vw, 44px); }
 .page-head .eyebrow { margin-bottom: var(--s3); }
