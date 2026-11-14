@@ -480,7 +480,11 @@ a.bento-cell:hover { transform: translateY(-2px); border-color: var(--ink-2); }
   font-size: 16px; font-weight: 500; color: var(--accent-ink);
 }
 .bento-cell:hover .arrow, .project-card:hover .project-more .arrow { transform: translateX(4px); }
-.arrow { display: inline-block; transition: transform var(--dur) var(--ease); }
+.arrow { display: inline-flex; transition: transform var(--dur) var(--ease); }
+/* Drawn, for the reason written above `.ext`: measured in the page, Inter
+   renders `a` at 22.46px and the up arrow at 33.36px, but U+2192 comes back at
+   exactly the fallback's 24.08 — the glyph was never ours. */
+.arrow svg { display: block; width: 14px; height: 14px; }
 
 @media (max-width: 900px) {
   .bento { grid-template-columns: repeat(4, 1fr); }
@@ -560,6 +564,15 @@ a.bento-cell:hover { transform: translateY(-2px); border-color: var(--ink-2); }
 
 /* The store block inside Turquoise's frame: a hairline rather than a second box —
    a card drawn inside a card is one frame too many for something this small. */
+/* Where a project has no store block yet, this stands in its place: the same
+   place in the frame, the same quiet voice, and it says what a reader is
+   owed — that there is nothing to download.
+   It is scoped to the card on purpose. A bare `.status-note` loses to
+   `.project-card p` — same weight, but that one also names an element — and
+   the note then renders as one more line of the paragraph: measured, the two
+   came back identical at ink, 16.5px, margin 0. */
+.project-card .status-note { margin: var(--s4) 0 0; color: var(--ink-2); font-size: 15px; }
+
 .card-store { margin-top: var(--s4); padding-top: var(--s4); border-top: 1px solid var(--line); }
 .card-store .cell-label { margin-bottom: var(--s1); }
 .card-store .store-note { margin: 0 0 var(--s3); font-size: 14px; }
