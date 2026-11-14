@@ -40,6 +40,15 @@ const button = inside.match(/<button[^>]*class="shot-play"[^>]*>/)[0];
 assert.ok(/\btype="button"/.test(button), "the button must not submit anything");
 assert.ok(/\baria-pressed="false"/.test(button), "the strip starts stopped: nothing moves until it is pressed");
 assert.ok(/\baria-label="[^"]+"/.test(button), "a button with only an icon needs a label");
+
+// The strip is a scroll container, so it is focusable and it is named — but it must stay a LIST.
+// Found 2026-11-14 by Lighthouse on the live page: role="group" replaces the <ul>'s own list
+// role, and its ten <li> children are then list items with no list ("List items are not
+// contained within <ul>, <ol> or <menu>"). role="list" keeps both the name and the semantics.
+const strip = list[0].match(/<ul class="shot-strip"[^>]*>/)[0];
+assert.ok(/\brole="list"/.test(strip), 'the strip must keep a list role — role="group" orphans its items');
+assert.ok(/\btabindex="0"/.test(strip), "a scrollable region must be reachable by keyboard");
+assert.ok(/\baria-label="[^"]+"/.test(strip), "the strip needs a name");
 for (const icon of ["icon-play", "icon-pause"]) {
   assert.ok(inside.includes(`class="${icon}"`), `the button carries its ${icon} icon`);
 }
