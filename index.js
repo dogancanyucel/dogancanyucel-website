@@ -59,7 +59,7 @@ const BASE_CSP =
  * hash from the file and fails with this constant's name when the two drift apart, so the suite says so before a visitor
  * does.
  */
-const AUTH_PAGE_STYLE_HASH = "sha256-k40iVteoOcO55w2foENluHwSHjt1t91BJgALTRIil8Y=";
+const AUTH_PAGE_STYLE_HASH = "sha256-Sdn3ou9Fs2Rb1Kr+N+6sVPZCYNCjP51XE5DMr4BnrWw=";
 const AUTH_PAGE_PREFIX = "/turquoise/auth";
 
 /** The policy for one path: the site's, with the account page's one hashed block added. */

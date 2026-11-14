@@ -35,6 +35,9 @@
     main { width: 100%; max-width: 400px; display: grid; gap: 20px; }
     .brand { display: flex; align-items: center; gap: 10px; justify-content: center; font-weight: 700; font-size: 1.05rem; }
     .brand img { width: 36px; height: 36px; border-radius: 9px; }
+    /* The page's heading is its name; it takes the row's own type, not the
+       browser's h1 defaults. */
+    .brand h1 { margin: 0; font: inherit; }
     .card { background: var(--surface); border-radius: 16px; padding: 24px 20px; display: grid; gap: 16px; }
     h1 { margin: 0; font-size: 1.35rem; text-align: center; text-wrap: balance; }
     .who { margin: -8px 0 0; text-align: center; color: var(--secondary); font-size: 0.95rem; overflow-wrap: anywhere; }
@@ -63,7 +66,7 @@
 </head>
 <body>
   <main>
-    <div class="brand"><img src="/assets/turquoise-ai-logo.svg" alt="" /><span>Turquoise</span></div>
+    <div class="brand"><img src="/assets/turquoise-ai-logo.svg" alt="" /><h1>Turquoise</h1></div>
     <section class="card" id="card" aria-live="polite">
       <p class="wait">…</p>
     </section>
