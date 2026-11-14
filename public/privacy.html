@@ -8,6 +8,10 @@
   <link rel="canonical" href="https://dogancanyucel.com/privacy" />
   <meta name="theme-color" content="#F7F4EF" />
   <link rel="icon" href="/assets/dcy-icon.svg" type="image/svg+xml" />
+  <!-- The one preload the design allows, and it is spent on the face that caused the
+       only layout shift on the site: measured live 2026-11-14, CLS 0.066 on the home
+       page, every bit of it the hero re-laying out when inter-latin.woff2 arrived. -->
+  <link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
