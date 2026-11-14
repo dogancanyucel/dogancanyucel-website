@@ -71,7 +71,10 @@
       <p class="wait">…</p>
     </section>
   </main>
-  <noscript><p style="text-align:center">JavaScript is needed to finish this.</p></noscript>
+  <!-- `class`, not `style="text-align:center"`: the hash in index.js covers this page's <style> ELEMENT and a hash
+       never reaches a style ATTRIBUTE, so that attribute was refused on the live site and the sentence was never
+       centred (measured 2026-11-14). .wait already says the same thing. -->
+  <noscript><p class="wait">JavaScript is needed to finish this.</p></noscript>
   <script type="module" src="./page.js"></script>
 </body>
 </html>

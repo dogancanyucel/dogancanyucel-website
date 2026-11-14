@@ -80,15 +80,21 @@ console.log(`no-third-party: ${files.length} served files, nothing loads from an
 // The same policy that keeps other companies out (`style-src 'self'`, `script-src 'self'`) also
 // refuses this site's OWN inline style and script — silently. Found 2026-11-14 by Lighthouse:
 // six `style=` attributes on three pages had never applied on the live site, and the margins
-// their author wrote were simply not there. Only the account page is exempt: its inline <style>
-// is in the policy by hash, which test/security-headers.test.js holds.
-const INLINE_EXEMPT = "public/turquoise/auth/";
+// their author wrote were simply not there.
+//
+// **The exemption is one ELEMENT, not one folder** (narrowed 2026-11-14). The account page's inline <style> is in
+// the policy by hash, which test/security-headers.test.js holds — but the rule written on 2026-11-14 skipped that
+// page's whole folder, and a hash does not reach a style ATTRIBUTE. So the one `style="text-align:center"` left in
+// that file sat on the live site refused, on the page a password-reset mail opens, inside the exemption that was
+// written the same day to catch exactly this. A rule wider than the thing it excuses is a rule with a hole in it.
+const HASHED_STYLE_BLOCK = "public/turquoise/auth/index.html";
 for (const file of filesUnder("public", [".html"])) {
-  if (file.startsWith(INLINE_EXEMPT)) continue;
   const html = readFileSync(file, "utf8");
   const styled = [...html.matchAll(/<[a-z][^>]*\sstyle=["'][^"']*["']/gi)].map((m) => m[0].slice(0, 60));
   assert.deepStrictEqual(styled, [], `${file}: inline style= is refused by the page's own CSP and never applies`);
-  assert.ok(!/<style[\s>]/i.test(html), `${file}: an inline <style> block is refused by the page's own CSP`);
+  if (file !== HASHED_STYLE_BLOCK) {
+    assert.ok(!/<style[\s>]/i.test(html), `${file}: an inline <style> block is refused by the page's own CSP`);
+  }
   const inlineScript = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>/gi)].map((m) => m[0]);
   assert.deepStrictEqual(inlineScript, [], `${file}: an inline <script> is refused by the page's own CSP`);
 }
