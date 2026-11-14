@@ -101,17 +101,21 @@ function page({ places, days, total, since, api, nonce }) {
   .stats h1 { font-size: clamp(30px, 5vw, 42px); letter-spacing: -.03em; margin-bottom: 8px; }
   .stats .lead { margin: 0 0 32px; }
   .figure { font-size: clamp(40px, 8vw, 64px); font-weight: 600; letter-spacing: -.04em; line-height: 1; }
-  .figure-label { color: var(--label-2); font-size: 15px; margin-top: 6px; }
-  /* style.css says --label-3 (#8e8e93) is for cards only: it is 2.8:1 on the field, and this
-     page puts its small print straight on the field with no card under it. The field's own
-     pair is #bcbcc0, measured to hold 4.6:1 with the cursor glow at its strongest. */
-  .stats .footnote { color: var(--label-2); }
-  table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: var(--r-card); overflow: hidden; }
-  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--hairline); font-size: 15px; }
-  th { color: var(--label-2); font-weight: 500; font-size: 13px; letter-spacing: .02em; text-transform: uppercase; }
+  .figure-label { color: var(--ink-2); font-size: 15px; margin-top: 6px; }
+  /* --ink-2 is the stylesheet's own second voice: 7.14:1 on the paper this sits on and 7.83:1
+     on the card the tables wear. Measured 2026-11-14 against the tokens, not estimated.
+     This page used to ask for --label-2, --surface and --hairline — three names the paper
+     system deleted. An undefined var() does not fall back: it makes the whole declaration
+     invalid, so the tables had no background and not one row rule for the hours between the
+     redesign going live and this. test/worker-pages.test.js now refuses a name the
+     stylesheet does not define. */
+  .stats .footnote { color: var(--ink-2); }
+  table { width: 100%; border-collapse: collapse; background: var(--paper-2); border-radius: var(--r-card); overflow: hidden; }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); font-size: 15px; }
+  th { color: var(--ink-2); font-weight: 500; font-size: 13px; letter-spacing: .02em; text-transform: uppercase; }
   tr:last-child td { border-bottom: 0; }
   td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
-  td.empty { color: var(--label-2); }
+  td.empty { color: var(--ink-2); }
   td.warn { color: #9a3412; font-weight: 600; }
   .scroller { overflow-x: auto; border-radius: var(--r-card); }
   .scroller table { min-width: 560px; }      /* narrower than this the columns crush into each other */

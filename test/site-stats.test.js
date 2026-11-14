@@ -63,9 +63,13 @@ for (const path of ["/stats", "/stats/"]) {
   // reached and scrolled from the keyboard (axe: scrollable-region-focusable).
   assert.match(html, /<div class="scroller" tabindex="0" role="region" aria-label="[^"]+">\s*<table>/,
     "the API table is not in a focusable scroll container");
-  // style.css's own rule: --label-3 (#8e8e93) is 2.8:1 on the field and belongs on a card only.
-  // This page has no card under its text, so its small print takes the field's pair.
-  assert.match(html, /\.stats \.footnote \{ color: var\(--label-2\)/, "the small print is back on --label-3");
+  // The small print is given a colour of its own rather than the body's.
+  //
+  // This assertion used to name the token: `var(--label-2)`. That is how the 2026-11-14 redesign could delete
+  // --label-2, --surface and --hairline from style.css and leave this page asking for all three with the suite
+  // still green — the test proved the page agreed with ITSELF, never that the name existed. Whether the name is
+  // real is test/worker-pages.test.js's job now, for every token on both pages the Worker builds.
+  assert.match(html, /\.stats \.footnote \{ color: var\(--[\w-]+\)/, "the small print lost its own colour");
   assert.strictEqual(r.headers.get("cache-control"), "no-store", "the page may be cached");
   assert.ok(/noindex/.test(r.headers.get("x-robots-tag") || ""), "the page is indexable");
   assert.ok(/<meta name="robots" content="noindex/.test(html), "no robots meta");
