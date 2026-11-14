@@ -58,6 +58,10 @@ assert.ok(!/setInterval|setTimeout\s*\([^)]*scrollLeft/.test(script),
 // test and the observer itself. Either one gone and the loop runs against a strip off screen.
 assert.ok(script.includes("'IntersectionObserver' in window") && /new IntersectionObserver\(/.test(script),
   "the walk must be guarded by an IntersectionObserver so it stops when the strip is off screen");
+// Frames stop while the tab is in the background and then arrive together. Without a gap guard
+// each caught-up frame moves the strip by the clamped maximum and it jumps — measured live on
+// 2026-11-14 as a 180px jump the moment the page was drawn again.
+assert.ok(/gap > SKIP|gap > \d+/.test(script), "a long gap between frames must move the strip by nothing");
 
 const css = readFileSync("public/style.css", "utf8");
 assert.ok(/\.shot-play\[aria-pressed="true"\][\s\S]*icon-pause/.test(css),

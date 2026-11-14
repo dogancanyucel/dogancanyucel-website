@@ -129,9 +129,17 @@ if (shotsStage) {
 
     const limit = () => Math.max(0, strip.scrollWidth - strip.clientWidth);
 
+    const SKIP = 100;          // ms: longer than this and the browser was not drawing us
+
     const step = (now) => {
-      const dt = last ? Math.min((now - last) / 1000, 0.1) : 0;   // a tab that was away does not leap
+      const gap = last ? now - last : 0;
       last = now;
+      // A tab in the background, a hidden pane, a laptop lid: frames stop, then arrive in a
+      // burst. Measured on the live site 2026-11-14: each caught-up frame took the clamped
+      // maximum and the strip jumped 180px at once. A gap this long is not time the strip
+      // walked through — it is time nobody saw, so it moves nothing.
+      if (gap > SKIP) { frame = requestAnimationFrame(step); return; }
+      const dt = gap / 1000;
       const end = limit();
       if (end <= 0) { stop(); return; }                           // nothing to walk through
       at += dir * SPEED * dt;
