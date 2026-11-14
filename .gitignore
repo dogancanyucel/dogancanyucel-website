@@ -34,6 +34,9 @@ CLAUDE.md
 # The task queue, for the same reason (2026-11-14): it carries the owner's open decisions and
 # half-done work, and a public repo is the wrong place for either.
 TASKS.md
+# The outcome log the next session greps before walking a path again (2026-11-14): same class,
+# same reason. It deepens the no-backup problem in TASKS.md T8 — that is the owner's call, not this file's.
+LESSONS.md
 # The scan log and its coverage maps, for the same reason (2026-11-06): working state, not a
 # deliverable. CLAUDE.md points at them.
 tarama-kaydi.md
