@@ -390,6 +390,17 @@ h2.eyebrow { margin: 0 0 var(--s4); }
    it does not carry accent rules (3.01:1 — see the file header). */
 .band { background: var(--sand); }
 
+/* The one way out of the Studio band. The accent's darker sibling is 4.51:1 on
+   sand — it passes as text with 0.01 to spare, which is why nothing on this
+   band is ever a 1px accent rule (3.01:1). Re-measure before either colour
+   moves. */
+.studio-link {
+  display: inline-flex; align-items: center;
+  min-height: 44px; margin-top: var(--s4);
+  font-size: 16.5px; font-weight: 500;
+  color: var(--accent-ink);
+}
+
 /* ── Hero ─────────────────────────────────────────────────── */
 
 #hero {
