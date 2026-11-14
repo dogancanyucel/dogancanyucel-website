@@ -671,6 +671,38 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   scrollbar-color: var(--edge-strong) transparent;
 }
 .shot { flex: none; scroll-snap-align: center; }
+/* The strip can walk itself: one button in the middle, pressed to start, pressed to stop
+   (owner, 2026-11-14: "let the screen move right and left, and put a button in the middle —
+   press it and it plays"). It starts stopped and nothing moves until someone asks for it, and
+   it walks to the end and back rather than jumping to the start, because a jump reads as a
+   glitch. The loop is paused when the strip is off screen — a requestAnimationFrame that scrolls
+   something nobody is looking at is battery for nothing. */
+.shots-stage { position: relative; }
+.shot-play {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  z-index: 2;
+  display: grid; place-items: center;
+  width: 56px; height: 56px; padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--edge-strong);
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+  color: var(--label);
+  cursor: pointer;
+  transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease),
+              background var(--dur) var(--ease);
+}
+.shot-play:hover { border-color: var(--accent); transform: translate(-50%, -50%) scale(1.06); }
+.shot-play:active { transform: translate(-50%, -50%) scale(.96); }
+.shot-play svg { display: block; }
+/* The icon is the state: a triangle while it is stopped, two bars while it walks. */
+.shot-play .icon-pause { display: none; }
+.shot-play[aria-pressed="true"] .icon-play { display: none; }
+.shot-play[aria-pressed="true"] .icon-pause { display: block; }
+@media (prefers-reduced-motion: reduce) {
+  .shot-play:hover, .shot-play:active { transform: translate(-50%, -50%); }
+}
+
 .shot img {
   display: block;
   width: clamp(206px, 54vw, 268px);

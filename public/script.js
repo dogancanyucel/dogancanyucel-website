@@ -107,3 +107,70 @@ if (revealEls.length) {
   pointer.addEventListener('change', apply);
   still.addEventListener('change', apply);
 }
+
+// ── The screenshot strip walks itself ─────────────────────
+// Only the Turquoise page has one. It starts stopped: the button is the whole contract
+// (owner, 2026-11-14). It walks to the far end, then back, so nothing ever jumps; it stops
+// when the strip leaves the screen, and the browser stops rAF in a hidden tab by itself.
+const shotsStage = document.querySelector('.shots-stage');
+
+if (shotsStage) {
+  const strip = shotsStage.querySelector('.shot-strip');
+  const button = shotsStage.querySelector('.shot-play');
+
+  if (strip && button) {
+    const SPEED = 90;          // px per second — about three seconds per screenshot
+    let playing = false;       // what the owner asked for
+    let onScreen = true;       // whether it is worth drawing
+    let frame = 0;
+    let last = 0;
+    let dir = 1;               // 1 walks to the right, -1 comes back
+    let at = 0;                // our own position, so fractions are not lost to rounding
+
+    const limit = () => Math.max(0, strip.scrollWidth - strip.clientWidth);
+
+    const step = (now) => {
+      const dt = last ? Math.min((now - last) / 1000, 0.1) : 0;   // a tab that was away does not leap
+      last = now;
+      const end = limit();
+      if (end <= 0) { stop(); return; }                           // nothing to walk through
+      at += dir * SPEED * dt;
+      if (at >= end) { at = end; dir = -1; }
+      else if (at <= 0) { at = 0; dir = 1; }
+      strip.scrollLeft = at;
+      frame = requestAnimationFrame(step);
+    };
+
+    const start = () => {
+      if (frame) return;
+      at = strip.scrollLeft;                                      // carry on from where it is
+      last = 0;
+      frame = requestAnimationFrame(step);
+    };
+    const stop = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+    };
+
+    const setPlaying = (on) => {
+      playing = on;
+      button.setAttribute('aria-pressed', String(on));
+      button.setAttribute('aria-label', on ? 'Stop the screenshots' : 'Play the screenshots');
+      if (on && onScreen) start(); else stop();
+    };
+
+    button.addEventListener('click', () => setPlaying(!playing));
+
+    // A hand on the strip wins over the walk: dragging or scrolling it stops the machine.
+    ['pointerdown', 'wheel', 'touchstart'].forEach((kind) =>
+      strip.addEventListener(kind, () => { if (playing) setPlaying(false); }, { passive: true }));
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        onScreen = entries[0].isIntersecting;
+        if (playing && onScreen) start();
+        if (!onScreen) stop();
+      }, { threshold: 0.05 }).observe(strip);
+    }
+  }
+}
