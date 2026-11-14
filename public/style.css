@@ -590,6 +590,33 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
 .project-card .pills { margin: 0 0 18px; }
 .project-card .feature-head { margin-bottom: 18px; }
 
+/* Turquoise's frame carries two real screens (owner, 2026-11-14). They are the app's own
+   pixels, cropped out of the App Store device frame — the marketing art's turquoise field and
+   its baked-in headline would put a second brand and a second headline inside our card. They
+   are decoration here, not information: the card already says in words what the app does, so
+   they carry an empty alt and are hidden from a screen reader. Below 900px the column folds
+   away entirely rather than shrinking to thumbnails. */
+.project-card.has-visual { flex-direction: row; gap: clamp(24px, 3vw, 44px); align-items: stretch; }
+.card-body { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; }
+.card-visual {
+  flex: none; display: flex; gap: 14px; align-items: flex-start;
+  margin-block: 4px;
+}
+.card-visual img {
+  width: clamp(120px, 13vw, 168px);
+  height: auto;
+  border-radius: var(--r-control);
+  border: 1px solid var(--edge);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+}
+/* The second screen steps down, so the pair reads as a pair and not as a wall. */
+.card-visual img:nth-child(2) { margin-top: 30px; }
+
+@media (max-width: 900px) {
+  .project-card.has-visual { flex-direction: column; }
+  .card-visual { display: none; }
+}
+
 /* The one link out of the frame; margin-top:auto keeps it on the frame's last line. */
 .project-more {
   display: inline-flex; align-self: flex-start; align-items: center; gap: 7px;
