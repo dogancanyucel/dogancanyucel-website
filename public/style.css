@@ -644,6 +644,41 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
 }
 .pill .dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
 
+/* ── App Store screenshots ────────────────────────────────── */
+/* The store's own shots, kept in the store's shape: one row you push sideways.
+   The home page's sideways strip was removed on the owner's word (2026-11-06) — that
+   was the two project CARDS, with arrow buttons, on a page where everything fitted
+   anyway. A screenshot gallery is the one place the pattern earns itself: ten tall
+   phone images cannot be a grid without each one shrinking to a thumbnail, and every
+   store shows them exactly like this. No arrow buttons: the strip is scrolled, swiped
+   or tabbed to and driven with the arrow keys.
+   The images are ours and are served from this site — hot-linking Apple's CDN would
+   put a third-party request on a site that has none, and hand a visitor's address to
+   Apple for a picture we already own. */
+
+.shots-note { margin: -4px 0 22px; color: var(--label-2); font-size: 15px; }
+
+.shot-strip {
+  display: flex;
+  gap: 14px;
+  margin: 0;
+  padding: 2px 0 10px;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge-strong) transparent;
+}
+.shot { flex: none; scroll-snap-align: center; }
+.shot img {
+  display: block;
+  width: clamp(206px, 54vw, 268px);
+  height: auto;
+  border-radius: var(--r-card);
+  border: 1px solid var(--edge);
+}
+
 /* ── Rows (contact) ───────────────────────────────────────── */
 
 .rows { margin: 0; border-radius: var(--r-card); background: var(--surface); border: 1px solid var(--edge); overflow: hidden; }
