@@ -75,3 +75,21 @@ for (const file of files) {
 }
 
 console.log(`no-third-party: ${files.length} served files, nothing loads from another company`);
+
+// ── Nothing inline, because the policy refuses it without a word ───────────
+// The same policy that keeps other companies out (`style-src 'self'`, `script-src 'self'`) also
+// refuses this site's OWN inline style and script — silently. Found 2026-11-14 by Lighthouse:
+// six `style=` attributes on three pages had never applied on the live site, and the margins
+// their author wrote were simply not there. Only the account page is exempt: its inline <style>
+// is in the policy by hash, which test/security-headers.test.js holds.
+const INLINE_EXEMPT = "public/turquoise/auth/";
+for (const file of filesUnder("public", [".html"])) {
+  if (file.startsWith(INLINE_EXEMPT)) continue;
+  const html = readFileSync(file, "utf8");
+  const styled = [...html.matchAll(/<[a-z][^>]*\sstyle=["'][^"']*["']/gi)].map((m) => m[0].slice(0, 60));
+  assert.deepStrictEqual(styled, [], `${file}: inline style= is refused by the page's own CSP and never applies`);
+  assert.ok(!/<style[\s>]/i.test(html), `${file}: an inline <style> block is refused by the page's own CSP`);
+  const inlineScript = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>/gi)].map((m) => m[0]);
+  assert.deepStrictEqual(inlineScript, [], `${file}: an inline <script> is refused by the page's own CSP`);
+}
+console.log("no-third-party: no inline style or script either — the policy would refuse them in silence");

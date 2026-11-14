@@ -617,6 +617,14 @@ a.bento-cell:hover, .bento-cell.is-link:hover {
   .card-visual { display: none; }
 }
 
+/* These four were written as inline style= attributes and never applied: the site's own
+   `style-src 'self'` refuses inline styles silently, so the margins existed in the markup and
+   not on the page (found 2026-11-14 by Lighthouse, which read them out of the console). */
+.page-head .feature-logo { margin-bottom: 22px; }
+.page-head .pills        { margin: 26px 0 0; }
+.page-head .hero-actions { margin-top: 24px; }
+#contact .rows           { margin-top: 28px; }
+
 /* The one link out of the frame; margin-top:auto keeps it on the frame's last line. */
 .project-more {
   display: inline-flex; align-self: flex-start; align-items: center; gap: 7px;
