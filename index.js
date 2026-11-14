@@ -105,9 +105,11 @@ function hardened(response, pathname) {
 /** Everything the site answers. One return per route, counted by fetch below. */
 async function handle(request, env, ctx, url) {
 
-    // The app's own host answers nothing else — see app-links.js.
+    // The app's own host answers nothing else — see app-links.js. The request goes in because the landing page's
+    // one link is chosen from the User-Agent: the inline script that used to choose it in the browser was refused by
+    // this file's own policy from the day it shipped.
     if (url.hostname === APP_LINKS_HOST) {
-      return appLinksResponse(url);
+      return appLinksResponse(request, url);
     }
 
     // The owner's view of the tally. Answers 404 unless STATS_PASSWORD is set.
