@@ -73,7 +73,31 @@ function apiSection(api) {
     </div>`;
 }
 
-function page({ places, days, total, since, api, nonce }) {
+/**
+ * The movement names the apps asked for and no clip answered to (owner, 2026-10-15: knowing which names are missing
+ * tells him which other names to write against the clips he has).
+ *
+ * **It was collected and shown nowhere** (found 2026-11-14, the full scan). /api/clips/missing has been counting into
+ * clip_misses since it was built; nothing read the table, and unlike site_visits and api_calls it had no migration
+ * file either, so the table was probably never created and every report was swallowed by the insert's own catch. The
+ * owner asked for this to learn something and there was no way for him to learn it.
+ *
+ * A name is the app's, not a person's: it was folded and matched against `[\p{L}\p{N} ()'-/.&+,]{1,64}` before it
+ * was stored, so there is no markup in it — and it is escaped here anyway, like every other value on this page.
+ */
+function missesSection(misses) {
+  if (!misses.length) {
+    return `<p class="footnote">No missing names reported yet. If the apps are live and this stays empty, the clip_misses table is missing — see scripts/migrate-clip-misses.sql.</p>`;
+  }
+  const rows = misses.map((r) =>
+    `<tr><td>${escape(r.day)}</td><td>${escape(r.name)}</td><td class="n">${Number(r.hits) || 0}</td></tr>`).join("");
+  return `<table>
+      <thead><tr><th>Day</th><th>Name asked for</th><th class="n">Times</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function page({ places, days, total, since, api, misses, nonce }) {
   const placeRows = places.length
     ? places.map((r) => `<tr><td>${flag(r.country)} ${escape(r.country)}</td><td>${escape(r.city || "—")}</td><td class="n">${r.hits}</td></tr>`).join("")
     : `<tr><td colspan="3" class="empty">Nothing recorded yet. If the site is live and this stays empty, the site_visits table is missing — see scripts/migrate-site-visits.sql.</td></tr>`;
@@ -144,6 +168,10 @@ function page({ places, days, total, since, api, nonce }) {
   <h2 class="title-2 api-heading">What the API answered</h2>
   <p class="footnote api-note">How much, not who. <strong>Rejected</strong>: no valid key — the apps have one, so that is somebody else. <strong>Refused</strong>: a route that is switched off was called, so somebody is knocking that nobody knew about. <strong>Failed</strong>: the route itself broke.</p>
   ${apiSection(api)}
+
+  <h2 class="title-2 api-heading">Movements with no clip</h2>
+  <p class="footnote api-note">The standard English names the apps looked for and found no clip for, most asked first. Per day and name only — no user, no device, nothing joining two of them.</p>
+  ${missesSection(misses)}
 </main>
 </body>
 </html>`;
@@ -164,9 +192,9 @@ export async function statsResponse(request, env, url) {
     });
   }
 
-  let places = [], days = [], total = 0, since = "", api = [];
+  let places = [], days = [], total = 0, since = "", api = [], misses = [];
   try {
-    const [byPlace, byDay, sum, byRoute] = await Promise.all([
+    const [byPlace, byDay, sum, byRoute, byName] = await Promise.all([
       env.DB.prepare("SELECT country, city, SUM(hits) AS hits FROM site_visits GROUP BY country, city ORDER BY hits DESC LIMIT 100").all(),
       env.DB.prepare("SELECT day, SUM(hits) AS hits FROM site_visits GROUP BY day ORDER BY day DESC LIMIT 30").all(),
       env.DB.prepare("SELECT SUM(hits) AS hits, MIN(day) AS since FROM site_visits").all(),
@@ -179,12 +207,14 @@ export async function statsResponse(request, env, url) {
         "SUM(CASE WHEN outcome = 'error' THEN hits ELSE 0 END) AS err " +
         "FROM api_calls GROUP BY day, route ORDER BY day DESC, total DESC LIMIT 60"
       ).all(),
+      env.DB.prepare("SELECT day, name, SUM(hits) AS hits FROM clip_misses GROUP BY day, name ORDER BY day DESC, hits DESC LIMIT 60").all(),
     ]);
     places = byPlace.results ?? [];
     days = byDay.results ?? [];
     total = sum.results?.[0]?.hits ?? 0;
     since = sum.results?.[0]?.since ?? "";
     api = byRoute.results ?? [];
+    misses = byName.results ?? [];
   } catch {
     // The table may not exist yet. The page says so rather than showing an error.
   }
@@ -192,7 +222,7 @@ export async function statsResponse(request, env, url) {
   // This page's own policy, because it is the one page built here and the only one with an inline <style>. index.js
   // adds the site's headers but never overwrites one a route set itself, so this stays.
   const nonce = crypto.randomUUID();
-  return new Response(page({ places, days, total, since, api, nonce }), {
+  return new Response(page({ places, days, total, since, api, misses, nonce }), {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",

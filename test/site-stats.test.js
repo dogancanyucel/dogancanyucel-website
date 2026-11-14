@@ -8,8 +8,13 @@ const basic = (pw, user = "owner") => ({ authorization: "Basic " + Buffer.from(`
 // The api query also says "GROUP BY day", so its key comes first: with the page's own
 // query matched to the day rows, the API table rendered from the wrong shape and the
 // test still passed (found 2026-11-06).
+//
+// The same trap caught the clip_misses query on 2026-11-14: it says "GROUP BY day, name", which CONTAINS
+// "GROUP BY day", so it would have been handed the day rows and rendered a table of blank names that still passed.
+// Its own key is named by its table and sits above the loose one.
 const rows = {
   "FROM api_calls": [{ day: "2026-10-30", route: "exercises", total: 41, ok: 0, rejected: 2, refused: 39, err: 0 }],
+  "FROM clip_misses": [{ day: "2026-10-31", name: "face pull", hits: 7 }, { day: "2026-10-31", name: "jm press", hits: 2 }],
   "GROUP BY country, city": [{ country: "PL", city: "Wroclaw", hits: 14 }, { country: "TR", city: "Istanbul", hits: 9 }],
   "GROUP BY day": [{ day: "2026-09-26", hits: 23 }],
   "MIN(day)": [{ hits: 23, since: "2026-09-25" }],
@@ -58,6 +63,18 @@ for (const path of ["/stats", "/stats/"]) {
     assert.ok(html.includes(`>${column}<`), `the API table has no ${column} column`);
   }
   assert.ok(/switched off/.test(html), "the page does not say what a refused call means");
+
+  // ── The names no clip answered to reach the owner ─────────────────────────────────────────
+  // /api/clips/missing has counted into clip_misses since it was built and NOTHING read the table — the owner asked
+  // for this on 2026-10-15 to learn which names to write, and there was nowhere he could learn it. Found by the full
+  // scan on 2026-11-14, with the other half of the same gap: no migration file, so the table was most likely never
+  // created and every report fell into the insert's own catch.
+  assert.ok(html.includes("Movements with no clip"), "the missing-name tally is not on the page at all");
+  assert.ok(html.includes(">Name asked for<"), "the missing-name table has no name column");
+  // The rows are the clip_misses rows, not whatever another query returned: a name, its day and its count.
+  assert.match(html, /<td>2026-10-31<\/td><td>face pull<\/td><td class="n">7<\/td>/,
+    "the missing-name table did not render the clip_misses rows");
+  assert.ok(html.includes("jm press"), "only one of the two reported names reached the page");
   // A table of seven columns is 629px at its narrowest, and a phone is 320-430: in normal flow
   // it drags the whole page sideways. It scrolls inside its own box instead, and that box can be
   // reached and scrolled from the keyboard (axe: scrollable-region-focusable).
