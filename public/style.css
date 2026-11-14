@@ -700,6 +700,10 @@ a.bento-cell:hover { transform: translateY(-2px); border-color: var(--ink-2); }
 
 /* ── Elsewhere ────────────────────────────────────────────── */
 
+/* Elsewhere is not a new room, only a new shelf: a hairline divides it from
+   Contact, and the two share the paper. The band is spent on Studio. */
+#elsewhere { border-top: 1px solid var(--line); padding-block: clamp(40px, 5vw, 64px); }
+
 .linklist { display: flex; flex-wrap: wrap; gap: var(--s1); margin: var(--s4) 0 0; }
 .linklist li { list-style: none; }
 .linklist a {
