@@ -735,6 +735,13 @@ footer {
 .footer-links a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: var(--s2); color: var(--ink-2); }
 .footer-links a:hover { color: var(--accent-ink); }
 
+/* The "leaves the site" mark is drawn, not typed. The two Inter subsets this
+   site serves declare U+0000-206F plus ↑ and ↓ only, so ↗ (U+2197) would be
+   painted by whatever font the reader's OS offers — a different face beside
+   our own, and an empty box where the OS has none. An inline path is ours on
+   every machine and costs no request. */
+.ext { width: 11px; height: 11px; margin-left: 5px; flex: none; }
+
 /* ── Reveal ───────────────────────────────────────────────────
    The rest state is the FINISHED state: if the script never runs — blocked,
    failed, an old browser — the page is simply there. Only once script.js has
