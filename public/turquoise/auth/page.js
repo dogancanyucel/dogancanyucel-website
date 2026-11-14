@@ -105,4 +105,12 @@ async function start() {
   }
 }
 
-start();
+// Belt as well as braces. The one fault this page has ever had — a lookup table answering for
+// Object.prototype, 2026-11-14 — threw inside start() and outside its try, and the page simply stayed at its "…"
+// for ever. The cause is fixed in action.js; this is here so that the NEXT throw, wherever it comes from, leaves a
+// reader who clicked a password-reset mail with a sentence rather than three dots. It never hides a Firebase
+// refusal: those are already caught inside and said in the reader's own language.
+start().catch((fault) => {
+  console.error("auth page:", fault);
+  showResult("refused", say("That didn't go through. Try again in a moment."));
+});

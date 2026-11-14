@@ -3,8 +3,21 @@
 
 const IDENTITY = "https://identitytoolkit.googleapis.com/v1";
 
-/** Firebase's and the browser's names for a language, as the app's catalogue names it. */
-const ALIASES = { "zh-CN": "zh-Hans", "zh-SG": "zh-Hans", "zh-TW": "zh-Hant", "zh-HK": "zh-Hant", "zh-MO": "zh-Hant", iw: "he", no: "nb", in: "id" };
+/**
+ * Firebase's and the browser's names for a language, as the app's catalogue names it.
+ *
+ * **A Map, not an object** (2026-11-14). As an object literal this table answered for every name on
+ * Object.prototype as well: `?lang=constructor` returned the Object function, `?lang=__proto__` returned the
+ * prototype, and the next line — `code.split(...)` — threw TypeError on a value that is not a string. The throw
+ * was in pickLanguage, which start() calls outside its try, so the page stopped at its "…" and never drew the
+ * form, the error or anything else. The language on the link is whatever is in the address bar, so the one page
+ * a person reaches from a password-reset mail could be stopped dead by a word in a query string.
+ * A Map holds only what was put in it.
+ */
+const ALIASES = new Map([
+  ["zh-CN", "zh-Hans"], ["zh-SG", "zh-Hans"], ["zh-TW", "zh-Hant"], ["zh-HK", "zh-Hant"], ["zh-MO", "zh-Hant"],
+  ["iw", "he"], ["no", "nb"], ["in", "id"],
+]);
 
 /**
  * The language to speak: the one Firebase put on the link (the app sets it from its own language before sending), then the
@@ -12,12 +25,12 @@ const ALIASES = { "zh-CN": "zh-Hans", "zh-SG": "zh-Hans", "zh-TW": "zh-Hant", "z
  */
 export function pickLanguage(requested, preferred, available) {
   for (const raw of [requested, ...(preferred ?? [])]) {
-    if (!raw) continue;
-    const code = ALIASES[raw] ?? raw;
+    if (typeof raw !== "string" || !raw) continue;
+    const code = ALIASES.get(raw) ?? raw;
     if (available.includes(code)) return code;
     const base = code.split(/[-_]/)[0].toLowerCase();
     if (base === "zh") return /TW|HK|MO|Hant/i.test(code) ? "zh-Hant" : "zh-Hans";
-    const named = ALIASES[base] ?? base;
+    const named = ALIASES.get(base) ?? base;
     if (available.includes(named)) return named;
   }
   return "en";

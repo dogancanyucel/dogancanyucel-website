@@ -23,6 +23,24 @@ assert.strictEqual(pickLanguage("iw", [], languages), "he");
 assert.strictEqual(pickLanguage("", ["pt-BR", "en"], languages), "pt");
 assert.strictEqual(pickLanguage("", ["xx-YY"], languages), "en");
 
+// ── A name from the address bar must never stop the page ────────────────────────────────────
+// The alias table used to be an object literal, so it answered for every name on Object.prototype too:
+// `?lang=constructor` came back as the Object function and the next line, `code.split(...)`, threw TypeError.
+// That throw was inside pickLanguage, which start() calls OUTSIDE its try — so the page stayed at its "…" and
+// never drew the form, the refusal, or anything at all. The language is read straight off the link, so a word in
+// a query string could stop the one page a password-reset mail opens. The table is a Map now.
+for (const hostile of ["constructor", "__proto__", "toString", "valueOf", "hasOwnProperty", "prototype"]) {
+  assert.strictEqual(pickLanguage(hostile, [], languages), "en", `?lang=${hostile} did not fall back to English`);
+  assert.strictEqual(pickLanguage("", [hostile], languages), "en", `navigator.languages ${hostile} was not survived`);
+}
+// Nothing the browser or Firebase can put there is a string this throws on, either.
+for (const odd of [null, undefined, 0, false, {}, [], "   ", "en-US-x-" + "a".repeat(200)]) {
+  assert.doesNotThrow(() => pickLanguage(odd, [odd], languages), `pickLanguage threw on ${JSON.stringify(odd)}`);
+}
+// And the aliases the Map is actually for still answer.
+assert.strictEqual(pickLanguage("no", [], languages), "nb");
+assert.strictEqual(pickLanguage("in", [], languages), "id");
+
 // Every sentence the page picks is one the strings carry.
 for (const code of ["EXPIRED_OOB_CODE", "INVALID_OOB_CODE", "USER_DISABLED", "TOO_MANY_ATTEMPTS_TRY_LATER",
   "WEAK_PASSWORD : Password should be at least 6 characters", "SOMETHING_NEW", undefined]) {
