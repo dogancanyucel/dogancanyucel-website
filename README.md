@@ -38,11 +38,13 @@ of the Turquoise apps.
 npm test                      # node, no dependencies
 ```
 
-Twelve files, no dependencies and no runner: each one is a node script that throws on the first
-thing that is wrong. Three of them are structural and read the site rather than run it — no file
+Fifteen files, no dependencies and no runner: each one is a node script that throws on the first
+thing that is wrong. Five of them are structural and read the site rather than run it — no file
 loads anything from another company (`no-third-party`), every class a page asks for has a rule
-(`classes-have-rules`), and the retired routes and the removed media map stay gone
-(`retired-routes`).
+(`classes-have-rules`), the retired routes and the removed media map stay gone
+(`retired-routes`), every page has a sitemap row and a canonical that agrees with it (`sitemap`),
+and every page that declares a social card is attributed to the X profile the site links to and
+carries the Open Graph tags the card is drawn from (`social-cards`).
 
 ## Deployment: commit + push = live
 

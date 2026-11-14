@@ -15,19 +15,12 @@
 //   · /website-privacy.html's canonical pointed at its own redirecting .html address.
 // Run: node test/sitemap.test.js
 import assert from "node:assert";
-import { readdirSync, readFileSync } from "node:fs";
-import { join, relative } from "node:path";
+import { readFileSync } from "node:fs";
+import { relative } from "node:path";
 import worker from "../index.js";
+import { htmlUnder } from "./page-files.js";
 
 const SITE = "https://dogancanyucel.com";
-
-function htmlUnder(folder) {
-  return readdirSync(folder, { withFileTypes: true }).flatMap((entry) => {
-    const path = join(folder, entry.name);
-    if (entry.isDirectory()) return htmlUnder(path);
-    return entry.name.endsWith(".html") ? [path] : [];
-  });
-}
 
 /**
  * The address a file in public/ is indexed under — the form that answers 200, measured live
