@@ -52,3 +52,7 @@ clip-slugs.json
 # The T18 build spec, same class as the notes above (2026-11-14): the owner's design decisions and
 # measured numbers for the rebuild. It is the file the build follows; it is not a deliverable.
 tasarim-spec-*.md
+# Skill strengthening packages waiting for the owner (/skill-improve). They belong in
+# ~/Desktop/Projects/claude-skills/, but a session sandboxed to this repository cannot write there,
+# so they are parked here until he moves them. Never part of the site.
+skill-paketleri/
